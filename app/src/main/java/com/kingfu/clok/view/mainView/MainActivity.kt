@@ -13,7 +13,6 @@ import com.kingfu.clok.ui.theme.ClokTheme
 
 const val TAG = "MainActivityLog"
 
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

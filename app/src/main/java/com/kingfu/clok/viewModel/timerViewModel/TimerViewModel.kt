@@ -226,7 +226,7 @@ class TimerViewModel(
         )
 
         when (snackbarResult) {
-            SnackbarResult.Dismissed -> Log.d("SnackbarDemo", "Dismissed")
+            SnackbarResult.Dismissed -> { }
             SnackbarResult.ActionPerformed -> {
                 timerCancelNotification(context = context)
             }

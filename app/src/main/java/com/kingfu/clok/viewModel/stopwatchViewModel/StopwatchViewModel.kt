@@ -324,18 +324,6 @@ class StopwatchViewModel(
         stopwatchPreferences.setStopwatchLapPreviousTime(lapPreviousTime)
     }
 
-//    suspend fun loadStopwatchInitialTime(){
-//        stopwatchInitialTime = stopwatchPreferences.getStopwatchInitialTime.first()
-//    }
-//
-//    suspend fun saveStopwatchInitialTime(){
-//        stopwatchPreferences.setStopwatchInitialTime(stopwatchInitialTime)
-//    }
-
-//    suspend fun loadStopwatchOffsetTime() {
-//        stopwatchOffsetTime = stopwatchPreferences.getStopwatchOffsetTime.first()
-//    }
-
     suspend fun saveStopwatchOffsetTime() {
         stopwatchPreferences.setStopwatchOffsetTime(stopwatchOffsetTime)
     }

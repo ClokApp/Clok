@@ -37,7 +37,9 @@ fun BugReport() {
     val bugReportScrollState = rememberScrollState()
     val context = LocalContext.current
     val bugReportEmail = "ClokBugReport@gmail.com"
+    val bugReportEmailIntent = Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", bugReportEmail, null))
     val discordInviteLink = "https://discord.gg/wssjhZavc2"
+    val discordIntent = Intent(Intent.ACTION_VIEW)
 
     Column(
         modifier = Modifier
@@ -55,9 +57,8 @@ fun BugReport() {
                         .fillMaxWidth()
                         .clickable {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            val intent = Intent(Intent.ACTION_VIEW)
-                            intent.data = Uri.parse(discordInviteLink)
-                            context.startActivity(intent)
+                            discordIntent.data = Uri.parse(discordInviteLink)
+                            context.startActivity(discordIntent)
                         }
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -89,10 +90,8 @@ fun BugReport() {
                     IconButton(
                         onClick = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            val url = "https://discord.gg/wssjhZavc2"
-                            val intent = Intent(Intent.ACTION_VIEW)
-                            intent.data = Uri.parse(url)
-                            context.startActivity(intent)
+                            discordIntent.data = Uri.parse(discordInviteLink)
+                            context.startActivity(discordIntent)
                         }
                     ) {
                         Icon(
@@ -114,14 +113,7 @@ fun BugReport() {
                         .fillMaxWidth()
                         .clickable {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            val emailIntent =
-                                Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", bugReportEmail, null))
-                            context.startActivity(
-                                Intent.createChooser(
-                                    emailIntent,
-                                    "Send email..."
-                                )
-                            )
+                            context.startActivity(Intent.createChooser(bugReportEmailIntent, "Send email..."))
                         }
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -163,8 +155,7 @@ fun BugReport() {
                     IconButton(
                         onClick = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            val emailIntent = Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", bugReportEmail, null))
-                            context.startActivity(Intent.createChooser(emailIntent, "Send email..."))
+                            context.startActivity(Intent.createChooser(bugReportEmailIntent, "Send email..."))
                         }
                     ) {
                         Icon(

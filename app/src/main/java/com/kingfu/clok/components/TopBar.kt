@@ -60,7 +60,6 @@ fun TopBar(
                 run {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
-//                            imageVector = Icons.Filled.ArrowBack,
                             painterResource(id = R.drawable.ic_arrow_back_ios_new_24),
                             contentDescription = "Back"
                         )
