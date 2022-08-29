@@ -36,7 +36,7 @@ fun BugReport() {
     val haptic = LocalHapticFeedback.current
     val bugReportScrollState = rememberScrollState()
     val context = LocalContext.current
-    val bugReportEmail = "clokbugreport@gmail.com"
+    val bugReportEmail = "ClokBugReport@gmail.com"
     val discordInviteLink = "https://discord.gg/wssjhZavc2"
 
     Column(
