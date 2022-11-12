@@ -78,34 +78,15 @@ class StopwatchViewModel(
 
     init {
         viewModelScope.launch {
-//            if (stopwatchPreferences.getStopwatchSaveTime.first()) {
-//                stopwatchOffsetTime = stopwatchPreferences.getStopwatchOffsetTime.first()
-//                stopwatchTime = stopwatchOffsetTime
-//            } else {
-//                stopwatchPreferences.clearStopwatchOffsetTime()
-//            }
-
-//            stopwatchOffsetTime = stopwatchPreferences.getStopwatchOffsetTime.first()
             loadStopwatchOffset()
             loadStopwatchTime()
-//            stopwatchTime = stopwatchOffsetTime
             stopwatchOffsetTime = stopwatchTime
 
             stopwatchRefreshRate = stopwatchPreferences.getStopwatchRefreshRate.first()
 
-//            if (stopwatchPreferences.getStopwatchSaveLapTime.first()) {
-//                lapPreviousTime = stopwatchPreferences.getStopwatchLapPreviousTime.first()
-//            } else {
-////                stopwatchPreferences.clearStopwatchLapPreviousTime()
-//                clearLapTimes()
-//
-//            }
 
             lapPreviousTime = stopwatchPreferences.getStopwatchLapPreviousTime.first()
 
-//            if (!stopwatchPreferences.getStopwatchSaveLapTime.first()) {
-//                clearLapTimes()
-//            }
         }
     }
 
@@ -124,27 +105,19 @@ class StopwatchViewModel(
                     formatTimeStopWatchMs(stopwatchTime) + " $lapCounter"
         )
         lapPreviousTime = stopwatchTime
-//        viewModelScope.launch {
-//            if (stopwatchPreferences.getStopwatchSaveTime.first()) {
-//                saveStopwatchLapPreviousTime()
-//            }
-//        }
     }
 
 
     fun saveLapTimes() {
         viewModelScope.launch {
-//            if (stopwatchPreferences.getStopwatchSaveLapTime.first()) {
             saveStopwatchLapNumber()
             saveStopwatchLapCounter()
             saveStopwatchLapTime()
             saveStopwatchLapTotalTimes()
-//            }
         }
     }
 
     fun clearLapTimes() {
-//        if (!stopwatchPreferences.getStopwatchSaveLapTime.first()) {
         viewModelScope.launch {
             lapCounter = 0
             lapPreviousTime = 0
@@ -224,37 +197,17 @@ class StopwatchViewModel(
 
     fun pauseStopWatch() {
         stopwatchIsActive = false
-//        stopwatchOffsetTime = stopwatchTime
-//        viewModelScope.launch {
-            stopwatchOffsetTime = stopwatchTime
-
-//            saveStopwatchOffsetTime()
-
-//            if (stopwatchPreferences.getStopwatchSaveTime.first()) {
-//                saveStopwatchLapPreviousTime()
-//            }
-//            saveLapTimes()
-//        }
-
-
+        stopwatchOffsetTime = stopwatchTime
     }
 
     fun resetStopWatch() {
         stopwatchIsActive = false
         stopwatchTime = 0L
-//        lapPreviousTime = 0L
-//        _lapTime.clear()
-//        _lapNumber.clear()
-//        _lapTotalTime.clear()
-//        lapCounter = 0
+
         stopwatchOffsetTime = 0L
         viewModelScope.launch {
-//            saveStopwatchLapNumber()
             saveStopwatchOffsetTime()
             saveStopwatchTime()
-//            saveStopwatchLapTotalTime()
-//            saveStopwatchLapCounter()
-//            saveStopwatchLapPreviousTime()
         }
     }
 
@@ -316,16 +269,14 @@ class StopwatchViewModel(
     }
 
     suspend fun saveStopwatchTime() {
-//        if (stopwatchPreferences.getStopwatchSaveTime.first()) {
-            stopwatchPreferences.setStopwatchTime(stopwatchTime)
-//        }
+        stopwatchPreferences.setStopwatchTime(stopwatchTime)
     }
 
-    suspend fun loadStopwatchTime(){
+    suspend fun loadStopwatchTime() {
         stopwatchTime = stopwatchPreferences.getStopwatchTime.first()
     }
 
-    suspend fun loadStopwatchOffset(){
+    suspend fun loadStopwatchOffset() {
         stopwatchOffsetTime = stopwatchPreferences.getStopwatchOffsetTime.first()
     }
 
@@ -371,15 +322,11 @@ class StopwatchViewModel(
     }
 
     suspend fun saveStopwatchLapPreviousTime() {
-//        if (stopwatchPreferences.getStopwatchSaveTime.first()) {
         stopwatchPreferences.setStopwatchLapPreviousTime(lapPreviousTime)
-//        }
     }
 
     suspend fun saveStopwatchOffsetTime() {
-//        if (stopwatchPreferences.getStopwatchSaveTime.first()) {
         stopwatchPreferences.setStopwatchOffsetTime(stopwatchOffsetTime)
-//        }
     }
 
 }
