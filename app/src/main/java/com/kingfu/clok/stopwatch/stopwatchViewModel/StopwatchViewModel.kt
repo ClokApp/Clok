@@ -316,7 +316,6 @@ class StopwatchViewModel(
         stopwatchShowLabel = stopwatchPreferences.getStopwatchShowLabel.first()
     }
 
-
     suspend fun loadStopwatchLabelStyle() {
         stopwatchLabelStyle = stopwatchPreferences.getStopwatchLabelStyleSelectedOption.first()
     }

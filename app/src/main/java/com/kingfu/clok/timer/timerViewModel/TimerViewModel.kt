@@ -138,6 +138,7 @@ class TimerViewModel(
     fun pauseTimer() {
         timerIsActive = false
         viewModelScope.launch {
+            delay(100)
             timerOffsetTime = timerTime
             saveTimerOffsetTime()
             saveTimerCurrentPercentage()
