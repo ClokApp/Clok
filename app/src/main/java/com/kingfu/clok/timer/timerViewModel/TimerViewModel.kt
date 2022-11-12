@@ -224,6 +224,7 @@ class TimerViewModel(
             SnackbarResult.Dismissed -> {}
             SnackbarResult.ActionPerformed -> {
                 timerCancelNotification(context = context)
+                cancelTimer()
             }
         }
     }
