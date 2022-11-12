@@ -34,13 +34,13 @@ class TimerPreferences(context: Context) {
     private val timerTotalTimeDefault = 0.0
     private val timerIsEditStateDefault = true
     private val timerCurrentPercentageDefault = 0.0f
-    private val timerIsActiveDefault = false
+//    private val timerIsActiveDefault = false
     private val timerCountOvertimeDefault = true
     private val timerLabelStyleSelectedOptionDefault = "RGB"
     private val timerEnableScrollsHapticFeedbackDefault = true
     private val timerNotificationDefault = 5f
     private val timerOffsetTimeDefault = 0L
-    private val timerRGBCCounterDefault = 0
+    private val timerRGBCCounterDefault = 255
 
     private val _timerIsFinished = booleanPreferencesKey("timerIsFinished")
     private val _timerHourKey = intPreferencesKey("timerHour")
@@ -111,11 +111,11 @@ class TimerPreferences(context: Context) {
         }
     }
 
-    suspend fun setTimerIsActive(boolean: Boolean) {
-        timerDataStore.edit { preferences ->
-            preferences[_timerIsActive] = boolean
-        }
-    }
+//    suspend fun setTimerIsActive(boolean: Boolean) {
+//        timerDataStore.edit { preferences ->
+//            preferences[_timerIsActive] = boolean
+//        }
+//    }
 
     suspend fun setTimerCountOvertime(boolean: Boolean) {
         timerDataStore.edit { preferences ->
@@ -192,10 +192,10 @@ class TimerPreferences(context: Context) {
             preferences[_timerCurrentPercentage] ?: timerCurrentPercentageDefault
         }
 
-    val getTimerIsActive: Flow<Boolean> = timerDataStore.data
-        .map { preferences ->
-            preferences[_timerIsActive] ?: timerIsActiveDefault
-        }
+//    val getTimerIsActive: Flow<Boolean> = timerDataStore.data
+//        .map { preferences ->
+//            preferences[_timerIsActive] ?: timerIsActiveDefault
+//        }
 
     val getTimerCountOvertime: Flow<Boolean> = timerDataStore.data
         .map { preferences ->

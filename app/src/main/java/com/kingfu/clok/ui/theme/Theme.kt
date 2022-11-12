@@ -5,6 +5,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
@@ -50,5 +52,4 @@ fun ClokTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable (
     systemUiController.setSystemBarsColor(color = Black00)
     systemUiController.setStatusBarColor(color = Black00)
     systemUiController.setNavigationBarColor(color = Black00)
-
 }

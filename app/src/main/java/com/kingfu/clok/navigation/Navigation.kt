@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -15,16 +16,16 @@ import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.variable.Variable.navigateToStartScreen
 import com.kingfu.clok.variable.Variable.startDestination
 import com.kingfu.clok.variable.Variable.timerShowNotification
-import com.kingfu.clok.view.bugReport.BugReport
-import com.kingfu.clok.view.settingsView.settingsStopwatchView.SettingsStopwatchLabelStyle
-import com.kingfu.clok.view.settingsView.settingsTimerView.SettingsTimerProgressBarStyle
-import com.kingfu.clok.view.settingsView.settingsView.SettingsView
-import com.kingfu.clok.view.stopwatchView.StopwatchView
-import com.kingfu.clok.view.timerView.TimerView
-import com.kingfu.clok.viewModel.settingsViewModel.SettingsViewModelStopwatch
-import com.kingfu.clok.viewModel.settingsViewModel.SettingsViewModelTimer
-import com.kingfu.clok.viewModel.stopwatchViewModel.StopwatchViewModel
-import com.kingfu.clok.viewModel.timerViewModel.TimerViewModel
+import com.kingfu.clok.bugReport.BugReport
+import com.kingfu.clok.settings.settingsView.settingsStopwatchView.SettingsStopwatchLabelStyle
+import com.kingfu.clok.settings.settingsView.settingsTimerView.SettingsTimerProgressBarStyle
+import com.kingfu.clok.settings.settingsView.SettingsView
+import com.kingfu.clok.stopwatch.stopwatchView.StopwatchView
+import com.kingfu.clok.timer.timerView.TimerView
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
+import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
+import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import kotlinx.coroutines.flow.first
 
 @Composable

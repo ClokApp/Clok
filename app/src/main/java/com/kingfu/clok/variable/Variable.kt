@@ -12,4 +12,5 @@ object Variable {
     var startDestination by mutableStateOf<String?>(null)
     var navigateToStartScreen by mutableStateOf(true)
     var showMenu by mutableStateOf(false)
+
 }

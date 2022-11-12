@@ -1,10 +1,15 @@
 package com.kingfu.clok.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -26,6 +31,7 @@ fun TopBar(
     currentDestination: NavDestination?,
 ) {
     TopAppBar(
+//        modifier = Modifier.statusBarsPadding(),
         title = {
             Text(
                 text =
@@ -87,7 +93,10 @@ fun TopBar(
 
 @Composable
 fun ShowMenu(navController: NavController) {
-    MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(16.dp))) {
+    MaterialTheme(
+        colors = MaterialTheme.colors.copy(surface = Color.Black.copy(0.4f)),
+        shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(16.dp))
+    ) {
         DropdownMenu(
             expanded = showMenu,
             onDismissRequest = { showMenu = false }
@@ -109,6 +118,7 @@ fun ShowMenu(navController: NavController) {
                     fontWeight = FontWeight.Normal
                 )
             }
+
             DropdownMenuItem(
                 onClick = {
                     navController.navigate(Screens.BugReport.route) {

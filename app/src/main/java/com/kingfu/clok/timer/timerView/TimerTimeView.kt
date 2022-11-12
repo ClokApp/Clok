@@ -1,0 +1,149 @@
+package com.kingfu.clok.timer.timerView
+
+import android.content.Context
+import android.content.res.Configuration
+import android.util.Log
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Text
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.kingfu.clok.ui.theme.Cyan50
+import com.kingfu.clok.ui.theme.Red50
+import com.kingfu.clok.util.NoRippleTheme
+import com.kingfu.clok.util.customFontSize
+import com.kingfu.clok.timer.timerViewModel.TimerViewModel
+import kotlinx.coroutines.CoroutineScope
+
+@Composable
+fun TimerTimeView(
+    vm: TimerViewModel,
+    context: Context,
+    coroutineScopeTimer: CoroutineScope,
+    haptic: HapticFeedback
+) {
+
+    LaunchedEffect(Unit) {
+        vm.loadTimerLabelStyleOption()
+    }
+    var isLoadTimerLabelStyle by rememberSaveable { mutableStateOf(true) }
+
+    LaunchedEffect(vm.timerLabelStyle) {
+        if (vm.timerLabelStyle == "RGB" && isLoadTimerLabelStyle) {
+            vm.timerUpdateStartAndEndRGB()
+            Log.d("DebugRGB", "executed")
+            isLoadTimerLabelStyle = false
+        }
+    }
+
+    Box {
+        val configurationOrientation = LocalConfiguration.current.orientation
+
+        val animatedProgress by animateFloatAsState(
+            targetValue = vm.timerCurrentTimePercentage,
+            animationSpec = tween(
+                durationMillis = 100,
+                easing = FastOutLinearInEasing
+            ),
+        )
+        val animatedCircularProgressBarColor by animateColorAsState(
+            targetValue = if (vm.timerTime > 6000) Cyan50 else Red50,
+            animationSpec = tween(
+                durationMillis = 500,
+                easing = LinearEasing
+            )
+        )
+
+        if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            Canvas(
+                modifier = Modifier
+                    .size(320.dp, 320.dp)
+                    .padding(5.dp)
+            ) {
+                drawArc(
+                    color = Color.DarkGray,
+                    startAngle = -90f,
+                    sweepAngle = 360f,
+                    useCenter = false,
+                    style = Stroke(10f),
+                )
+                drawArc(
+                    brush = Brush.linearGradient(
+                        colors =
+                        when (vm.timerLabelStyle) {
+                            "RGB" ->
+                                listOf(
+                                    Color(
+                                        vm.timerLabelColorList[0],
+                                        vm.timerLabelColorList[1],
+                                        vm.timerLabelColorList[2],
+                                    ),
+                                    Color(
+                                        vm.timerLabelColorList[3],
+                                        vm.timerLabelColorList[4],
+                                        vm.timerLabelColorList[5],
+                                    )
+                                )
+                            else -> listOf(
+                                animatedCircularProgressBarColor,
+                                animatedCircularProgressBarColor
+                            )
+                        }
+                    ),
+                    startAngle = -90f,
+                    sweepAngle = 360 * animatedProgress,
+                    useCenter = false,
+                    style = Stroke(20f, cap = StrokeCap.Round),
+                )
+            }
+        }
+
+        Box(
+            modifier = Modifier.align(Alignment.Center)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
+                    Text(
+                        text = vm.formatTimerTime(vm.timerTime),
+                        color = Color.White,
+                        fontSize = customFontSize(textUnit = 65.sp),
+                        fontFamily = FontFamily.Default,
+                        fontWeight = FontWeight.Light,
+                        modifier = Modifier.clickable {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            if (vm.timerIsActive) {
+                                vm.startButton()
+                            } else {
+                                vm.pauseButton()
+                            }
+                            vm.timerCancelNotification(context)
+                        }
+                    )
+                }
+            }
+        }
+    }
+}

@@ -28,6 +28,7 @@ class StopwatchPreferences(context: Context) {
     private val Context.stopwatchDataStore: DataStore<Preferences> by preferencesDataStore(name = "StopwatchDataStore")
     private val stopwatchDataStore: DataStore<Preferences> = context.stopwatchDataStore
 
+    private val stopwatchTimeDefault = 0L
     private val stopwatchLapNumberDefault = setOf<String>()
     private val stopwatchLapCounterDefault = 0
     private val stopwatchLapTimeDefault = setOf("00:00.00")
@@ -40,6 +41,7 @@ class StopwatchPreferences(context: Context) {
     private val stopwatchLabelStyleSelectedOptionDefault = "RGB"
     private val stopwatchOffsetTimeDefault = 0L
 
+    private val _stopwatchTime = longPreferencesKey("stopwatchTime")
     private val _stopwatchLapNumber = stringSetPreferencesKey("stopwatchLapNumber")
     private val _stopwatchLapCounter = intPreferencesKey("stopwatchLapCounter")
     private val _stopwatchLapTime = stringSetPreferencesKey("stopwatchLapTime")
@@ -98,6 +100,12 @@ class StopwatchPreferences(context: Context) {
     }
 
     /************************************************ set ************************************************/
+
+    suspend fun setStopwatchTime(long: Long) {
+        stopwatchDataStore.edit { preferences ->
+            preferences[_stopwatchTime] = long
+        }
+    }
 
     suspend fun setStopwatchLapNumber(strings: Set<String>) {
         stopwatchDataStore.edit { preferences ->
@@ -166,6 +174,10 @@ class StopwatchPreferences(context: Context) {
     }
 
     /************************************************ get ************************************************/
+    val getStopwatchTime: Flow<Long> = stopwatchDataStore.data
+        .map { preferences ->
+            preferences[_stopwatchTime] ?: stopwatchTimeDefault
+        }
 
     val getStopwatchLabNumber: Flow<Set<String>> = stopwatchDataStore.data
         .map { preferences ->

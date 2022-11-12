@@ -34,7 +34,6 @@ fun BottomBarNavigation(
     navController: NavHostController,
     navigationPreferences: NavigationPreferences,
 ) {
-    var test = 0
     AnimatedVisibility(
         visible = currentDestination?.route == Screens.Stopwatch.route ||
                 currentDestination?.route == Screens.Timer.route,

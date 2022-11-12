@@ -8,7 +8,7 @@ import android.content.Intent
 import android.graphics.Color
 import androidx.core.app.NotificationCompat
 import com.kingfu.clok.R
-import com.kingfu.clok.view.mainView.MainActivity
+import com.kingfu.clok.mainActivity.MainActivity
 
 class TimerNotificationService(
     private val context: Context

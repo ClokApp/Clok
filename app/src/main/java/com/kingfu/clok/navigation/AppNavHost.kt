@@ -12,12 +12,12 @@ import com.kingfu.clok.components.TopBar
 import com.kingfu.clok.repository.preferencesDataStore.NavigationPreferences
 import com.kingfu.clok.repository.preferencesDataStore.StopwatchPreferences
 import com.kingfu.clok.repository.preferencesDataStore.TimerPreferences
-import com.kingfu.clok.viewModel.factory.StopwatchFactory
-import com.kingfu.clok.viewModel.factory.TimerFactory
-import com.kingfu.clok.viewModel.settingsViewModel.SettingsViewModelStopwatch
-import com.kingfu.clok.viewModel.settingsViewModel.SettingsViewModelTimer
-import com.kingfu.clok.viewModel.stopwatchViewModel.StopwatchViewModel
-import com.kingfu.clok.viewModel.timerViewModel.TimerViewModel
+import com.kingfu.clok.stopwatch.stopwatchFactory.StopwatchFactory
+import com.kingfu.clok.timer.timerFactory.TimerFactory
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
+import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
+import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 
 @Composable
 fun AppNavHost() {
@@ -42,7 +42,6 @@ fun AppNavHost() {
 
     val navigationPreferences: NavigationPreferences =
         NavigationPreferences.getInstance(LocalContext.current)
-
 
     Scaffold(
         scaffoldState = scaffoldState,
