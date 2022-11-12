@@ -22,7 +22,6 @@ import com.kingfu.clok.ui.theme.Green50
 import com.kingfu.clok.ui.theme.Red50
 import com.kingfu.clok.util.customFontSize
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun TimerStartButtonView(
@@ -64,9 +63,12 @@ fun TimerStartButtonView(
         {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             if (vm.timerIsActive) {
-                vm.startButton()
+                vm.pauseTimer()
             } else {
-                vm.pauseButton()
+                if (vm.timerIsEditState) {
+                    vm.convertHrMinSecToMillis()
+                }
+                vm.startTimer()
             }
             vm.timerCancelNotification(context)
         }

@@ -2,7 +2,6 @@ package com.kingfu.clok.timer.timerViewModel
 
 import android.content.Context
 import android.os.SystemClock
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarResult
@@ -101,6 +100,7 @@ class TimerViewModel(
     }
 
     fun startTimer() {
+
         if (timerIsEditState) {
             timerIsEditState = false
             timerTotalTime = timerTime.toDouble()
@@ -137,16 +137,15 @@ class TimerViewModel(
 
     fun pauseTimer() {
         timerIsActive = false
-    }
-
-    fun delayThenSaveTime() {
         viewModelScope.launch {
-            delay(100L)
             timerOffsetTime = timerTime
             saveTimerOffsetTime()
+            saveTimerCurrentPercentage()
+            saveTimerIsEditState()
+            saveTimerTotalTime()
+            saveTimerIsFinished()
         }
     }
-
 
     fun cancelTimer() {
         timerIsEditState = true
@@ -279,27 +278,8 @@ class TimerViewModel(
         }
     }
 
-    fun startButton() {
-        pauseTimer()
-        delayThenSaveTime()
-        viewModelScope.launch {
-            saveTimerCurrentPercentage()
-            saveTimerIsEditState()
-            saveTimerTotalTime()
-            saveTimerIsFinished()
-        }
 
-    }
-
-    fun pauseButton() {
-        if (timerIsEditState) {
-            convertHrMinSecToMillis()
-        }
-        startTimer()
-    }
-
-
-    fun cancelButton(){
+    fun cancelButton() {
         cancelTimer()
     }
 

@@ -135,9 +135,12 @@ fun TimerTimeView(
                         modifier = Modifier.clickable {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             if (vm.timerIsActive) {
-                                vm.startButton()
+                                vm.pauseTimer()
                             } else {
-                                vm.pauseButton()
+                                if (vm.timerIsEditState) {
+                                    vm.convertHrMinSecToMillis()
+                                }
+                                vm.startTimer()
                             }
                             vm.timerCancelNotification(context)
                         }
