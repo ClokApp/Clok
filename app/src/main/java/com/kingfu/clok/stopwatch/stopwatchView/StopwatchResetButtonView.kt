@@ -29,13 +29,11 @@ fun StopwatchResetButton(
     coroutineScopeStopwatch: CoroutineScope,
 ) {
 
-
     val stopwatchResetButtonColor by animateColorAsState(
         targetValue = if (vm.stopwatchIsActive) Cyan50 else Yellow50
     )
 
     OutlinedButton(
-//        modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
         modifier = Modifier.padding(10.dp),
         shape = RoundedCornerShape(50),
         border = BorderStroke(0.5.dp, stopwatchResetButtonColor.copy(0.5f)),

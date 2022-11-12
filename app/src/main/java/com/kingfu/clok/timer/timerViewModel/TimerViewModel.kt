@@ -157,7 +157,6 @@ class TimerViewModel(
         timerOffsetTime = 0L
         viewModelScope.launch {
             saveTimerIsFinished()
-//            saveTimerIsActive()
             saveTimerIsEditState()
             saveTimerOffsetTime()
         }
@@ -273,7 +272,6 @@ class TimerViewModel(
             timerIsEditState = true
             timerIsFinished = false
             viewModelScope.launch {
-//                saveTimerIsActive()
                 saveTimerIsEditState()
                 saveTimerIsFinished()
             }

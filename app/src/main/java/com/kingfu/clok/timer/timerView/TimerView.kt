@@ -96,7 +96,6 @@ fun TimerView(
                 selectedMin = selectedMin,
                 selectedSec = selectedSec,
                 haptic = haptic,
-                coroutineScopeTimer = coroutineScopeTimer,
                 context = context
             )
         }

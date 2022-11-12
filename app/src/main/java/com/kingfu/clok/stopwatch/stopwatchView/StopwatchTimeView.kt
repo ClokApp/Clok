@@ -219,22 +219,6 @@ fun StopwatchTimeView(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Light,
         )
-
-//        Text(
-//            text = vm.formatTimeStopWatch(vm.stopwatchTime),
-//            fontSize = customFontSize(textUnit = 35.sp),
-//            color = Color.Gray,
-//            fontFamily = FontFamily.Default,
-//            fontWeight = FontWeight.Light,
-//        )
-//
-//        Text(
-//            text = vm.formatTimeStopWatch(vm.lapPreviousTime),
-//            fontSize = customFontSize(textUnit = 35.sp),
-//            color = Color.Gray,
-//            fontFamily = FontFamily.Default,
-//            fontWeight = FontWeight.Light,
-//        )
     }
 
 }

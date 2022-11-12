@@ -1,9 +1,10 @@
 package com.kingfu.clok.navigation
 
-import android.content.res.Configuration
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -64,7 +65,7 @@ fun BottomBarNavigation(
                             unselectedContentColor = Color.DarkGray,
                             icon = {
                                 Icon(
-                                    painterResource(if(selected) items[screen].filledIconId else items[screen].outlinedIconId),
+                                    painterResource(if (selected) items[screen].filledIconId else items[screen].outlinedIconId),
                                     contentDescription = null
                                 )
                             },

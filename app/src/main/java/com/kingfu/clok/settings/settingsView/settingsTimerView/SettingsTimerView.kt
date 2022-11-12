@@ -21,11 +21,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
 import com.kingfu.clok.ui.theme.Cyan50
 import com.kingfu.clok.ui.theme.Green50
 import com.kingfu.clok.util.NoRippleTheme
 import com.kingfu.clok.util.customFontSize
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
 
 @Composable
 fun SettingsTimerView(
@@ -49,7 +49,8 @@ fun SettingsTimerView(
     ) {
         Column {
             Row(
-                modifier = Modifier.background(Color.Black.copy(0.4f))
+                modifier = Modifier
+                    .background(Color.Black.copy(0.4f))
                     .fillMaxWidth()
                     .clickable(enabled = navController.currentDestination?.route == "settings") {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -82,7 +83,8 @@ fun SettingsTimerView(
             )
 
             Row(
-                modifier = Modifier.background(Color.Black.copy(0.4f))
+                modifier = Modifier
+                    .background(Color.Black.copy(0.4f))
                     .fillMaxWidth()
                     .clickable {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -139,7 +141,8 @@ fun SettingsTimerView(
             )
 
             Row(
-                modifier = Modifier.background(Color.Black.copy(0.4f))
+                modifier = Modifier
+                    .background(Color.Black.copy(0.4f))
                     .fillMaxWidth()
                     .clickable {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -189,7 +192,8 @@ fun SettingsTimerView(
             )
 
             Row(
-                modifier = Modifier.background(Color.Black.copy(0.4f))
+                modifier = Modifier
+                    .background(Color.Black.copy(0.4f))
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,

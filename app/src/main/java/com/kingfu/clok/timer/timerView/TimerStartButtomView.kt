@@ -34,7 +34,6 @@ fun TimerStartButtonView(
     selectedMin: Int?,
     selectedSec: Int?,
     haptic: HapticFeedback,
-    coroutineScopeTimer: CoroutineScope,
     context: Context,
 ) {
     val startTimerColor by animateColorAsState(

@@ -31,7 +31,6 @@ fun StopwatchStartButtonView(
     val startStopWatchColor by animateColorAsState(if (vm.stopwatchIsActive) Red50 else Green50)
 
     OutlinedButton(
-//        modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
         modifier = Modifier.padding(10.dp),
         shape = RoundedCornerShape(50),
         border = BorderStroke(0.5.dp, startStopWatchColor.copy(0.5f)),

@@ -48,26 +48,6 @@ class SettingsViewModelStopwatch(
         }
     }
 
-    fun saveStopwatchTimeCheckState() {
-        stopwatchSaveTimeCheckState = !stopwatchSaveTimeCheckState
-    }
-
-    fun saveStopwatchSaveTimeCheckState() {
-        viewModelScope.launch {
-            stopwatchPreferences.setStopwatchAutoSaveTime(stopwatchSaveTimeCheckState)
-        }
-    }
-
-    fun stopwatchSaveLapTimeCheckState() {
-        stopwatchSaveLapTimeCheckState = !stopwatchSaveLapTimeCheckState
-    }
-
-    fun saveStopwatchSaveLapTimeCheckState() {
-        viewModelScope.launch {
-            stopwatchPreferences.setStopwatchAutoLapTime(stopwatchSaveLapTimeCheckState)
-        }
-    }
-
     fun stopwatchRefreshRateValue(float: Float) {
         stopwatchRefreshRateValue = float
     }

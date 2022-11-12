@@ -25,7 +25,6 @@ fun StopwatchLapView(
 ) {
 
     LaunchedEffect(Unit) {
-//        vm.clearLapTimes()
         vm.loadStopwatchLapCounter()
         vm.loadStopwatchLapNumber()
         vm.loadStopwatchLapTimes()

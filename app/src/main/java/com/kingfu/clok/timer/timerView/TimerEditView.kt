@@ -24,11 +24,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.ui.theme.Cyan50
 import com.kingfu.clok.util.customFontSize
 import com.kingfu.clok.variable.Variable
-import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
@@ -46,7 +46,7 @@ fun TimerEditView(
 ) {
     val configurationOrientation = LocalConfiguration.current.orientation
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         vm.loadTimerEnableScrollsHapticFeedback()
     }
 
@@ -56,7 +56,7 @@ fun TimerEditView(
             vm.saveTimerHour()
         }
 
-        if(!lazyListStateHr.isScrollInProgress){
+        if (!lazyListStateHr.isScrollInProgress) {
             lazyListStateHr.scrollToItem(Int.MAX_VALUE / 2 - 15 + vm.timerHour)
         }
     }
@@ -67,7 +67,7 @@ fun TimerEditView(
             vm.saveTimerMinute()
         }
 
-        if(!lazyListStateMin.isScrollInProgress){
+        if (!lazyListStateMin.isScrollInProgress) {
             lazyListStateMin.scrollToItem(Int.MAX_VALUE / 2 - 3 + vm.timerMinute)
         }
     }
@@ -77,7 +77,7 @@ fun TimerEditView(
             vm.updateTimerSecond(selectedSec)
             vm.saveTimerSecond()
         }
-        if(!lazyListStateSec.isScrollInProgress) {
+        if (!lazyListStateSec.isScrollInProgress) {
             lazyListStateSec.scrollToItem(Int.MAX_VALUE / 2 - 3 + vm.timerSecond)
         }
     }
@@ -184,7 +184,6 @@ fun TimerEditView(
                         )
                     }
                 }
-
 
                 LaunchedEffect(selectedHr) {
                     if (lazyListStateHr.isScrollInProgress && vm.timerEnableScrollsHapticFeedback) {
