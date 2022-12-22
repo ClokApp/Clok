@@ -22,6 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel.StopwatchViewModelVariable.stopwatchIsActive
+import com.kingfu.clok.stopwatch.styles.Gray
+import com.kingfu.clok.stopwatch.styles.RGB.RGBVariable.RGBHrColorList
+import com.kingfu.clok.stopwatch.styles.RGB.RGBVariable.RGBMinColorList
+import com.kingfu.clok.stopwatch.styles.RGB.RGBVariable.RGBMsColorList
+import com.kingfu.clok.stopwatch.styles.RGB.RGBVariable.RGBSecColorList
 import com.kingfu.clok.util.customFontSize
 
 @OptIn(ExperimentalTextApi::class)
@@ -41,7 +46,9 @@ fun StopwatchTimeView(
     Row {
         val stopwatchLabelFontSize = customFontSize(textUnit = 35.sp)
         val stopwatchTimeFontSize = customFontSize(textUnit = 65.sp)
-        val defaultGrayColor = listOf(Color.Gray, Color.Gray)
+//        val rgbColorStyle =
+        val grayColorStyle = Gray().grayStyle()
+//        val grayColorStyle = listOf(Color.Gray, Color.Gray)
 
         if (vm.stopwatchTime >= 3_600_000) {
             Column(
@@ -53,17 +60,17 @@ fun StopwatchTimeView(
                         "RGB" ->
                             listOf(
                                 Color(
-                                    vm.stopwatchHrColorList[0],
-                                    vm.stopwatchHrColorList[1],
-                                    vm.stopwatchHrColorList[2]
+                                    RGBHrColorList[0],
+                                    RGBHrColorList[1],
+                                    RGBHrColorList[2]
                                 ),
                                 Color(
-                                    vm.stopwatchHrColorList[3],
-                                    vm.stopwatchHrColorList[4],
-                                    vm.stopwatchHrColorList[5]
+                                    RGBHrColorList[3],
+                                    RGBHrColorList[4],
+                                    RGBHrColorList[5]
                                 )
                             )
-                        else -> defaultGrayColor
+                        else -> grayColorStyle
                     }
                 if (vm.stopwatchShowLabel) {
                     Text(
@@ -74,7 +81,7 @@ fun StopwatchTimeView(
                         fontStyle = FontStyle.Italic,
                         style = TextStyle(
                             brush = Brush.linearGradient(
-                                colors = if (stopwatchIsActive) stopwatchHrListOfColor else defaultGrayColor
+                                colors = if (stopwatchIsActive) stopwatchHrListOfColor else grayColorStyle
                             )
                         )
                     )
@@ -117,17 +124,17 @@ fun StopwatchTimeView(
                     "RGB" ->
                         listOf(
                             Color(
-                                vm.stopwatchMinColorList[0],
-                                vm.stopwatchMinColorList[1],
-                                vm.stopwatchMinColorList[2]
+                                RGBMinColorList[0],
+                                RGBMinColorList[1],
+                                RGBMinColorList[2]
                             ),
                             Color(
-                                vm.stopwatchMinColorList[3],
-                                vm.stopwatchMinColorList[4],
-                                vm.stopwatchMinColorList[5]
+                                RGBMinColorList[3],
+                                RGBMinColorList[4],
+                                RGBMinColorList[5]
                             )
                         )
-                    else -> defaultGrayColor
+                    else -> grayColorStyle
                 }
             if (vm.stopwatchShowLabel) {
                 Text(
@@ -138,7 +145,7 @@ fun StopwatchTimeView(
                     fontStyle = FontStyle.Italic,
                     style = TextStyle(
                         brush = Brush.linearGradient(
-                            colors = if (stopwatchIsActive) stopwatchMinListOfColor else defaultGrayColor
+                            colors = if (stopwatchIsActive) stopwatchMinListOfColor else grayColorStyle
                         )
                     )
                 )
@@ -179,17 +186,17 @@ fun StopwatchTimeView(
                     "RGB" ->
                         listOf(
                             Color(
-                                vm.stopwatchSecColorList[0],
-                                vm.stopwatchSecColorList[1],
-                                vm.stopwatchSecColorList[2],
+                                RGBSecColorList[0],
+                                RGBSecColorList[1],
+                                RGBSecColorList[2],
                             ),
                             Color(
-                                vm.stopwatchSecColorList[3],
-                                vm.stopwatchSecColorList[4],
-                                vm.stopwatchSecColorList[5],
+                                RGBSecColorList[3],
+                                RGBSecColorList[4],
+                                RGBSecColorList[5],
                             )
                         )
-                    else -> defaultGrayColor
+                    else -> grayColorStyle
 
                 }
             if (vm.stopwatchShowLabel) {
@@ -201,7 +208,7 @@ fun StopwatchTimeView(
                     fontStyle = FontStyle.Italic,
                     style = TextStyle(
                         brush = Brush.linearGradient(
-                            colors = if (stopwatchIsActive) stopwatchSecListOfColor else defaultGrayColor
+                            colors = if (stopwatchIsActive) stopwatchSecListOfColor else grayColorStyle
                         )
                     )
                 )
@@ -244,17 +251,17 @@ fun StopwatchTimeView(
                     "RGB" ->
                         listOf(
                             Color(
-                                vm.stopwatchMsColorList[0],
-                                vm.stopwatchMsColorList[1],
-                                vm.stopwatchMsColorList[2]
+                                RGBMsColorList[0],
+                                RGBMsColorList[1],
+                                RGBMsColorList[2]
                             ),
                             Color(
-                                vm.stopwatchMsColorList[3],
-                                vm.stopwatchMsColorList[4],
-                                vm.stopwatchMsColorList[5]
+                                RGBMsColorList[3],
+                                RGBMsColorList[4],
+                                RGBMsColorList[5]
                             )
                         )
-                    else -> defaultGrayColor
+                    else -> grayColorStyle
                 }
             if (vm.stopwatchShowLabel) {
                 Text(
@@ -265,7 +272,7 @@ fun StopwatchTimeView(
                     fontStyle = FontStyle.Italic,
                     style = TextStyle(
                         brush = Brush.linearGradient(
-                            colors = if (stopwatchIsActive) stopwatchMsListOfColorStart else defaultGrayColor
+                            colors = if (stopwatchIsActive) stopwatchMsListOfColorStart else grayColorStyle
                         )
                     )
                 )

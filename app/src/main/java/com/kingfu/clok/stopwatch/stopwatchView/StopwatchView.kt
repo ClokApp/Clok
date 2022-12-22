@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -25,8 +24,6 @@ fun StopwatchView(
     scaffoldState: ScaffoldState,
     vm: StopwatchViewModel,
 ) {
-
-    val columnListStateStopwatch = rememberScrollState()
     val lazyColumnState = rememberLazyListState()
 
     val haptic = LocalHapticFeedback.current
@@ -44,7 +41,6 @@ fun StopwatchView(
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
-//                    .verticalScroll(columnListStateStopwatch),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -75,7 +71,6 @@ fun StopwatchView(
             Row(
                 modifier = Modifier
                     .fillMaxSize(),
-//                    .verticalScroll(columnListStateStopwatch),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {

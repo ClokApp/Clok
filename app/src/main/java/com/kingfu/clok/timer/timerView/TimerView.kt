@@ -10,19 +10,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.variable.Variable.TIMER_HR
 import com.kingfu.clok.variable.Variable.TIMER_MIN
 import com.kingfu.clok.variable.Variable.TIMER_SEC
-import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberLazyListSnapperLayoutInfo
 
@@ -51,8 +49,6 @@ fun TimerView(
     val selectedSec = layoutInfoSec.currentItem?.index?.rem(TIMER_SEC)
 
     val columnListStateTimer = rememberScrollState()
-
-
 
 
     Column(

@@ -21,11 +21,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
 import com.kingfu.clok.ui.theme.Cyan50
 import com.kingfu.clok.ui.theme.Green50
 import com.kingfu.clok.util.NoRippleTheme
 import com.kingfu.clok.util.customFontSize
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
 
 @Composable
 fun SettingsStopwatchView(
@@ -118,6 +118,41 @@ fun SettingsStopwatchView(
                 ) {
                     Text(
                         text = "Label styles",
+                        fontSize = customFontSize(textUnit = 18.sp),
+                        fontFamily = FontFamily.Default,
+                        fontWeight = FontWeight.Normal,
+                    )
+                }
+            }
+
+            Divider(
+                modifier = Modifier
+                    .background(Color.Black.copy(0.4f))
+                    .padding(horizontal = 24.dp),
+                color = Color.DarkGray,
+            )
+
+            Row(
+                modifier = Modifier
+                    .background(Color.Black.copy(0.4f))
+                    .fillMaxWidth()
+                    .clickable {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        navController.navigate("settingsStopwatchBackgroundEffects")
+                    }
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp),
+                ) {
+                    Text(
+                        text = "Background effects",
                         fontSize = customFontSize(textUnit = 18.sp),
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight.Normal,

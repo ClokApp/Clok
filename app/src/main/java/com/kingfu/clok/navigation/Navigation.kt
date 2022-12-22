@@ -1,38 +1,36 @@
 package com.kingfu.clok.navigation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ScaffoldState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.kingfu.clok.bugReport.BugReport
 import com.kingfu.clok.repository.preferencesDataStore.NavigationPreferences
+import com.kingfu.clok.settings.settingsView.SettingsView
+import com.kingfu.clok.settings.settingsView.settingsStopwatchView.SettingsStopwatchBackgroundEffects
+import com.kingfu.clok.settings.settingsView.settingsStopwatchView.SettingsStopwatchLabelStyle
+import com.kingfu.clok.settings.settingsView.settingsTimerView.SettingsTimerProgressBarStyle
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
+import com.kingfu.clok.stopwatch.stopwatchView.StopwatchView
+import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
+import com.kingfu.clok.timer.timerView.TimerView
+import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.variable.Variable.navigateToStartScreen
 import com.kingfu.clok.variable.Variable.startDestination
 import com.kingfu.clok.variable.Variable.timerShowNotification
-import com.kingfu.clok.bugReport.BugReport
-import com.kingfu.clok.settings.settingsView.settingsStopwatchView.SettingsStopwatchLabelStyle
-import com.kingfu.clok.settings.settingsView.settingsTimerView.SettingsTimerProgressBarStyle
-import com.kingfu.clok.settings.settingsView.SettingsView
-import com.kingfu.clok.stopwatch.stopwatchView.StopwatchView
-import com.kingfu.clok.timer.timerView.TimerView
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
-import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
-import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import kotlinx.coroutines.flow.first
 
 @Composable
 fun Navigation(
     navController: NavHostController,
     scaffoldState: ScaffoldState,
-//    paddingValues: PaddingValues,
     timerViewModel: TimerViewModel,
     stopwatchViewModel: StopwatchViewModel,
     settingsViewModelStopwatch: SettingsViewModelStopwatch,
@@ -61,9 +59,7 @@ fun Navigation(
         NavHost(
             navController,
             startDestination = startDestination!!,
-            modifier = Modifier
-                .background(Black00)
-//                .padding(paddingValues = paddingValues)
+            modifier = Modifier.background(Black00)
         ) {
 
             composable(Screens.Stopwatch.route) {
@@ -93,6 +89,10 @@ fun Navigation(
 
             composable(Screens.BugReport.route){
                 BugReport()
+            }
+
+            composable(Screens.SettingsStopwatchBackgroundEffects.route){
+                SettingsStopwatchBackgroundEffects(settingsViewModelStopwatch)
             }
         }
     }

@@ -31,7 +31,6 @@ import com.kingfu.clok.util.customFontSize
 import com.kingfu.clok.variable.Variable
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
@@ -57,14 +56,8 @@ fun TimerEditView(
             vm.saveTimerHour()
         }
         if (!lazyListStateHr.isScrollInProgress) {
-//            lazyListStateHr.scrollToItem(Int.MAX_VALUE / 2 - 15 + vm.timerHour)
             lazyListStateHr.scrollToItem(Int.MAX_VALUE / 2 - 23 + vm.timerHour)
         }
-//        delay(100)
-//        if (selectedHr != null ) {
-//            vm.updateTimerHour(selectedHr)
-//            vm.saveTimerHour()
-//        }
 
     }
 
@@ -77,11 +70,6 @@ fun TimerEditView(
         if (!lazyListStateMin.isScrollInProgress) {
             lazyListStateMin.scrollToItem(Int.MAX_VALUE / 2 - 3 + vm.timerMinute)
         }
-//        delay(100)
-//        if (selectedMin != null) {
-//            vm.updateTimerMinute(selectedMin)
-//            vm.saveTimerMinute()
-//        }
     }
 
     LaunchedEffect(selectedSec) {
@@ -92,11 +80,6 @@ fun TimerEditView(
         if (!lazyListStateSec.isScrollInProgress) {
             lazyListStateSec.scrollToItem(Int.MAX_VALUE / 2 - 3 + vm.timerSecond)
         }
-//        delay(100)
-//        if (selectedSec != null) {
-//            vm.updateTimerSecond(selectedSec)
-//            vm.saveTimerSecond()
-//        }
     }
 
 

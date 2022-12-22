@@ -6,7 +6,6 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -27,6 +26,7 @@ class MainActivity : ComponentActivity() {
 //        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         super.onCreate(savedInstanceState)
+
         val configuration: Configuration = resources.configuration
         configuration.fontScale = 1f //0.85 small size, 1 normal size, 1,15 big etc
         val metrics = DisplayMetrics()
@@ -34,9 +34,8 @@ class MainActivity : ComponentActivity() {
         metrics.scaledDensity = configuration.fontScale * metrics.density
         configuration.densityDpi = resources.displayMetrics.xdpi.toInt()
         baseContext.resources.updateConfiguration(configuration, metrics)
+
         setContent {
-
-
             ClokTheme {
                 val context = LocalContext.current
                 var hasNotificationPermission by remember {

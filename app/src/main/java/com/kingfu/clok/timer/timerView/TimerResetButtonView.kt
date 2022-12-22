@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewModelScope
 import com.kingfu.clok.util.customFontSize
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import kotlinx.coroutines.CoroutineScope

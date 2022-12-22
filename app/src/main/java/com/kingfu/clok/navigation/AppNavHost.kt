@@ -8,21 +8,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.kingfu.clok.bottomBar.BottomBarNavigation
-import com.kingfu.clok.topBar.TopBar
 import com.kingfu.clok.repository.preferencesDataStore.NavigationPreferences
 import com.kingfu.clok.repository.preferencesDataStore.StopwatchPreferences
 import com.kingfu.clok.repository.preferencesDataStore.TimerPreferences
-import com.kingfu.clok.stopwatch.stopwatchFactory.StopwatchFactory
-import com.kingfu.clok.timer.timerFactory.TimerFactory
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
+import com.kingfu.clok.stopwatch.stopwatchFactory.StopwatchFactory
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
+import com.kingfu.clok.timer.timerFactory.TimerFactory
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
+import com.kingfu.clok.topBar.TopBar
 
 @Composable
 fun AppNavHost() {
@@ -71,7 +70,6 @@ fun AppNavHost() {
                 Navigation(
                     navController = navController,
                     scaffoldState = scaffoldState,
-//                    paddingValues = paddingValues,
                     timerViewModel = timerViewModel,
                     stopwatchViewModel = stopwatchViewModel,
                     settingsViewModelStopwatch = settingsViewModelStopwatch,

@@ -30,35 +30,19 @@ fun StopwatchLapView(
     configurationOrientation: Int
 ) {
 
-//    LaunchedEffect(Unit) {
-//        vm.loadStopwatchLapCounter()
-//        vm.loadStopwatchLapNumber()
-//        vm.loadStopwatchLapTimes()
-//        vm.loadStopwatchLapTotalTimes()
-//    }
-
-//    if (vm.lapCounter > 0) {
-
-    if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
-//        Spacer(modifier = Modifier.padding(top = 40.dp, bottom = 5.dp))
-    } else {
-//        Spacer(modifier = Modifier.padding(horizontal = 25.dp))
-    }
-
-
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .alpha(if (vm.lapCounter > 0 || configurationOrientation == Configuration.ORIENTATION_LANDSCAPE) 1f else 0f)
-            .fillMaxHeight(if( configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 0.65f else 1f)
-            .fillMaxWidth(if( configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 0.8f else 0.5f)
-            .padding(vertical = 0.dp, horizontal = if( configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 0.dp else 40.dp),
+            .fillMaxHeight(if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 0.65f else 1f)
+            .fillMaxWidth(if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 0.8f else 0.5f)
+            .padding(
+                vertical = 0.dp,
+                horizontal = if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 0.dp else 40.dp
+            ),
 
-    ) {
-
-
+        ) {
 
         Row(Modifier.padding(10.dp)) {
             Text(
@@ -170,4 +154,3 @@ fun StopwatchLapView(
     }
 
 }
-//}

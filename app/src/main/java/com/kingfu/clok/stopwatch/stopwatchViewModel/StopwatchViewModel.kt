@@ -6,11 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kingfu.clok.repository.preferencesDataStore.StopwatchPreferences
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel.StopwatchViewModelVariable.stopwatchIsActive
+import com.kingfu.clok.stopwatch.styles.RGB
 import com.kingfu.clok.variable.Variable.keepScreenOn
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlin.math.sin
 
 class StopwatchViewModel(
     private val stopwatchPreferences: StopwatchPreferences,
@@ -20,6 +20,11 @@ class StopwatchViewModel(
 
     object StopwatchViewModelVariable {
         var stopwatchIsActive by mutableStateOf(false)
+//        var stopwatchColorCounter by mutableStateOf(0.0)
+//        var stopwatchHrColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
+//        var stopwatchMinColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
+//        var stopwatchSecColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
+//        var stopwatchMsColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
     }
 
 //    companion object {
@@ -33,20 +38,20 @@ class StopwatchViewModel(
     var stopwatchTime by mutableStateOf(0L)
         private set
 
-    var stopwatchHrColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
-        private set
+//    var stopwatchHrColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
+//        private set
+//
+//    var stopwatchMinColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
+//        private set
+//
+//    var stopwatchSecColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
+//        private set
+//
+//    var stopwatchMsColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
+//        private set
 
-    var stopwatchMinColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
-        private set
-
-    var stopwatchSecColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
-        private set
-
-    var stopwatchMsColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
-        private set
-
-    var stopwatchColorCounter by mutableStateOf(0.0)
-        private set
+//    var stopwatchColorCounter by mutableStateOf(0.0)
+//        private set
 
     private var _lapNumber = mutableStateListOf<String>()
     val lapNumber: List<String>
@@ -111,7 +116,6 @@ class StopwatchViewModel(
             formatTimeStopWatch(stopwatchTime) + "-$lapCounter"
         )
         lapPreviousTime = stopwatchTime
-
     }
 
 
@@ -150,10 +154,9 @@ class StopwatchViewModel(
                     pauseStopWatch()
                     break
                 }
-                stopwatchLabelStyle(stopwatchRefreshRate)
+                stopwatchLabelStyle()
                 stopwatchTime =
                     (SystemClock.elapsedRealtime()  - stopwatchInitialTime) + stopwatchOffsetTime
-
 
                 saveStopwatchLapPreviousTime()
                 saveStopwatchOffsetTime()
@@ -164,49 +167,14 @@ class StopwatchViewModel(
     }
 
 
-    private suspend fun stopwatchLabelStyle(refreshRate: Float) {
+    private suspend fun stopwatchLabelStyle() {
         if (stopwatchShowLabel) {
             when (stopwatchPreferences.getStopwatchLabelStyleSelectedOption.first()) {
+//                "Gray" -> {Gray().grayStyle()}
                 "Gray" -> {}
-                "RGB" -> stopwatchUpdateStartAndEndRGB(refreshRate)
+                "RGB" -> { RGB().rgbStyle(stopwatchRefreshRate)}
                 else -> {}
             }
-        }
-    }
-
-
-    private fun stopwatchUpdateStartAndEndRGB(refreshRate: Float) {
-        val frequency = 0.9
-        val phase = 1.5
-        val width = 128
-        val center = 127
-        val hrOffset = 0
-        val minOffset = 3
-        val secOffset = 6
-        val msOffset = 9
-
-        val temp: Double =
-            if (refreshRate <= 25) {
-                0.025
-            } else if (refreshRate > 25 && refreshRate <= 50) {
-                0.0025
-            } else if (refreshRate > 50 && refreshRate <= 75) {
-                0.00025
-            } else {
-                0.000025
-            }
-
-        stopwatchColorCounter =
-            (stopwatchColorCounter + ((refreshRate / 200) + temp)) % Double.MAX_VALUE
-        for (i in 0 until stopwatchHrColorList.size) {
-            stopwatchHrColorList[i] =
-                (sin(frequency * stopwatchColorCounter + phase * (i + hrOffset)) * width + center).toInt()
-            stopwatchMinColorList[i] =
-                (sin(frequency * stopwatchColorCounter + phase * (i + minOffset)) * width + center).toInt()
-            stopwatchSecColorList[i] =
-                (sin(frequency * stopwatchColorCounter + phase * (i + secOffset)) * width + center).toInt()
-            stopwatchMsColorList[i] =
-                (sin(frequency * stopwatchColorCounter + phase * (i + msOffset)) * width + center).toInt()
         }
     }
 
@@ -226,23 +194,23 @@ class StopwatchViewModel(
         }
     }
 
-    fun displayLapTimes(index: Int): String {
-        viewModelScope.launch {
-            delay(1000)
-        }
-        return if (stopwatchTime > 3_600_000) lapTime[index].takeWhile { it != '-' } else lapTime[index].drop(
-            3
-        ).takeWhile { it != '-' }
-    }
-
-    fun displayTotalTimes(index: Int): String {
-        viewModelScope.launch {
-            delay(1000)
-        }
-        return if (stopwatchTime > 3_600_000) lapTotalTime[index].takeWhile { it != '-' } else lapTotalTime[index].drop(
-            3
-        ).takeWhile { it != '-' }
-    }
+//    fun displayLapTimes(index: Int): String {
+//        viewModelScope.launch {
+//            delay(1000)
+//        }
+//        return if (stopwatchTime > 3_600_000) lapTime[index].takeWhile { it != '-' } else lapTime[index].drop(
+//            3
+//        ).takeWhile { it != '-' }
+//    }
+//
+//    fun displayTotalTimes(index: Int): String {
+//        viewModelScope.launch {
+//            delay(1000)
+//        }
+//        return if (stopwatchTime > 3_600_000) lapTotalTime[index].takeWhile { it != '-' } else lapTotalTime[index].drop(
+//            3
+//        ).takeWhile { it != '-' }
+//    }
 
     fun formatTimeStopWatchHr(timeMillis: Long): String {
         val hr2 = (timeMillis / 36_000_000) % 10
