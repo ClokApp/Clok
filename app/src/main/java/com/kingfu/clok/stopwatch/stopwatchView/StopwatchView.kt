@@ -2,10 +2,12 @@ package com.kingfu.clok.stopwatch.stopwatchView
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -46,7 +48,10 @@ fun StopwatchView(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                StopwatchTimeView(vm = vm)
+                StopwatchTimeView(
+                    vm = vm,
+                    configurationOrientation
+                )
 
                 StopwatchLapView(
                     vm,
@@ -79,7 +84,7 @@ fun StopwatchView(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    StopwatchTimeView(vm = vm)
+                    StopwatchTimeView(vm = vm, configurationOrientation = configurationOrientation)
 
                     Row(
                         modifier = Modifier,

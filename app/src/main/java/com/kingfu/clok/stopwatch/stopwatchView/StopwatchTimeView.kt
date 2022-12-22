@@ -1,5 +1,6 @@
 package com.kingfu.clok.stopwatch.stopwatchView
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,7 +27,8 @@ import com.kingfu.clok.util.customFontSize
 @OptIn(ExperimentalTextApi::class)
 @Composable
 fun StopwatchTimeView(
-    vm: StopwatchViewModel
+    vm: StopwatchViewModel,
+    configurationOrientation: Int
 ) {
 
     LaunchedEffect(Unit) {
@@ -279,15 +281,15 @@ fun StopwatchTimeView(
         }
     }
 
-//    if (vm.lapCounter != 0) {
-        Text(
-            text = vm.formatTimeStopWatch(vm.stopwatchTime - vm.lapPreviousTime),
-            fontSize = customFontSize(textUnit = 35.sp),
-            color = Color.Gray,
-            fontFamily = FontFamily.Default,
-            fontWeight = FontWeight.Light,
-            modifier = Modifier.alpha(if(vm.lapCounter > 0) 1f else 0f).padding(bottom = 20.dp)
-        )
-//    }
+    Text(
+        text = vm.formatTimeStopWatch(vm.stopwatchTime - vm.lapPreviousTime),
+        fontSize = customFontSize(textUnit = 35.sp),
+        color = Color.Gray,
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Light,
+        modifier = Modifier
+            .alpha(if (vm.lapCounter > 0) 1f else 0f)
+            .padding(bottom = if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 20.dp else  0.dp)
+    )
 
 }
