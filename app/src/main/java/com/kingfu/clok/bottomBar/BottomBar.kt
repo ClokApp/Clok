@@ -1,17 +1,16 @@
-package com.kingfu.clok.navigation
+package com.kingfu.clok.bottomBar
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.foundation.background
+import androidx.compose.material.*
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -21,6 +20,8 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import com.kingfu.clok.navigation.Screens
+import com.kingfu.clok.navigation.items
 import com.kingfu.clok.repository.preferencesDataStore.NavigationPreferences
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.util.NoRippleTheme
@@ -35,9 +36,10 @@ fun BottomBarNavigation(
     navController: NavHostController,
     navigationPreferences: NavigationPreferences,
 ) {
+    val currentRoute = currentDestination?.route
+
     AnimatedVisibility(
-        visible = currentDestination?.route == Screens.Stopwatch.route ||
-                currentDestination?.route == Screens.Timer.route,
+        visible = currentRoute == Screens.Stopwatch.route || currentRoute == Screens.Timer.route,
         enter = slideInVertically(
             initialOffsetY = { 100 },
             animationSpec = tween(
@@ -52,10 +54,9 @@ fun BottomBarNavigation(
                 easing = LinearEasing
             )
         ),
+        modifier = Modifier.background(Black00),
         content = {
-            BottomNavigation(
-                backgroundColor = Black00
-            ) {
+            BottomNavigation(backgroundColor = Black00) {
                 for (screen in 0 until 2) {
                     val selected =
                         currentDestination?.hierarchy?.any { it.route == items[screen].route } == true

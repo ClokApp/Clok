@@ -1,7 +1,9 @@
-package com.kingfu.clok.components
+package com.kingfu.clok.topBar
 
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
@@ -9,7 +11,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -25,11 +26,13 @@ fun TopBar(
     navController: NavController,
     currentDestination: NavDestination?,
 ) {
+    val currentRoute = currentDestination?.route
+
     TopAppBar(
         title = {
             Text(
                 text =
-                when (currentDestination?.route) {
+                when (currentRoute) {
                     Screens.Settings.route -> {
                         Screens.Settings.name
                     }
@@ -54,8 +57,8 @@ fun TopBar(
         backgroundColor = Black00,
         navigationIcon =
         {
-            if (navController.previousBackStackEntry != null && navController.currentDestination?.route != Screens.Stopwatch.route &&
-                currentDestination?.route != Screens.Timer.route
+            if (navController.previousBackStackEntry != null && currentRoute != Screens.Stopwatch.route
+                && currentRoute != Screens.Timer.route
             ) {
                 run {
                     IconButton(onClick = { navController.navigateUp() }) {
@@ -68,9 +71,7 @@ fun TopBar(
             }
         },
         actions = {
-            if (navController.currentDestination?.route == Screens.Stopwatch.route ||
-                navController.currentDestination?.route == Screens.Timer.route
-            ) {
+            if (currentRoute == Screens.Timer.route || currentRoute == Screens.Stopwatch.route) {
                 IconButton(onClick = { showMenu = !showMenu }) {
                     Icon(
                         Icons.Filled.MoreVert,
@@ -85,50 +86,3 @@ fun TopBar(
 
 }
 
-@Composable
-fun ShowMenu(navController: NavController) {
-    MaterialTheme(
-        colors = MaterialTheme.colors.copy(surface = Color.Black.copy(0.4f)),
-        shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(16.dp))
-    ) {
-        DropdownMenu(
-            expanded = showMenu,
-            onDismissRequest = { showMenu = false }
-        ) {
-            DropdownMenuItem(
-                onClick = {
-                    navController.navigate(Screens.Settings.route)
-                    {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                    showMenu = false
-                },
-            ) {
-                Text(
-                    text = "Settings",
-                    fontSize = customFontSize(textUnit = 16.sp),
-                    fontFamily = FontFamily.Default,
-                    fontWeight = FontWeight.Normal
-                )
-            }
-
-            DropdownMenuItem(
-                onClick = {
-                    navController.navigate(Screens.BugReport.route) {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                    showMenu = false
-                },
-            ) {
-                Text(
-                    text = "Bug report",
-                    fontSize = customFontSize(textUnit = 16.sp),
-                    fontFamily = FontFamily.Default,
-                    fontWeight = FontWeight.Normal
-                )
-            }
-        }
-    }
-}

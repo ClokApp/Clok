@@ -47,7 +47,7 @@ fun TimerResetButtonView(
             if (vm.timerIsEditState) {
                 vm.resetTimer()
                 coroutineScopeTimer.launch {
-                    lazyListStateHr.scrollToItem(Int.MAX_VALUE / 2 - 15)
+                    lazyListStateHr.scrollToItem(Int.MAX_VALUE / 2 - 23)
                     lazyListStateMin.scrollToItem(Int.MAX_VALUE / 2 - 3)
                     lazyListStateSec.scrollToItem(Int.MAX_VALUE / 2 - 3)
                 }

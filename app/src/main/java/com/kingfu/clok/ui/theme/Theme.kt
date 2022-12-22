@@ -34,7 +34,6 @@ private val LightColorPalette = lightColors(
 fun ClokTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val colors = if (darkTheme) {
         DarkColorPalette
-
     } else {
         DarkColorPalette
 //        LightColorPalette

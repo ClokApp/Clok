@@ -2,10 +2,7 @@ package com.kingfu.clok.stopwatch.stopwatchView
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -15,24 +12,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
+import com.kingfu.clok.ui.theme.Black00
 
 @Composable
 fun StopwatchView(
     navController: NavController,
     scaffoldState: ScaffoldState,
-    vm: StopwatchViewModel = viewModel(),
+    vm: StopwatchViewModel,
 ) {
 
     val columnListStateStopwatch = rememberScrollState()
     val lazyColumnState = rememberLazyListState()
 
-    val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
     val configurationOrientation = LocalConfiguration.current.orientation
     val coroutineScopeStopwatch = rememberCoroutineScope()
@@ -47,8 +41,8 @@ fun StopwatchView(
         if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(columnListStateStopwatch),
+                    .fillMaxSize(),
+//                    .verticalScroll(columnListStateStopwatch),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -59,7 +53,7 @@ fun StopwatchView(
                     lazyColumnState,
                     configurationOrientation
                 )
-                Row {
+                Row() {
                     StopwatchResetButton(
                         vm = vm,
                         haptic = haptic,
@@ -75,12 +69,13 @@ fun StopwatchView(
         } else {
             Row(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(columnListStateStopwatch),
+                    .fillMaxSize(),
+//                    .verticalScroll(columnListStateStopwatch),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
+                    modifier = Modifier.weight(0.5f),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {

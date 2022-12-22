@@ -1,21 +1,15 @@
 package com.kingfu.clok.stopwatch.stopwatchViewModel
 
 import android.os.SystemClock
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kingfu.clok.repository.preferencesDataStore.StopwatchPreferences
+import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel.StopwatchViewModelVariable.stopwatchIsActive
+import com.kingfu.clok.variable.Variable.keepScreenOn
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 import kotlin.math.sin
 
 class StopwatchViewModel(
@@ -24,10 +18,22 @@ class StopwatchViewModel(
 
     /******************************** Stopwatch ********************************/
 
-    var stopwatchIsActive by mutableStateOf(false)
-        private set
+    object StopwatchViewModelVariable {
+        var stopwatchIsActive by mutableStateOf(false)
+    }
+
+//    companion object {
+//        var stopwatchIsActive by mutableStateOf(false)
+//            private set
+//    }
+
+//    var stopwatchIsActive by mutableStateOf(false)
+//        private set
 
     var stopwatchTime by mutableStateOf(0L)
+        private set
+
+    var stopwatchHrColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
         private set
 
     var stopwatchMinColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
@@ -42,11 +48,11 @@ class StopwatchViewModel(
     var stopwatchColorCounter by mutableStateOf(0.0)
         private set
 
-    private var _lapNumber = mutableListOf<String>()
+    private var _lapNumber = mutableStateListOf<String>()
     val lapNumber: List<String>
         get() = _lapNumber
 
-    private var _lapTime = mutableListOf<String>()
+    private var _lapTime = mutableStateListOf<String>()
     val lapTime: List<String>
         get() = _lapTime
 
@@ -56,7 +62,7 @@ class StopwatchViewModel(
     var lapPreviousTime by mutableStateOf(0L)
         private set
 
-    private var _lapTotalTime = mutableListOf<String>()
+    private var _lapTotalTime = mutableStateListOf<String>()
     val lapTotalTime: List<String>
         get() = _lapTotalTime
 
@@ -84,9 +90,12 @@ class StopwatchViewModel(
 
             stopwatchRefreshRate = stopwatchPreferences.getStopwatchRefreshRate.first()
 
-
             lapPreviousTime = stopwatchPreferences.getStopwatchLapPreviousTime.first()
 
+            loadStopwatchLapCounter()
+            loadStopwatchLapNumber()
+            loadStopwatchLapTimes()
+            loadStopwatchLapTotalTimes()
         }
     }
 
@@ -95,16 +104,14 @@ class StopwatchViewModel(
         _lapNumber.add(0, lapCounter.toString())
         _lapTime.add(
             0,
-            "${formatTimeStopWatchMin(stopwatchTime - lapPreviousTime)}:" +
-                    "${formatTimeStopWatchSec(stopwatchTime - lapPreviousTime)}." +
-                    formatTimeStopWatchMs(stopwatchTime - lapPreviousTime) + " $lapCounter"
+            formatTimeStopWatch(stopwatchTime - lapPreviousTime) + "-$lapCounter"
         )
         _lapTotalTime.add(
             0,
-            "${formatTimeStopWatchMin(stopwatchTime)}:${formatTimeStopWatchSec(stopwatchTime)}." +
-                    formatTimeStopWatchMs(stopwatchTime) + " $lapCounter"
+            formatTimeStopWatch(stopwatchTime) + "-$lapCounter"
         )
         lapPreviousTime = stopwatchTime
+
     }
 
 
@@ -134,13 +141,19 @@ class StopwatchViewModel(
 
     fun startStopWatch() {
         stopwatchIsActive = true
+        keepScreenOn = true
         stopwatchInitialTime = SystemClock.elapsedRealtime()
 
         viewModelScope.launch {
             while (stopwatchIsActive) {
+                if (stopwatchTime >= 360_000_000) {
+                    pauseStopWatch()
+                    break
+                }
                 stopwatchLabelStyle(stopwatchRefreshRate)
                 stopwatchTime =
-                    (SystemClock.elapsedRealtime() - stopwatchInitialTime) + stopwatchOffsetTime
+                    (SystemClock.elapsedRealtime()  - stopwatchInitialTime) + stopwatchOffsetTime
+
 
                 saveStopwatchLapPreviousTime()
                 saveStopwatchOffsetTime()
@@ -167,9 +180,10 @@ class StopwatchViewModel(
         val phase = 1.5
         val width = 128
         val center = 127
-        val minOffset = 0
-        val secOffset = 3
-        val msOffset = 6
+        val hrOffset = 0
+        val minOffset = 3
+        val secOffset = 6
+        val msOffset = 9
 
         val temp: Double =
             if (refreshRate <= 25) {
@@ -184,7 +198,9 @@ class StopwatchViewModel(
 
         stopwatchColorCounter =
             (stopwatchColorCounter + ((refreshRate / 200) + temp)) % Double.MAX_VALUE
-        for (i in 0 until 6) {
+        for (i in 0 until stopwatchHrColorList.size) {
+            stopwatchHrColorList[i] =
+                (sin(frequency * stopwatchColorCounter + phase * (i + hrOffset)) * width + center).toInt()
             stopwatchMinColorList[i] =
                 (sin(frequency * stopwatchColorCounter + phase * (i + minOffset)) * width + center).toInt()
             stopwatchSecColorList[i] =
@@ -192,7 +208,6 @@ class StopwatchViewModel(
             stopwatchMsColorList[i] =
                 (sin(frequency * stopwatchColorCounter + phase * (i + msOffset)) * width + center).toInt()
         }
-
     }
 
     fun pauseStopWatch() {
@@ -211,58 +226,70 @@ class StopwatchViewModel(
         }
     }
 
+    fun displayLapTimes(index: Int): String {
+        viewModelScope.launch {
+            delay(1000)
+        }
+        return if (stopwatchTime > 3_600_000) lapTime[index].takeWhile { it != '-' } else lapTime[index].drop(
+            3
+        ).takeWhile { it != '-' }
+    }
+
+    fun displayTotalTimes(index: Int): String {
+        viewModelScope.launch {
+            delay(1000)
+        }
+        return if (stopwatchTime > 3_600_000) lapTotalTime[index].takeWhile { it != '-' } else lapTotalTime[index].drop(
+            3
+        ).takeWhile { it != '-' }
+    }
+
+    fun formatTimeStopWatchHr(timeMillis: Long): String {
+        val hr2 = (timeMillis / 36_000_000) % 10
+        val hr1 = (timeMillis / 3_600_000) % 10
+        return "$hr2$hr1"
+    }
+
     fun formatTimeStopWatchMin(timeMillis: Long): String {
-        val localDateTime = LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(timeMillis),
-            ZoneId.systemDefault()
-        )
-        val formatter = DateTimeFormatter.ofPattern(
-            "mm",
-            Locale.getDefault()
-        )
-        return localDateTime.format(formatter)
+        val min2 = (timeMillis / 600_000) % 6
+        val min1 = (timeMillis / 60_000) % 10
+        return "$min2$min1"
     }
 
     fun formatTimeStopWatchSec(timeMillis: Long): String {
-        val localDateTime = LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(timeMillis),
-            ZoneId.systemDefault()
-        )
-        val formatter = DateTimeFormatter.ofPattern(
-            "ss",
-            Locale.getDefault()
-        )
-        return localDateTime.format(formatter)
+        val sec2 = (timeMillis / 10_000) % 6
+        val sec1 = (timeMillis / 1_000) % 10
+        return "$sec2$sec1"
     }
 
     fun formatTimeStopWatchMs(timeMillis: Long): String {
-        val localDateTime = LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(timeMillis),
-            ZoneId.systemDefault()
-        )
-        val formatter = DateTimeFormatter.ofPattern(
-            "SS",
-            Locale.getDefault()
-        )
-        return localDateTime.format(formatter)
+        val ms2 = (timeMillis / 100) % 10
+        val ms1 = (timeMillis / 10) % 10
+        return "$ms2$ms1"
     }
 
     fun formatTimeStopWatch(timeMillis: Long): String {
-        val localDateTime = LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(timeMillis),
-            ZoneId.systemDefault()
-        )
-        val formatter = DateTimeFormatter.ofPattern(
-            "mm:ss.SS",
-            Locale.getDefault()
-        )
-        return localDateTime.format(formatter)
+        val hr2 = (timeMillis / 36_000_000) % 10
+        val hr1 = (timeMillis / 3_600_000) % 10
+        val min2 = (timeMillis / 600_000) % 6
+        val min1 = (timeMillis / 60_000) % 10
+        val sec2 = (timeMillis / 10_000) % 6
+        val sec1 = (timeMillis / 1_000) % 10
+        val ms2 = (timeMillis / 100) % 10
+        val ms1 = (timeMillis / 10) % 10
+        var result = "$min2$min1:$sec2$sec1.$ms2$ms1"
+
+        if (stopwatchTime >= 3_600_000) {
+            result = "$hr2$hr1:$result"
+            return result
+        }
+
+        return result
     }
 
     suspend fun stopwatchTimeClearAll() {
         stopwatchPreferences.clearAll()
     }
-
 
     suspend fun loadStopwatchRefreshRate() {
         stopwatchRefreshRate = stopwatchPreferences.getStopwatchRefreshRate.first()
@@ -285,7 +312,7 @@ class StopwatchViewModel(
     }
 
     suspend fun loadStopwatchLapNumber() {
-        _lapNumber = stopwatchPreferences.getStopwatchLabNumber.first().toMutableList()
+        _lapNumber = stopwatchPreferences.getStopwatchLabNumber.first().toMutableStateList()
     }
 
     suspend fun loadStopwatchLapCounter() {
@@ -301,7 +328,7 @@ class StopwatchViewModel(
     }
 
     suspend fun loadStopwatchLapTimes() {
-        _lapTime = stopwatchPreferences.getStopwatchLapTime.first().toMutableList()
+        _lapTime = stopwatchPreferences.getStopwatchLapTime.first().toMutableStateList()
     }
 
     suspend fun saveStopwatchLapTotalTimes() {
@@ -309,7 +336,7 @@ class StopwatchViewModel(
     }
 
     suspend fun loadStopwatchLapTotalTimes() {
-        _lapTotalTime = stopwatchPreferences.getStopwatchLapTotalTime.first().toMutableList()
+        _lapTotalTime = stopwatchPreferences.getStopwatchLapTotalTime.first().toMutableStateList()
     }
 
     suspend fun loadStopwatchShowLabel() {

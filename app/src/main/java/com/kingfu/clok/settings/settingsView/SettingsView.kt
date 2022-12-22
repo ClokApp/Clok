@@ -26,8 +26,8 @@ import com.kingfu.clok.ui.theme.Black00
 fun SettingsView(
     navController: NavHostController,
     scaffoldState: ScaffoldState,
-    settingsViewModelStopwatch: SettingsViewModelStopwatch = viewModel(),
-    settingsViewModelTimer: SettingsViewModelTimer = viewModel(),
+    settingsViewModelStopwatch: SettingsViewModelStopwatch,
+    settingsViewModelTimer: SettingsViewModelTimer,
 ) {
     val haptic = LocalHapticFeedback.current
     val settingsScrollState = rememberScrollState()

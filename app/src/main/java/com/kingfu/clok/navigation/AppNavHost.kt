@@ -1,14 +1,19 @@
 package com.kingfu.clok.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.kingfu.clok.components.TopBar
+import com.kingfu.clok.bottomBar.BottomBarNavigation
+import com.kingfu.clok.topBar.TopBar
 import com.kingfu.clok.repository.preferencesDataStore.NavigationPreferences
 import com.kingfu.clok.repository.preferencesDataStore.StopwatchPreferences
 import com.kingfu.clok.repository.preferencesDataStore.TimerPreferences
@@ -29,6 +34,7 @@ fun AppNavHost() {
     val stopwatchViewModel: StopwatchViewModel = viewModel(
         factory = StopwatchFactory(StopwatchPreferences.getInstance(LocalContext.current))
     )
+
     val timerViewModel: TimerViewModel = viewModel(
         factory = TimerFactory(TimerPreferences.getInstance(LocalContext.current))
     )
@@ -61,16 +67,18 @@ fun AppNavHost() {
             )
         },
         content = { paddingValues ->
-            Navigation(
-                navController = navController,
-                scaffoldState = scaffoldState,
-                paddingValues = paddingValues,
-                timerViewModel = timerViewModel,
-                stopwatchViewModel = stopwatchViewModel,
-                settingsViewModelStopwatch = settingsViewModelStopwatch,
-                settingsViewModelTimer = settingsViewModelTimer,
-                navigationPreferences = navigationPreferences,
-            )
+            Box(Modifier.padding(paddingValues)) {
+                Navigation(
+                    navController = navController,
+                    scaffoldState = scaffoldState,
+//                    paddingValues = paddingValues,
+                    timerViewModel = timerViewModel,
+                    stopwatchViewModel = stopwatchViewModel,
+                    settingsViewModelStopwatch = settingsViewModelStopwatch,
+                    settingsViewModelTimer = settingsViewModelTimer,
+                    navigationPreferences = navigationPreferences,
+                )
+            }
         },
     )
 }

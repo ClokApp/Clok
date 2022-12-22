@@ -3,11 +3,13 @@ package com.kingfu.clok.stopwatch.stopwatchView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.ExperimentalTextApi
@@ -15,9 +17,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kingfu.clok.util.customFontSize
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
+import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel.StopwatchViewModelVariable.stopwatchIsActive
+import com.kingfu.clok.util.customFontSize
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
@@ -26,7 +30,6 @@ fun StopwatchTimeView(
 ) {
 
     LaunchedEffect(Unit) {
-//        vm.loadStopwatchOffset()
         vm.loadStopwatchRefreshRate()
         vm.loadStopwatchShowLabel()
         vm.loadStopwatchLabelStyle()
@@ -37,6 +40,71 @@ fun StopwatchTimeView(
         val stopwatchLabelFontSize = customFontSize(textUnit = 35.sp)
         val stopwatchTimeFontSize = customFontSize(textUnit = 65.sp)
         val defaultGrayColor = listOf(Color.Gray, Color.Gray)
+
+        if (vm.stopwatchTime >= 3_600_000) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                val stopwatchHrListOfColor =
+                    when (vm.stopwatchLabelStyle) {
+                        "RGB" ->
+                            listOf(
+                                Color(
+                                    vm.stopwatchHrColorList[0],
+                                    vm.stopwatchHrColorList[1],
+                                    vm.stopwatchHrColorList[2]
+                                ),
+                                Color(
+                                    vm.stopwatchHrColorList[3],
+                                    vm.stopwatchHrColorList[4],
+                                    vm.stopwatchHrColorList[5]
+                                )
+                            )
+                        else -> defaultGrayColor
+                    }
+                if (vm.stopwatchShowLabel) {
+                    Text(
+                        text = "hr",
+                        fontSize = stopwatchLabelFontSize,
+                        fontFamily = FontFamily.Default,
+                        fontWeight = FontWeight.Thin,
+                        fontStyle = FontStyle.Italic,
+                        style = TextStyle(
+                            brush = Brush.linearGradient(
+                                colors = if (stopwatchIsActive) stopwatchHrListOfColor else defaultGrayColor
+                            )
+                        )
+                    )
+                }
+
+                Text(
+                    text = vm.formatTimeStopWatchHr(vm.stopwatchTime),
+                    fontSize = stopwatchTimeFontSize,
+                    color = Color.White,
+                    fontFamily = FontFamily.Default,
+                    fontWeight = FontWeight.Light,
+                )
+            }
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                if (vm.stopwatchShowLabel) {
+                    Text(text = "", fontSize = stopwatchLabelFontSize)
+                }
+
+                Text(
+                    text = ":",
+                    fontSize = stopwatchTimeFontSize,
+                    fontFamily = FontFamily.Default,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.White,
+                )
+            }
+
+        }
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,7 +136,7 @@ fun StopwatchTimeView(
                     fontStyle = FontStyle.Italic,
                     style = TextStyle(
                         brush = Brush.linearGradient(
-                            colors = if (vm.stopwatchIsActive) stopwatchMinListOfColor else defaultGrayColor
+                            colors = if (stopwatchIsActive) stopwatchMinListOfColor else defaultGrayColor
                         )
                     )
                 )
@@ -131,7 +199,7 @@ fun StopwatchTimeView(
                     fontStyle = FontStyle.Italic,
                     style = TextStyle(
                         brush = Brush.linearGradient(
-                            colors = if (vm.stopwatchIsActive) stopwatchSecListOfColor else defaultGrayColor
+                            colors = if (stopwatchIsActive) stopwatchSecListOfColor else defaultGrayColor
                         )
                     )
                 )
@@ -195,7 +263,7 @@ fun StopwatchTimeView(
                     fontStyle = FontStyle.Italic,
                     style = TextStyle(
                         brush = Brush.linearGradient(
-                            colors = if (vm.stopwatchIsActive) stopwatchMsListOfColorStart else defaultGrayColor
+                            colors = if (stopwatchIsActive) stopwatchMsListOfColorStart else defaultGrayColor
                         )
                     )
                 )
@@ -211,14 +279,15 @@ fun StopwatchTimeView(
         }
     }
 
-    if (vm.lapCounter != 0) {
+//    if (vm.lapCounter != 0) {
         Text(
             text = vm.formatTimeStopWatch(vm.stopwatchTime - vm.lapPreviousTime),
             fontSize = customFontSize(textUnit = 35.sp),
             color = Color.Gray,
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Light,
+            modifier = Modifier.alpha(if(vm.lapCounter > 0) 1f else 0f).padding(bottom = 20.dp)
         )
-    }
+//    }
 
 }

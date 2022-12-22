@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.first
 fun Navigation(
     navController: NavHostController,
     scaffoldState: ScaffoldState,
-    paddingValues: PaddingValues,
+//    paddingValues: PaddingValues,
     timerViewModel: TimerViewModel,
     stopwatchViewModel: StopwatchViewModel,
     settingsViewModelStopwatch: SettingsViewModelStopwatch,
@@ -63,7 +63,7 @@ fun Navigation(
             startDestination = startDestination!!,
             modifier = Modifier
                 .background(Black00)
-                .padding(paddingValues = paddingValues)
+//                .padding(paddingValues = paddingValues)
         ) {
 
             composable(Screens.Stopwatch.route) {

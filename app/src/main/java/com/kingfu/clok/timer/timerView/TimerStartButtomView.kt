@@ -1,6 +1,7 @@
 package com.kingfu.clok.timer.timerView
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.padding
@@ -69,6 +70,8 @@ fun TimerStartButtonView(
                     vm.convertHrMinSecToMillis()
                 }
                 vm.startTimer()
+                Log.d("StartTimer", "$selectedHr $selectedMin $selectedSec")
+                Log.d("StartTimer", vm.timerTime.toString())
             }
             vm.timerCancelNotification(context)
         }

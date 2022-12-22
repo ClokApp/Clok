@@ -17,11 +17,6 @@ import com.kingfu.clok.variable.Variable.timerShowNotification
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 import kotlin.math.sin
 
 class TimerViewModel(
@@ -231,23 +226,30 @@ class TimerViewModel(
 
     fun formatTimerTime(timeMillis: Long): String {
 
-        val localDateTime = LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(timeMillis),
-            ZoneId.of("UTC")
-        )
+        val hr2 = (timerTime / 36_000_000) % 10
+        val hr1 = (timerTime / 3_600_000) % 10
+        val min2 = (timerTime / 600_000) % 6
+        val min1 = (timerTime / 60_000) % 10
+        val sec2 = (timerTime / 10_000) % 6
+        val sec1 = (timerTime / 1_000) % 10
+        val ms2 = (timerTime / 100) % 10
+        val ms1 = (timerTime / 10) % 10
 
-        val formatter = DateTimeFormatter.ofPattern(
+        var time =
             when {
-                timeMillis >= 36_000_000L -> if (!timerIsFinished) "HH:mm:ss" else "-HH:mm:ss"
-                timeMillis in 3_600_000L until 36_000_000 -> if (!timerIsFinished) "H:mm:ss" else "-H:mm:ss"
-                timeMillis in 600_000L until 3_600_000L -> if (!timerIsFinished) "mm:ss" else "-mm:ss"
-                timeMillis in 60_000 until 600_000L -> if (!timerIsFinished) "m:ss" else "-m:ss"
-                timeMillis in 10_000L until 60_000L -> if (!timerIsFinished) "ss" else "-ss"
-                timeMillis in 0L until 10_000L -> if (!timerIsFinished) "s.SS" else "-s.SS"
+                timeMillis >= 36_000_000L -> "$hr2$hr1:$min2$min1:$sec2$sec1"
+                timeMillis in 3_600_000L until 36_000_000 -> "$hr1:$min2$min1:$sec2$sec1"
+                timeMillis in 600_000L until 3_600_000L -> "$min2$min1:$sec2$sec1"
+                timeMillis in 60_000 until 600_000L -> "$min1:$sec2$sec1"
+                timeMillis in 10_000L until 60_000L -> "$sec2$sec1"
+                timeMillis in 0L until 10_000L -> "$sec1.$ms2$ms1"
                 else -> "0"
-            }, Locale.getDefault()
-        )
-        return localDateTime.format(formatter)
+            }
+
+        if(timerIsFinished){
+            time = "-$time"
+        }
+        return time
     }
 
     fun convertHrMinSecToMillis() {

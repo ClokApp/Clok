@@ -19,6 +19,7 @@ import com.kingfu.clok.ui.theme.Cyan50
 import com.kingfu.clok.ui.theme.Yellow50
 import com.kingfu.clok.util.customFontSize
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
+import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel.StopwatchViewModelVariable.stopwatchIsActive
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -30,7 +31,7 @@ fun StopwatchResetButton(
 ) {
 
     val stopwatchResetButtonColor by animateColorAsState(
-        targetValue = if (vm.stopwatchIsActive) Cyan50 else Yellow50
+        targetValue = if (stopwatchIsActive) Cyan50 else Yellow50
     )
 
     OutlinedButton(
@@ -39,7 +40,7 @@ fun StopwatchResetButton(
         border = BorderStroke(0.5.dp, stopwatchResetButtonColor.copy(0.5f)),
         onClick = {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            if (vm.stopwatchIsActive) {
+            if (stopwatchIsActive) {
                 vm.addLap()
                 vm.saveLapTimes()
                 coroutineScopeStopwatch.launch {
@@ -58,10 +59,10 @@ fun StopwatchResetButton(
         }
     ) {
         Text(
-            text = if (vm.stopwatchIsActive) "  Lap  " else "Reset",
+            text = if (stopwatchIsActive) "  Lap  " else "Reset",
             modifier = Modifier.padding(horizontal = 10.dp),
             fontSize = customFontSize(textUnit = 20.sp),
-            color = if (vm.stopwatchIsActive) Cyan50 else Yellow50,
+            color = if (stopwatchIsActive) Cyan50 else Yellow50,
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Bold,
         )
