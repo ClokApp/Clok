@@ -27,6 +27,9 @@ class SettingsViewModelStopwatch(
     var stopwatchLabelStyleSelectedOption by mutableStateOf("RGB")
         private set
 
+    var stopwatchBackgroundEffectsSelectedOption by mutableStateOf("None")
+        private set
+
     init {
         viewModelScope.launch {
             stopwatchSaveTimeCheckState = stopwatchPreferences.getStopwatchSaveTime.first()
@@ -39,6 +42,10 @@ class SettingsViewModelStopwatch(
 
     fun stopwatchSetLabelStyleSelectedOption(name: String){
         stopwatchLabelStyleSelectedOption = name
+    }
+
+    fun stopwatchSetBackgroundEffectsSelectedOption(name: String){
+        stopwatchBackgroundEffectsSelectedOption = name
     }
 
 

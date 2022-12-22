@@ -56,15 +56,15 @@ fun SettingsStopwatchBackgroundEffects(
                             .fillMaxWidth()
                             .clickable {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                vm.stopwatchSetLabelStyleSelectedOption(radioOptions.elementAt(i))
-                                vm.saveStopwatchLabelStyleSelectedOption()
+                                vm.stopwatchSetBackgroundEffectsSelectedOption(radioOptions.elementAt(i))
+
                             }
                             .padding(8.dp),
                         horizontalArrangement = Arrangement.Start,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
-                            selected = (radioOptions.elementAt(i) == "None"),
+                            selected = (radioOptions.elementAt(i) == vm.stopwatchBackgroundEffectsSelectedOption),
                             onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 vm.stopwatchSetLabelStyleSelectedOption(radioOptions.elementAt(i))
