@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel.StopwatchViewModelVariable.stopwatchIsActive
+import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel.StopwatchViewModelVariable.stopwatchTime
 import com.kingfu.clok.stopwatch.styles.Gray
 import com.kingfu.clok.stopwatch.styles.RGB.RGBVariable.RGBHrColorList
 import com.kingfu.clok.stopwatch.styles.RGB.RGBVariable.RGBMinColorList
@@ -48,7 +49,7 @@ fun StopwatchTimeView(
             val stopwatchTimeFontSize = customFontSize(textUnit = 65.sp)
             val grayColorStyle = Gray().grayStyle()
 
-            if (vm.stopwatchTime >= 3_600_000) {
+            if (stopwatchTime >= 3_600_000) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
@@ -86,7 +87,7 @@ fun StopwatchTimeView(
                     }
 
                     Text(
-                        text = vm.formatTimeStopWatchHr(vm.stopwatchTime),
+                        text = vm.formatTimeStopWatchHr(stopwatchTime),
                         fontSize = stopwatchTimeFontSize,
                         color = Color.White,
                         fontFamily = FontFamily.Default,
@@ -150,7 +151,7 @@ fun StopwatchTimeView(
                 }
 
                 Text(
-                    text = vm.formatTimeStopWatchMin(vm.stopwatchTime),
+                    text = vm.formatTimeStopWatchMin(stopwatchTime),
                     fontSize = stopwatchTimeFontSize,
                     color = Color.White,
                     fontFamily = FontFamily.Default,
@@ -214,7 +215,7 @@ fun StopwatchTimeView(
 
 
                 Text(
-                    text = vm.formatTimeStopWatchSec(vm.stopwatchTime),
+                    text = vm.formatTimeStopWatchSec(stopwatchTime),
                     modifier = Modifier,
                     fontSize = stopwatchTimeFontSize,
                     color = Color.White,
@@ -277,7 +278,7 @@ fun StopwatchTimeView(
                 }
 
                 Text(
-                    text = vm.formatTimeStopWatchMs(vm.stopwatchTime),
+                    text = vm.formatTimeStopWatchMs(stopwatchTime),
                     fontSize = stopwatchTimeFontSize,
                     color = Color.White,
                     fontFamily = FontFamily.Default,
@@ -289,7 +290,7 @@ fun StopwatchTimeView(
 
 
     Text(
-        text = vm.formatTimeStopWatch(vm.stopwatchTime - vm.lapPreviousTime),
+        text = vm.formatTimeStopWatch(stopwatchTime - vm.lapPreviousTime),
         fontSize = customFontSize(textUnit = 35.sp),
         color = Color.Gray,
         fontFamily = FontFamily.Default,

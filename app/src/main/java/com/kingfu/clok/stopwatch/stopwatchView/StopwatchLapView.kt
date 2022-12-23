@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
+import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel.StopwatchViewModelVariable.stopwatchTime
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.util.customFontSize
 
@@ -108,7 +109,7 @@ fun StopwatchLapView(
                         )
 
                         Text(
-                            text = if (vm.stopwatchTime > 3_600_000) vm.lapTime[index].takeWhile { it != '-' } else vm.lapTime[index].takeWhile { it != '-' },
+                            text = if (stopwatchTime > 3_600_000) vm.lapTime[index].takeWhile { it != '-' } else vm.lapTime[index].takeWhile { it != '-' },
                             fontSize = customFontSize(textUnit = 16.sp),
                             fontFamily = FontFamily.Default,
                             fontWeight = FontWeight.Normal,
@@ -118,7 +119,7 @@ fun StopwatchLapView(
                         )
 
                         Text(
-                            text = if (vm.stopwatchTime > 3_600_000) vm.lapTotalTime[index].takeWhile { it != '-' } else vm.lapTotalTime[index].takeWhile { it != '-' },
+                            text = if (stopwatchTime > 3_600_000) vm.lapTotalTime[index].takeWhile { it != '-' } else vm.lapTotalTime[index].takeWhile { it != '-' },
                             fontSize = customFontSize(textUnit = 16.sp),
                             fontFamily = FontFamily.Default,
                             fontWeight = FontWeight.Normal,

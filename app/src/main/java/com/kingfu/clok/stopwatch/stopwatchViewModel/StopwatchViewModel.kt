@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kingfu.clok.repository.preferencesDataStore.StopwatchPreferences
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel.StopwatchViewModelVariable.stopwatchIsActive
+import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel.StopwatchViewModelVariable.stopwatchTime
 import com.kingfu.clok.stopwatch.styles.RGB
 import com.kingfu.clok.variable.Variable.keepScreenOn
 import kotlinx.coroutines.delay
@@ -25,6 +26,8 @@ class StopwatchViewModel(
 //        var stopwatchMinColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
 //        var stopwatchSecColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
 //        var stopwatchMsColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
+        var stopwatchTime by mutableStateOf(0L)
+
     }
 
 //    companion object {
@@ -35,8 +38,8 @@ class StopwatchViewModel(
 //    var stopwatchIsActive by mutableStateOf(false)
 //        private set
 
-    var stopwatchTime by mutableStateOf(0L)
-        private set
+//    var stopwatchTime by mutableStateOf(0L)
+//        private set
 
 //    var stopwatchHrColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
 //        private set
@@ -155,8 +158,10 @@ class StopwatchViewModel(
                     break
                 }
                 stopwatchLabelStyle()
-                stopwatchTime =
-                    (SystemClock.elapsedRealtime()  - stopwatchInitialTime) + stopwatchOffsetTime
+//                stopwatchTime =
+//                    (SystemClock.elapsedRealtime()  - stopwatchInitialTime) + stopwatchOffsetTime
+
+                stopwatchTime += 10_000
 
                 saveStopwatchLapPreviousTime()
                 saveStopwatchOffsetTime()
