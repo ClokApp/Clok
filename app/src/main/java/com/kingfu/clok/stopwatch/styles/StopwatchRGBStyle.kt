@@ -5,15 +5,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.kingfu.clok.stopwatch.styles.RGB.RGBVariable.RGBColorCounter
-import com.kingfu.clok.stopwatch.styles.RGB.RGBVariable.RGBHrColorList
-import com.kingfu.clok.stopwatch.styles.RGB.RGBVariable.RGBMinColorList
-import com.kingfu.clok.stopwatch.styles.RGB.RGBVariable.RGBMsColorList
-import com.kingfu.clok.stopwatch.styles.RGB.RGBVariable.RGBSecColorList
+import androidx.compose.ui.graphics.Color
+import com.kingfu.clok.stopwatch.styles.StopwatchRGBStyle.RGBVariable.RGBColorCounter
+import com.kingfu.clok.stopwatch.styles.StopwatchRGBStyle.RGBVariable.RGBHrColorList
+import com.kingfu.clok.stopwatch.styles.StopwatchRGBStyle.RGBVariable.RGBMinColorList
+import com.kingfu.clok.stopwatch.styles.StopwatchRGBStyle.RGBVariable.RGBMsColorList
+import com.kingfu.clok.stopwatch.styles.StopwatchRGBStyle.RGBVariable.RGBSecColorList
 import kotlin.math.sin
 
-class RGB {
-    object RGBVariable{
+class StopwatchRGBStyle {
+
+
+    object RGBVariable {
         var RGBColorCounter by mutableStateOf(0.0)
         var RGBHrColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
         var RGBMinColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
@@ -21,7 +24,8 @@ class RGB {
         var RGBMsColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
     }
 
-    fun rgbStyle(refreshRate: Float) {
+
+    fun rgbStyleUpdateColors(refreshRate: Float) {
         val frequency = 0.9
         val phase = 1.5
         val width = 128
@@ -32,19 +36,18 @@ class RGB {
         val msOffset = 9
 
         val temp: Double =
-            if (refreshRate <= 25) {
-                0.025
-            } else if (refreshRate > 25 && refreshRate <= 50) {
-                0.0025
-            } else if (refreshRate > 50 && refreshRate <= 75) {
-                0.00025
-            } else {
-                0.000025
+            when {
+                refreshRate <= 25 -> 0.05
+                refreshRate <= 50 -> 0.005
+                refreshRate <= 75 -> 0.0005
+                else -> 0.00005
             }
 
         RGBColorCounter =
-            (RGBColorCounter + ((refreshRate / 200) + temp)) % Double.MAX_VALUE
-        for (i in 0 until 6) {
+            (RGBColorCounter + ((refreshRate / 200) + temp)) % Int.MAX_VALUE
+
+
+        for (i in 0 until RGBHrColorList.size) {
             RGBHrColorList[i] =
                 (sin(frequency * RGBColorCounter + phase * (i + hrOffset)) * width + center).toInt()
             RGBMinColorList[i] =
@@ -54,6 +57,22 @@ class RGB {
             RGBMsColorList[i] =
                 (sin(frequency * RGBColorCounter + phase * (i + msOffset)) * width + center).toInt()
         }
-
     }
+
+    fun rgbStyleListRGB(RGBColorList: List<Int>): List<Color> {
+
+        return listOf(
+            Color(
+                RGBColorList[0],
+                RGBColorList[1],
+                RGBColorList[2]
+            ),
+            Color(
+                RGBColorList[3],
+                RGBColorList[4],
+                RGBColorList[5]
+            )
+        )
+    }
+
 }

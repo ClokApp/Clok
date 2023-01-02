@@ -6,52 +6,42 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kingfu.clok.repository.preferencesDataStore.StopwatchPreferences
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch.SettingsViewModelStopwatchVariable.stopwatchBackgroundEffectsSelectedOption
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch.SettingsViewModelStopwatchVariable.stopwatchLabelStyleSelectedOption
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch.SettingsViewModelStopwatchVariable.stopwatchRefreshRateValue
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch.SettingsViewModelStopwatchVariable.stopwatchShowLabel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class SettingsViewModelStopwatch(
     private val stopwatchPreferences: StopwatchPreferences
 ) : ViewModel() {
-    var stopwatchSaveTimeCheckState by mutableStateOf(true)
-        private set
 
-    var stopwatchSaveLapTimeCheckState by mutableStateOf(true)
-        private set
-
-    var stopwatchRefreshRateValue by mutableStateOf(51F)
-        private set
-
-    var stopwatchShowLabel by mutableStateOf(true)
-        private set
-
-    var stopwatchLabelStyleSelectedOption by mutableStateOf("RGB")
-        private set
-
-    var stopwatchBackgroundEffectsSelectedOption by mutableStateOf("None")
-        private set
+    object SettingsViewModelStopwatchVariable {
+        var stopwatchShowLabel by mutableStateOf(true)
+        var stopwatchBackgroundEffectsSelectedOption by mutableStateOf("Snow")
+        var stopwatchRefreshRateValue by mutableStateOf(51f)
+        var stopwatchLabelStyleSelectedOption by mutableStateOf("RGB")
+    }
 
     init {
         viewModelScope.launch {
-            stopwatchSaveTimeCheckState = stopwatchPreferences.getStopwatchSaveTime.first()
-            stopwatchSaveLapTimeCheckState = stopwatchPreferences.getStopwatchSaveLapTime.first()
-            stopwatchRefreshRateValue = stopwatchPreferences.getStopwatchRefreshRate.first()
-            stopwatchShowLabel = stopwatchPreferences.getStopwatchShowLabel.first()
-            stopwatchLabelStyleSelectedOption = stopwatchPreferences.getStopwatchLabelStyleSelectedOption.first()
+            loadStopwatchRefreshRateValue()
+            loadStopwatchShowLabel()
+            loadStopwatchLabelStyleSelectedOption()
+            loadStopwatchBackgroundEffectsSelectedOption()
         }
     }
 
-    fun stopwatchSetLabelStyleSelectedOption(name: String){
-        stopwatchLabelStyleSelectedOption = name
+    fun stopwatchSetLabelStyleSelectedOption(string: String) {
+        stopwatchLabelStyleSelectedOption = string
     }
 
-    fun stopwatchSetBackgroundEffectsSelectedOption(name: String){
-        stopwatchBackgroundEffectsSelectedOption = name
-    }
-
-
-    fun saveStopwatchLabelStyleSelectedOption(){
+    fun saveStopwatchLabelStyleSelectedOption() {
         viewModelScope.launch {
-            stopwatchPreferences.setStopwatchLabelStyleSelectedOption(stopwatchLabelStyleSelectedOption)
+            stopwatchPreferences.setStopwatchLabelStyleSelectedOption(
+                stopwatchLabelStyleSelectedOption
+            )
         }
     }
 
@@ -74,6 +64,36 @@ class SettingsViewModelStopwatch(
     fun stopwatchShowLabelCheckState() {
         stopwatchShowLabel = !stopwatchShowLabel
     }
+
+    fun saveStopwatchBackgroundEffectsSelectedOption() {
+        viewModelScope.launch {
+            stopwatchPreferences.setStopwatchBackgroundEffects(
+                stopwatchBackgroundEffectsSelectedOption
+            )
+        }
+    }
+
+    fun stopwatchSetBackgroundEffectSelectedOption(string: String) {
+        stopwatchBackgroundEffectsSelectedOption = string
+    }
+
+
+    suspend fun loadStopwatchRefreshRateValue(){
+        stopwatchRefreshRateValue = stopwatchPreferences.getStopwatchRefreshRate.first()
+    }
+
+    suspend fun loadStopwatchShowLabel(){
+        stopwatchShowLabel = stopwatchPreferences.getStopwatchShowLabel.first()
+    }
+
+    suspend fun loadStopwatchLabelStyleSelectedOption(){
+        stopwatchLabelStyleSelectedOption = stopwatchPreferences.getStopwatchLabelStyleSelectedOption.first()
+    }
+
+    suspend fun loadStopwatchBackgroundEffectsSelectedOption(){
+        stopwatchBackgroundEffectsSelectedOption = stopwatchPreferences.getStopwatchBackgroundEffects.first()
+    }
+
 
 
 }

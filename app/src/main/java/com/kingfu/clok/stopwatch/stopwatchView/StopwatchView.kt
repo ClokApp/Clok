@@ -1,11 +1,9 @@
 package com.kingfu.clok.stopwatch.stopwatchView
 
 import android.content.res.Configuration
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
@@ -30,6 +28,7 @@ fun StopwatchView(
     val configurationOrientation = LocalConfiguration.current.orientation
     val coroutineScopeStopwatch = rememberCoroutineScope()
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -44,26 +43,31 @@ fun StopwatchView(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                StopwatchTimeView(
-                    vm = vm,
-                    configurationOrientation
-                )
+                StopwatchTimeView(vm = vm)
 
                 StopwatchLapView(
                     vm,
                     lazyColumnState,
                     configurationOrientation
                 )
-                Row() {
+
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .animateContentSize(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
                     StopwatchResetButton(
                         vm = vm,
                         haptic = haptic,
                         coroutineScopeStopwatch = coroutineScopeStopwatch,
+                        scaffoldState = scaffoldState
                     )
+
                     StopwatchStartButtonView(
                         vm = vm,
                         haptic = haptic,
-                        coroutineScopeStopwatch
+                        coroutineScopeStopwatch,
                     )
                 }
             }
@@ -79,7 +83,7 @@ fun StopwatchView(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    StopwatchTimeView(vm = vm, configurationOrientation = configurationOrientation)
+                    StopwatchTimeView(vm = vm)
 
                     Row(
                         modifier = Modifier,
@@ -89,7 +93,8 @@ fun StopwatchView(
                         StopwatchResetButton(
                             vm = vm,
                             haptic = haptic,
-                            coroutineScopeStopwatch = coroutineScopeStopwatch
+                            coroutineScopeStopwatch = coroutineScopeStopwatch,
+                            scaffoldState = scaffoldState
                         )
                         StopwatchStartButtonView(
                             vm = vm,
@@ -107,4 +112,5 @@ fun StopwatchView(
             }
         }
     }
+
 }

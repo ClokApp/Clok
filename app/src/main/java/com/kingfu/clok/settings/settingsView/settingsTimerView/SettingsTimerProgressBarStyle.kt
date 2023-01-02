@@ -16,13 +16,13 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerLabelStyleSelectedOption
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.util.customFontSize
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
 
 @Composable
 fun SettingsTimerProgressBarStyle(
@@ -48,7 +48,6 @@ fun SettingsTimerProgressBarStyle(
         )
 
         Card(
-            modifier = Modifier.padding(5.dp),
             shape = RoundedCornerShape(30.dp)
         ) {
 
@@ -68,7 +67,7 @@ fun SettingsTimerProgressBarStyle(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
-                            selected = (radioOptions.elementAt(i) == vm.timerLabelStyleSelectedOption),
+                            selected = (radioOptions.elementAt(i) == timerLabelStyleSelectedOption),
                             onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 vm.timerSetLabelStyleSelectedOption(radioOptions.elementAt(i))

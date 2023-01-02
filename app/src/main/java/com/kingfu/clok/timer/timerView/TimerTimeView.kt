@@ -1,73 +1,72 @@
 package com.kingfu.clok.timer.timerView
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kingfu.clok.ui.theme.Cyan50
-import com.kingfu.clok.ui.theme.Red50
+import androidx.compose.ui.zIndex
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerBackgroundEffectsSelectedOption
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerLabelStyleSelectedOption
+import com.kingfu.clok.timer.backgroundEffects.TimerSnowEffect
+import com.kingfu.clok.timer.styles.TimerCyanStyle
+import com.kingfu.clok.timer.styles.TimerRGBStyle
+import com.kingfu.clok.timer.timerViewModel.TimerViewModel
+import com.kingfu.clok.timer.timerViewModel.TimerViewModel.TimerViewModelVariable.timerTime
 import com.kingfu.clok.util.NoRippleTheme
 import com.kingfu.clok.util.customFontSize
-import com.kingfu.clok.timer.timerViewModel.TimerViewModel
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun TimerTimeView(
     vm: TimerViewModel,
     context: Context,
-    coroutineScopeTimer: CoroutineScope,
-    haptic: HapticFeedback
+    haptic: HapticFeedback,
+    configurationOrientation: Int,
 ) {
-
-    LaunchedEffect(Unit) {
-        vm.loadTimerLabelStyleOption()
-    }
-    var isLoadTimerLabelStyle by rememberSaveable { mutableStateOf(true) }
-
-    LaunchedEffect(vm.timerLabelStyle) {
-        if (vm.timerLabelStyle == "RGB" && isLoadTimerLabelStyle) {
-            vm.timerUpdateStartAndEndRGB()
-            Log.d("DebugRGB", "executed")
-            isLoadTimerLabelStyle = false
-        }
-    }
-
-    Box {
-        val configurationOrientation = LocalConfiguration.current.orientation
+    val activity = LocalContext.current as Activity
+    Box(
+        Modifier
+            .zIndex(1f)
+            .clip(CircleShape)
+    ) {
 
         val animatedProgress by animateFloatAsState(
             targetValue = vm.timerCurrentTimePercentage,
             animationSpec = tween(
-                durationMillis = 100,
-                easing = FastOutLinearInEasing
+                durationMillis = if (timerTime >= 10000) 100 else 50,
+                easing = LinearEasing
             ),
         )
         val animatedCircularProgressBarColor by animateColorAsState(
-            targetValue = if (vm.timerTime > 6000) Cyan50 else Red50,
+            targetValue = TimerCyanStyle().cyanStyleListOfCyan(),
             animationSpec = tween(
                 durationMillis = 500,
                 easing = LinearEasing
@@ -90,24 +89,15 @@ fun TimerTimeView(
                 drawArc(
                     brush = Brush.linearGradient(
                         colors =
-                        when (vm.timerLabelStyle) {
-                            "RGB" ->
+                        when (timerLabelStyleSelectedOption) {
+                            "RGB" -> TimerRGBStyle().rgbStyleListRGB()
+
+                            else -> {
                                 listOf(
-                                    Color(
-                                        vm.timerLabelColorList[0],
-                                        vm.timerLabelColorList[1],
-                                        vm.timerLabelColorList[2],
-                                    ),
-                                    Color(
-                                        vm.timerLabelColorList[3],
-                                        vm.timerLabelColorList[4],
-                                        vm.timerLabelColorList[5],
-                                    )
+                                    animatedCircularProgressBarColor,
+                                    animatedCircularProgressBarColor
                                 )
-                            else -> listOf(
-                                animatedCircularProgressBarColor,
-                                animatedCircularProgressBarColor
-                            )
+                            }
                         }
                     ),
                     startAngle = -90f,
@@ -118,16 +108,33 @@ fun TimerTimeView(
             }
         }
 
+        var backgroundEffectsBoxSize by remember { mutableStateOf(IntSize.Zero) }
+
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .padding(5.dp)
+                .clip(CircleShape)
+                .zIndex(-1f)
+                .onSizeChanged { backgroundEffectsBoxSize = it }
+        ) {
+            if (backgroundEffectsBoxSize.width.dp != 0.dp && configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
+                when (timerBackgroundEffectsSelectedOption) {
+                    "Snow" -> {
+                        TimerSnowEffect(size = backgroundEffectsBoxSize)
+                    }
+                }
+
+            }
+        }
+
         Box(
             modifier = Modifier.align(Alignment.Center)
         ) {
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row {
                 CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
                     Text(
-                        text = vm.formatTimerTime(vm.timerTime),
+                        text = vm.formatTimerTime(timerTime),
                         color = Color.White,
                         fontSize = customFontSize(textUnit = 65.sp),
                         fontFamily = FontFamily.Default,
@@ -135,12 +142,13 @@ fun TimerTimeView(
                         modifier = Modifier.clickable {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             if (vm.timerIsActive) {
-                                vm.pauseTimer()
+                                vm.pauseTimer(activity)
                             } else {
                                 if (vm.timerIsEditState) {
                                     vm.convertHrMinSecToMillis()
                                 }
-                                vm.startTimer()
+                                vm.timerSetTotalTime()
+                                vm.startTimer(activity)
                             }
                             vm.timerCancelNotification(context)
                         }
@@ -148,5 +156,7 @@ fun TimerTimeView(
                 }
             }
         }
+
+
     }
 }

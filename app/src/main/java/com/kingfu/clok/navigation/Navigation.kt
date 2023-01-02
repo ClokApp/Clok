@@ -2,6 +2,7 @@ package com.kingfu.clok.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -9,11 +10,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.kingfu.clok.bottomBar.showSnackbar
 import com.kingfu.clok.bugReport.BugReport
 import com.kingfu.clok.repository.preferencesDataStore.NavigationPreferences
 import com.kingfu.clok.settings.settingsView.SettingsView
 import com.kingfu.clok.settings.settingsView.settingsStopwatchView.SettingsStopwatchBackgroundEffects
 import com.kingfu.clok.settings.settingsView.settingsStopwatchView.SettingsStopwatchLabelStyle
+import com.kingfu.clok.settings.settingsView.settingsTimerView.SettingsTimerBackgroundEffects
 import com.kingfu.clok.settings.settingsView.settingsTimerView.SettingsTimerProgressBarStyle
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
@@ -24,7 +27,6 @@ import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.variable.Variable.navigateToStartScreen
 import com.kingfu.clok.variable.Variable.startDestination
-import com.kingfu.clok.variable.Variable.timerShowNotification
 import kotlinx.coroutines.flow.first
 
 @Composable
@@ -39,6 +41,8 @@ fun Navigation(
 ) {
     val context = LocalContext.current
 
+
+
     if (navigateToStartScreen) {
         LaunchedEffect(Unit) {
             startDestination = navigationPreferences.getStartDestination.first()
@@ -46,14 +50,25 @@ fun Navigation(
         navigateToStartScreen = false
     }
 
-    if (timerShowNotification) {
-        LaunchedEffect(timerShowNotification){
-            timerViewModel.timerShowSnackBar(scaffoldState, context = context)
-        }
-        LaunchedEffect(timerShowNotification){
-            timerViewModel.timerNotification(context = context)
-        }
+
+    LaunchedEffect(timerViewModel.timerIsFinished) {
+        timerViewModel.timerNotification(context = context)
     }
+
+    LaunchedEffect(timerViewModel.timerIsFinished) {
+        showSnackbar(
+            message = "Timer is finished!",
+            actionLabel = "cancel",
+            duration = SnackbarDuration.Short,
+            scaffoldState = scaffoldState,
+            action = {
+                timerViewModel.timerCancelNotification(context = context)
+                timerViewModel.cancelTimer()
+            },
+            dismiss = {}
+        )
+    }
+
 
     if (startDestination != null) {
         NavHost(
@@ -87,12 +102,16 @@ fun Navigation(
                 SettingsTimerProgressBarStyle(settingsViewModelTimer)
             }
 
-            composable(Screens.BugReport.route){
+            composable(Screens.BugReport.route) {
                 BugReport()
             }
 
-            composable(Screens.SettingsStopwatchBackgroundEffects.route){
+            composable(Screens.SettingsStopwatchBackgroundEffects.route) {
                 SettingsStopwatchBackgroundEffects(settingsViewModelStopwatch)
+            }
+
+            composable(Screens.SettingsTimerBackgroundEffects.route) {
+                SettingsTimerBackgroundEffects(settingsViewModelTimer)
             }
         }
     }

@@ -42,6 +42,12 @@ fun TopBar(
                     Screens.SettingsTimerProgressBarStyle.route -> {
                         Screens.SettingsTimerProgressBarStyle.name
                     }
+                    Screens.SettingsStopwatchBackgroundEffects.route ->{
+                        "Stopwatch - ${Screens.SettingsStopwatchBackgroundEffects.name}"
+                    }
+                    Screens.SettingsTimerBackgroundEffects.route ->{
+                       "Timer - ${Screens.SettingsTimerBackgroundEffects.name}"
+                    }
                     Screens.BugReport.route -> {
                         Screens.BugReport.name
                     }

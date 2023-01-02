@@ -40,6 +40,7 @@ class TimerPreferences(context: Context) {
     private val timerNotificationDefault = 5f
     private val timerOffsetTimeDefault = 0L
     private val timerRGBCCounterDefault = 255
+    private val timerBackgroundEffectsDefault = "Snow"
 
     private val _timerIsFinished = booleanPreferencesKey("timerIsFinished")
     private val _timerHourKey = intPreferencesKey("timerHour")
@@ -48,13 +49,13 @@ class TimerPreferences(context: Context) {
     private val _timerTotalTime = doublePreferencesKey("timeTotalTime")
     private val _timerIsEditState = booleanPreferencesKey("timerIsEditState")
     private val _timerCurrentPercentage = floatPreferencesKey("timerCurrentPercentage")
-    private val _timerIsActive = booleanPreferencesKey("timerIsActive")
     private val _timerCounterOvertime = booleanPreferencesKey("timerCounterOvertime")
     private val _timerLabelStyleSelectedOption = stringPreferencesKey("timerLabelStyleSelectedOption")
     private val _timerEnableScrollsHapticFeedback = booleanPreferencesKey("timerEnableScrollsHapticFeedback")
     private val _timerNotification = floatPreferencesKey("timerNotification")
     private val _timerOffsetTime = longPreferencesKey("timerOffsetTime")
     private val _timerRGBCounter = intPreferencesKey("timerRGBCounter")
+    private val _timerBackgroundEffects = stringPreferencesKey("timerBackgroundEffects")
 
 
     /************************************************ Clear ************************************************/
@@ -146,6 +147,12 @@ class TimerPreferences(context: Context) {
         }
     }
 
+    suspend fun setTimerBackgroundEffects(string: String){
+        timerDataStore.edit { preferences ->
+            preferences[_timerBackgroundEffects] = string
+        }
+    }
+
     /************************************************ get ************************************************/
 
     val getTimerHour: Flow<Int> = timerDataStore.data
@@ -214,6 +221,12 @@ class TimerPreferences(context: Context) {
     val getTimerRGBCounter: Flow<Int> = timerDataStore.data
         .map { preferences ->
             preferences[_timerRGBCounter] ?: timerRGBCCounterDefault
+        }
+
+    val getTimerBackgroundEffects: Flow<String> = timerDataStore.data
+        .map { preferences ->
+            preferences[_timerBackgroundEffects] ?: timerBackgroundEffectsDefault
+
         }
 
 

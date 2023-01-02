@@ -22,7 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
-import com.kingfu.clok.ui.theme.Cyan50
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerCountOvertime
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerEnableScrollsHapticFeedback
 import com.kingfu.clok.ui.theme.Green50
 import com.kingfu.clok.util.NoRippleTheme
 import com.kingfu.clok.util.customFontSize
@@ -86,6 +87,48 @@ fun SettingsTimerView(
                 modifier = Modifier
                     .background(Color.Black.copy(0.4f))
                     .fillMaxWidth()
+                    .clickable(enabled = navController.currentDestination?.route == "settings") {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        navController.navigate("settingsTimerBackgroundEffects")
+                    }
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp),
+
+                    ) {
+                    Text(
+                        text = "Progress bar background effects",
+                        fontSize = customFontSize(textUnit = 18.sp),
+                        fontFamily = FontFamily.Default,
+                        fontWeight = FontWeight.Normal,
+                    )
+
+                    Text(
+                        text = "Enable when progress bar is visible.",
+                        fontSize = customFontSize(textUnit = 14.sp),
+                        fontFamily = FontFamily.Default,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Gray
+                    )
+                }
+            }
+
+            Divider(
+                modifier = Modifier
+                    .background(Color.Black.copy(0.4f))
+                    .padding(horizontal = 24.dp),
+                color = Color.DarkGray,
+            )
+
+            Row(
+                modifier = Modifier
+                    .background(Color.Black.copy(0.4f))
+                    .fillMaxWidth()
                     .clickable {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         vm.timerCountOvertime()
@@ -117,7 +160,7 @@ fun SettingsTimerView(
                 }
                 CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
                     Switch(
-                        checked = vm.timerCountOvertime,
+                        checked = timerCountOvertime,
                         onCheckedChange = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             vm.timerCountOvertime()
@@ -126,7 +169,7 @@ fun SettingsTimerView(
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = Color.White,
                             uncheckedThumbColor = Color.White,
-                            checkedTrackColor = Cyan50,
+                            checkedTrackColor = Green50,
                             uncheckedTrackColor = Color.Gray,
                         )
                     )
@@ -168,7 +211,7 @@ fun SettingsTimerView(
                 }
                 CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
                     Switch(
-                        checked = vm.timerEnableScrollsHapticFeedback,
+                        checked = timerEnableScrollsHapticFeedback,
                         onCheckedChange = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             vm.timerSetEnableScrollsHapticFeedback()
@@ -177,7 +220,7 @@ fun SettingsTimerView(
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = Color.White,
                             uncheckedThumbColor = Color.White,
-                            checkedTrackColor = Cyan50,
+                            checkedTrackColor = Green50,
                             uncheckedTrackColor = Color.Gray,
                         )
                     )

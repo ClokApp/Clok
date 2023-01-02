@@ -22,7 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
-import com.kingfu.clok.ui.theme.Cyan50
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch.SettingsViewModelStopwatchVariable.stopwatchRefreshRateValue
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch.SettingsViewModelStopwatchVariable.stopwatchShowLabel
 import com.kingfu.clok.ui.theme.Green50
 import com.kingfu.clok.util.NoRippleTheme
 import com.kingfu.clok.util.customFontSize
@@ -46,7 +47,7 @@ fun SettingsStopwatchView(
         modifier = Modifier,
         shape = RoundedCornerShape(30.dp),
     ) {
-        Column{
+        Column {
             Row(
                 modifier = Modifier
                     .background(Color.Black.copy(0.4f))
@@ -74,7 +75,7 @@ fun SettingsStopwatchView(
                 }
                 CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
                     Switch(
-                        checked = vm.stopwatchShowLabel,
+                        checked = stopwatchShowLabel,
                         onCheckedChange = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             vm.stopwatchShowLabelCheckState()
@@ -83,7 +84,7 @@ fun SettingsStopwatchView(
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = Color.White,
                             uncheckedThumbColor = Color.White,
-                            checkedTrackColor = Cyan50,
+                            checkedTrackColor = Green50,
                             uncheckedTrackColor = Color.Gray,
                         ),
                     )
@@ -152,10 +153,18 @@ fun SettingsStopwatchView(
                         .padding(8.dp),
                 ) {
                     Text(
-                        text = "Background effects",
+                        text = "Label background effects",
                         fontSize = customFontSize(textUnit = 18.sp),
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight.Normal,
+                    )
+
+                    Text(
+                        text = "Enable when show label is turned on.",
+                        fontSize = customFontSize(textUnit = 14.sp),
+                        fontFamily = FontFamily.Default,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Gray
                     )
                 }
             }
@@ -195,7 +204,7 @@ fun SettingsStopwatchView(
                                     color = Green50
                                 )
                             ) {
-                                append(vm.stopwatchRefreshRateValue.toInt().toString())
+                                append(stopwatchRefreshRateValue.toInt().toString())
                             }
                             append(" millisecond(s) before refreshing.")
                         },
@@ -208,7 +217,7 @@ fun SettingsStopwatchView(
                     CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
                         Slider(
                             modifier = Modifier,
-                            value = vm.stopwatchRefreshRateValue,
+                            value = stopwatchRefreshRateValue,
                             valueRange = 1f..100f,
                             onValueChange = {
                                 vm.stopwatchRefreshRateValue(it)
@@ -222,6 +231,8 @@ fun SettingsStopwatchView(
                     }
                 }
             }
+
+
 
 
         }

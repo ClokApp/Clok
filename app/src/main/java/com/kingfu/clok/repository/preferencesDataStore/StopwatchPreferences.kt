@@ -33,27 +33,29 @@ class StopwatchPreferences(context: Context) {
     private val stopwatchLapCounterDefault = 0
     private val stopwatchLapTimeDefault = setOf("00:00.00")
     private val stopwatchLapTotalTimeDefault = setOf("00:00.00")
-    private val stopwatchAutoSaveTimeDefault = true
-    private val stopwatchAutoSaveLapTimeDefault = true
     private val stopwatchRefreshRateDefault = 55f
     private val stopwatchShowLabelDefault = true
     private val stopwatchLapPreviousTimeDefault = 0L
     private val stopwatchLabelStyleSelectedOptionDefault = "RGB"
     private val stopwatchOffsetTimeDefault = 0L
+    private val stopwatchBackgroundEffectsDefault = "Snow"
+
+    private val labelStyleRGBColorCounterDefault = 0.0
 
     private val _stopwatchTime = longPreferencesKey("stopwatchTime")
     private val _stopwatchLapNumber = stringSetPreferencesKey("stopwatchLapNumber")
     private val _stopwatchLapCounter = intPreferencesKey("stopwatchLapCounter")
     private val _stopwatchLapTime = stringSetPreferencesKey("stopwatchLapTime")
     private val _stopwatchLapTotalTime = stringSetPreferencesKey("stopwatchLapTotalTime")
-    private val _stopwatchAutoSaveTime = booleanPreferencesKey("stopwatchAutoSaveTime")
-    private val _stopwatchAutoSaveLapTime = booleanPreferencesKey("stopwatchAutoSaveLapTime")
     private val _stopwatchRefreshRate = floatPreferencesKey("stopwatchRefreshRate")
     private val _stopwatchShowLabel = booleanPreferencesKey("stopwatchShowLabel")
     private val _stopwatchLapPreviousTime = longPreferencesKey("stopwatchLapPreviousTime")
     private val _stopwatchLabelStyleSelectedOption =
         stringPreferencesKey("stopwatchLabelStyleSelectedOption")
     private val _stopwatchOffsetTime = longPreferencesKey("stopwatchOffsetTime")
+    private val _stopwatchBackgroundEffects = stringPreferencesKey("stopwatchBackgroundEffects")
+
+    private val _labelStyleRGBColorCounter = doublePreferencesKey("labelStyleRGBColorCounter")
 
     /************************************************ Clear ************************************************/
 
@@ -131,17 +133,6 @@ class StopwatchPreferences(context: Context) {
         }
     }
 
-    suspend fun setStopwatchAutoSaveTime(boolean: Boolean) {
-        stopwatchDataStore.edit { preferences ->
-            preferences[_stopwatchAutoSaveTime] = boolean
-        }
-    }
-
-    suspend fun setStopwatchAutoLapTime(boolean: Boolean) {
-        stopwatchDataStore.edit { preferences ->
-            preferences[_stopwatchAutoSaveLapTime] = boolean
-        }
-    }
 
     suspend fun setStopwatchRefreshRate(float: Float) {
         stopwatchDataStore.edit { preferences ->
@@ -173,6 +164,18 @@ class StopwatchPreferences(context: Context) {
         }
     }
 
+    suspend fun setStopwatchBackgroundEffects(string: String){
+        stopwatchDataStore.edit { preferences ->
+            preferences[_stopwatchBackgroundEffects] = string
+        }
+    }
+
+    suspend fun setLabelStyleRGBColorCounter(double: Double){
+        stopwatchDataStore.edit { preferences ->
+            preferences[_labelStyleRGBColorCounter] = double
+        }
+    }
+
     /************************************************ get ************************************************/
     val getStopwatchTime: Flow<Long> = stopwatchDataStore.data
         .map { preferences ->
@@ -199,16 +202,6 @@ class StopwatchPreferences(context: Context) {
             preferences[_stopwatchLapTotalTime] ?: stopwatchLapTotalTimeDefault
         }
 
-    val getStopwatchSaveTime: Flow<Boolean> = stopwatchDataStore.data
-        .map { preferences ->
-            preferences[_stopwatchAutoSaveTime] ?: stopwatchAutoSaveTimeDefault
-        }
-
-    val getStopwatchSaveLapTime: Flow<Boolean> = stopwatchDataStore.data
-        .map { preferences ->
-            preferences[_stopwatchAutoSaveLapTime] ?: stopwatchAutoSaveLapTimeDefault
-        }
-
     val getStopwatchRefreshRate: Flow<Float> = stopwatchDataStore.data
         .map { preferences ->
             preferences[_stopwatchRefreshRate] ?: stopwatchRefreshRateDefault
@@ -233,6 +226,16 @@ class StopwatchPreferences(context: Context) {
     val getStopwatchOffsetTime: Flow<Long> = stopwatchDataStore.data
         .map { preferences ->
             preferences[_stopwatchOffsetTime] ?: stopwatchOffsetTimeDefault
+        }
+
+    val getStopwatchBackgroundEffects: Flow<String> = stopwatchDataStore.data
+        .map { preferences ->
+            preferences[_stopwatchBackgroundEffects] ?: stopwatchBackgroundEffectsDefault
+        }
+
+    val getLabelStyleRGBColorCounter: Flow<Double> = stopwatchDataStore.data
+        .map { preferences ->
+            preferences[_labelStyleRGBColorCounter] ?: labelStyleRGBColorCounterDefault
         }
 
 }

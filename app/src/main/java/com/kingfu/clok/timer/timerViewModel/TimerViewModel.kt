@@ -1,23 +1,26 @@
 package com.kingfu.clok.timer.timerViewModel
 
+import android.app.Activity
 import android.content.Context
 import android.os.SystemClock
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.SnackbarResult
+import android.view.WindowManager
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kingfu.clok.notification.timer.TimerNotificationService
 import com.kingfu.clok.repository.preferencesDataStore.TimerPreferences
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerCountOvertime
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerLabelStyleSelectedOption
+import com.kingfu.clok.timer.styles.TimerRGBStyle
+import com.kingfu.clok.timer.styles.TimerRGBStyle.TimerRGBStyleVariable.timerRGBCounter
+import com.kingfu.clok.timer.timerViewModel.TimerViewModel.TimerViewModelVariable.timerTime
+import com.kingfu.clok.variable.Variable.showSnackbar
 import com.kingfu.clok.variable.Variable.timerShowNotification
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlin.math.sin
 
 class TimerViewModel(
     private val timerPreferences: TimerPreferences,
@@ -25,8 +28,9 @@ class TimerViewModel(
 
     /******************************** Timer ********************************/
 
-    var timerTime by mutableStateOf(0L)
-        private set
+    object TimerViewModelVariable {
+        var timerTime by mutableStateOf(0L)
+    }
 
     var timerIsFinished by mutableStateOf(false)
         private set
@@ -43,12 +47,6 @@ class TimerViewModel(
     var timerSecond by mutableStateOf(0)
         private set
 
-    var timerLabelColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
-        private set
-
-    var timerRGBCounter by mutableStateOf(0)
-        private set
-
     var timerTotalTime by mutableStateOf(0.0)
         private set
 
@@ -58,55 +56,61 @@ class TimerViewModel(
     var timerIsEditState by mutableStateOf(true)
         private set
 
-    var timerLabelStyle by mutableStateOf("RGB")
-        private set
-
-    var timerEnableScrollsHapticFeedback by mutableStateOf(true)
-        private set
-
     var timerInitialTime by mutableStateOf(0L)
         private set
 
     var timerOffsetTime by mutableStateOf(0L)
         private set
 
+
     init {
         viewModelScope.launch {
-            timerHour = timerPreferences.getTimerHour.first()
-            timerMinute = timerPreferences.getTimerMinute.first()
-            timerSecond = timerPreferences.getTimerSecond.first()
-            timerIsFinished = timerPreferences.getTimerIsFinished.first()
-            timerIsEditState = timerPreferences.getTimerIsEditState.first()
-            timerTotalTime = timerPreferences.getTimerTotalTime.first()
-            timerCurrentTimePercentage = timerPreferences.getTimerCurrentPercentage.first()
-            timerLabelStyle = timerPreferences.getTimerLabelStyleSelectedOption.first()
-            timerOffsetTime = timerPreferences.getTimerOffsetTime.first()
+            loadTimerHour()
+            loadTimerMinute()
+            loadTimerSecond()
+            loadTimerIsFinished()
+            loadTImerIsEditState()
+            loadTimerTotalTime()
+            loadTimerCurrentTimePercentage()
+            loadTimerOffsetTime()
+
             timerTime = timerOffsetTime
 
-            timerRGBCounter = timerPreferences.getTimerRGBCounter.first()
 
-            timerEnableScrollsHapticFeedback =
-                timerPreferences.getTimerEnableScrollsHapticFeedback.first()
             if (timerIsEditState) {
                 timerCurrentTimePercentage = 0f
             }
+
+            when (timerLabelStyleSelectedOption) {
+                "RGB" -> {
+                    loadTimerRGBCounter()
+                    TimerRGBStyle().timerUpdateStartAndEndRGB(initialize = true)
+                }
+            }
             initializeTimer()
         }
+
     }
 
-    fun startTimer() {
-
+    fun timerSetTotalTime() {
         if (timerIsEditState) {
             timerIsEditState = false
             timerTotalTime = timerTime.toDouble()
         }
+    }
+
+    fun startTimer(activity: Activity) {
+
+        if (timerCountOvertime && timerIsFinished) {
+            pauseTimer(activity)
+        }
         timerIsActive = true
         timerInitialTime = SystemClock.elapsedRealtime()
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         viewModelScope.launch {
             while (timerIsActive) {
-                timerUpdateStartAndEndRGB()
-
+                timerLabelStyles()
                 if (timerTime >= 0L && !timerIsFinished) {
                     timerCurrentTimePercentage = (timerTime.toDouble() / timerTotalTime).toFloat()
                     timerTime = timerOffsetTime + (timerInitialTime - SystemClock.elapsedRealtime())
@@ -117,12 +121,14 @@ class TimerViewModel(
                         timerCurrentTimePercentage = 0f
                         timerOffsetTime = 0L
                         timerInitialTime = SystemClock.elapsedRealtime()
+                        showSnackbar = true
                     }
-                    if (timerPreferences.getTimerCountOvertime.first()) {
+
+                    if (timerCountOvertime) {
                         timerTime =
                             timerOffsetTime + (SystemClock.elapsedRealtime() - timerInitialTime)
                     } else {
-                        pauseTimer()
+                        pauseTimer(activity)
                     }
                 }
                 delay(55L)
@@ -130,10 +136,10 @@ class TimerViewModel(
         }
     }
 
-    fun pauseTimer() {
+    fun pauseTimer(activity: Activity) {
         timerIsActive = false
+        activity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         viewModelScope.launch {
-            delay(100)
             timerOffsetTime = timerTime
             saveTimerOffsetTime()
             saveTimerCurrentPercentage()
@@ -154,6 +160,11 @@ class TimerViewModel(
             saveTimerIsFinished()
             saveTimerIsEditState()
             saveTimerOffsetTime()
+
+            saveTimerOffsetTime()
+            saveTimerCurrentPercentage()
+            saveTimerOffsetTime()
+
         }
     }
 
@@ -173,55 +184,33 @@ class TimerViewModel(
         }
     }
 
-    suspend fun timerUpdateStartAndEndRGB() {
-
-        val frequency = 0.15
-        val phase = 1.5
-        val width = 128
-        val center = 127
-
-        timerRGBCounter = (timerRGBCounter + 1) % Int.MAX_VALUE
-        saveTimerRGBCounter()
-
-        for (i in 0 until 6) {
-            timerLabelColorList[i] =
-                (sin(frequency * timerRGBCounter + phase * i) * width + center).toInt()
+    private suspend fun timerLabelStyles() {
+        when (timerLabelStyleSelectedOption) {
+            "Cyan" -> {}
+            "RGB" -> {
+                TimerRGBStyle().timerUpdateStartAndEndRGB(initialize = false)
+                saveTimerRGBCounter()
+            }
         }
     }
 
     suspend fun timerNotification(context: Context) {
-        for (i in 0 until timerPreferences.getTimerNotification.first().toInt()) {
-            if (timerShowNotification) {
-                TimerNotificationService(context).showNotification()
-                delay(2000)
-            } else {
-                break
+        if (timerIsFinished) {
+            for (i in 0 until timerPreferences.getTimerNotification.first().toInt()) {
+                if (timerShowNotification) {
+                    TimerNotificationService(context).showNotification()
+                    delay(2000)
+                } else {
+                    break
+                }
             }
+            timerShowNotification = false
         }
-        timerShowNotification = false
-
     }
 
     fun timerCancelNotification(context: Context) {
         timerShowNotification = false
         TimerNotificationService(context).notificationManager.cancel(1)
-    }
-
-    suspend fun timerShowSnackBar(scaffoldState: ScaffoldState, context: Context) {
-
-        val snackbarResult = scaffoldState.snackbarHostState.showSnackbar(
-            "Timer is finished!",
-            "cancel",
-            SnackbarDuration.Short
-        )
-
-        when (snackbarResult) {
-            SnackbarResult.Dismissed -> {}
-            SnackbarResult.ActionPerformed -> {
-                timerCancelNotification(context = context)
-                cancelTimer()
-            }
-        }
     }
 
     fun formatTimerTime(timeMillis: Long): String {
@@ -246,9 +235,10 @@ class TimerViewModel(
                 else -> "0"
             }
 
-        if(timerIsFinished){
+        if (timerIsFinished && timerCountOvertime) {
             time = "-$time"
         }
+
         return time
     }
 
@@ -302,7 +292,6 @@ class TimerViewModel(
         timerPreferences.setTimerSecond(timerSecond)
     }
 
-
     suspend fun saveTimerIsFinished() {
         timerPreferences.setTimerIsFinished(timerIsFinished)
     }
@@ -319,15 +308,6 @@ class TimerViewModel(
         timerPreferences.setTimerCurrentPercentage(timerCurrentTimePercentage)
     }
 
-    suspend fun loadTimerLabelStyleOption() {
-        timerLabelStyle = timerPreferences.getTimerLabelStyleSelectedOption.first()
-    }
-
-    suspend fun loadTimerEnableScrollsHapticFeedback() {
-        timerEnableScrollsHapticFeedback =
-            timerPreferences.getTimerEnableScrollsHapticFeedback.first()
-    }
-
     suspend fun saveTimerOffsetTime() {
         timerPreferences.setTimerOffsetTime(timerOffsetTime)
     }
@@ -335,5 +315,43 @@ class TimerViewModel(
     suspend fun saveTimerRGBCounter() {
         timerPreferences.setTimerRGBCounter(timerRGBCounter)
     }
+
+    suspend fun loadTimerRGBCounter() {
+        timerRGBCounter = timerPreferences.getTimerRGBCounter.first()
+    }
+
+    suspend fun loadTimerHour(){
+        timerHour = timerPreferences.getTimerHour.first()
+    }
+
+    suspend fun loadTimerMinute(){
+        timerMinute = timerPreferences.getTimerMinute.first()
+    }
+
+    suspend fun loadTimerSecond(){
+        timerSecond = timerPreferences.getTimerSecond.first()
+    }
+
+    suspend fun loadTimerIsFinished(){
+        timerIsFinished = timerPreferences.getTimerIsFinished.first()
+    }
+
+    suspend fun loadTImerIsEditState(){
+        timerIsEditState = timerPreferences.getTimerIsEditState.first()
+    }
+
+    suspend fun loadTimerTotalTime(){
+        timerTotalTime = timerPreferences.getTimerTotalTime.first()
+    }
+
+    suspend fun loadTimerCurrentTimePercentage(){
+        timerCurrentTimePercentage = timerPreferences.getTimerCurrentPercentage.first()
+    }
+
+    suspend fun loadTimerOffsetTime(){
+        timerOffsetTime = timerPreferences.getTimerOffsetTime.first()
+    }
+
+
 
 }

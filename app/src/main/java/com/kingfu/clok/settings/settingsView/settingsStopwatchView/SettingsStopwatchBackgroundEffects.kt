@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch.SettingsViewModelStopwatchVariable.stopwatchBackgroundEffectsSelectedOption
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.util.customFontSize
 
@@ -45,10 +46,7 @@ fun SettingsStopwatchBackgroundEffects(
             color = Color.Gray
         )
 
-        Card(
-            modifier = Modifier.padding(5.dp),
-            shape = RoundedCornerShape(30.dp)
-        ) {
+        Card(shape = RoundedCornerShape(30.dp)) {
             Column {
                 for (i in radioOptions.indices) {
                     Row(
@@ -56,19 +54,19 @@ fun SettingsStopwatchBackgroundEffects(
                             .fillMaxWidth()
                             .clickable {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                vm.stopwatchSetBackgroundEffectsSelectedOption(radioOptions.elementAt(i))
-
+                                vm.stopwatchSetBackgroundEffectSelectedOption(radioOptions.elementAt(i))
+                                vm.saveStopwatchBackgroundEffectsSelectedOption()
                             }
                             .padding(8.dp),
                         horizontalArrangement = Arrangement.Start,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
-                            selected = (radioOptions.elementAt(i) == vm.stopwatchBackgroundEffectsSelectedOption),
+                            selected = (radioOptions.elementAt(i) == stopwatchBackgroundEffectsSelectedOption),
                             onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                vm.stopwatchSetLabelStyleSelectedOption(radioOptions.elementAt(i))
-                                vm.saveStopwatchLabelStyleSelectedOption()
+                                vm.stopwatchSetBackgroundEffectSelectedOption(radioOptions.elementAt(i))
+                                vm.saveStopwatchBackgroundEffectsSelectedOption()
                             }
                         )
                         Text(

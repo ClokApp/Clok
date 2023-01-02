@@ -2,16 +2,18 @@ package com.kingfu.clok.timer.timerView
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.snapping.SnapFlingBehavior
+import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -22,104 +24,97 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerEnableScrollsHapticFeedback
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.ui.theme.Cyan50
 import com.kingfu.clok.util.customFontSize
-import com.kingfu.clok.variable.Variable
-import dev.chrisbanes.snapper.ExperimentalSnapperApi
-import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import com.kingfu.clok.variable.Variable.TIMER_HR
+import com.kingfu.clok.variable.Variable.TIMER_MIN
+import com.kingfu.clok.variable.Variable.TIMER_SEC
 
-@OptIn(ExperimentalSnapperApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TimerEditView(
     vm: TimerViewModel,
     lazyListStateHr: LazyListState,
     lazyListStateMin: LazyListState,
     lazyListStateSec: LazyListState,
-    selectedHr: Int?,
-    selectedMin: Int?,
-    selectedSec: Int?,
     haptic: HapticFeedback,
+    configurationOrientation: Int
 ) {
-    val configurationOrientation = LocalConfiguration.current.orientation
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-    LaunchedEffect(Unit) {
-        vm.loadTimerEnableScrollsHapticFeedback()
+
+    val layoutInfoHr = remember(lazyListStateHr) { SnapLayoutInfoProvider(lazyListStateHr)}
+    val layoutInfoMin = remember(lazyListStateMin) { SnapLayoutInfoProvider(lazyListStateMin) }
+    val layoutInfoSec = remember(lazyListStateSec) { SnapLayoutInfoProvider(lazyListStateSec) }
+
+    val selectedHr = rememberSnapFlingBehavior(snapLayoutInfoProvider = layoutInfoHr)
+    val selectedMin = rememberSnapFlingBehavior(snapLayoutInfoProvider = layoutInfoMin)
+    val selectedSec = rememberSnapFlingBehavior(snapLayoutInfoProvider = layoutInfoSec)
+
+    val selectedItemHr by remember { derivedStateOf { lazyListStateHr.firstVisibleItemIndex +1 } }
+    val selectedItemMin by remember { derivedStateOf { lazyListStateMin.firstVisibleItemIndex + 1 } }
+    val selectedItemSec by remember { derivedStateOf { lazyListStateSec.firstVisibleItemIndex + 1 } }
+
+
+    LaunchedEffect(selectedItemHr) {
+        vm.updateTimerHour(selectedItemHr % TIMER_HR)
+        vm.saveTimerHour()
     }
 
-    LaunchedEffect(selectedHr) {
-        if (selectedHr != null ) {
-            vm.updateTimerHour(selectedHr)
-            vm.saveTimerHour()
-        }
+    LaunchedEffect(selectedItemMin) {
+        vm.updateTimerMinute(selectedItemMin % TIMER_MIN)
+        vm.saveTimerMinute()
+    }
+
+    LaunchedEffect(selectedItemSec) {
+        vm.updateTimerSecond(selectedItemSec % TIMER_SEC)
+        vm.saveTimerSecond()
+    }
+
+    LaunchedEffect(lazyListStateHr.isScrollInProgress) {
         if (!lazyListStateHr.isScrollInProgress) {
-            lazyListStateHr.scrollToItem(Int.MAX_VALUE / 2 - 23 + vm.timerHour)
+            lazyListStateHr.scrollToItem(Int.MAX_VALUE / 2 - 24 + vm.timerHour)
         }
-
     }
 
-    LaunchedEffect(selectedMin) {
-        if (selectedMin != null) {
-            vm.updateTimerMinute(selectedMin)
-            vm.saveTimerMinute()
-        }
-
+    LaunchedEffect(lazyListStateMin.isScrollInProgress) {
         if (!lazyListStateMin.isScrollInProgress) {
-            lazyListStateMin.scrollToItem(Int.MAX_VALUE / 2 - 3 + vm.timerMinute)
+            lazyListStateMin.scrollToItem(Int.MAX_VALUE / 2 - 4 + vm.timerMinute)
         }
     }
 
-    LaunchedEffect(selectedSec) {
-        if (selectedSec != null) {
-            vm.updateTimerSecond(selectedSec)
-            vm.saveTimerSecond()
-        }
+    LaunchedEffect(lazyListStateSec.isScrollInProgress) {
         if (!lazyListStateSec.isScrollInProgress) {
-            lazyListStateSec.scrollToItem(Int.MAX_VALUE / 2 - 3 + vm.timerSecond)
+            lazyListStateSec.scrollToItem(Int.MAX_VALUE / 2 - 4 + vm.timerSecond)
         }
     }
 
 
     Row(
         modifier = Modifier
+            .wrapContentWidth()
             .height(
                 if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                    280.dp
+                    screenHeight / 3.3f
                 } else {
-                    200.dp
+                    screenHeight / 1.9f
                 }
-            )
+            ),
+        verticalAlignment = Alignment.CenterVertically
     ) {
 
         val timerScrollerFontSize =
             if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                customFontSize(textUnit = 65.sp)
+                customFontSize(textUnit = (screenHeight.value * 0.070).sp)
             } else {
-                customFontSize(textUnit = 50.sp)
-            }
+                customFontSize(textUnit = (screenHeight.value * 0.12).sp)
 
-        val timerEndContentPadding =
-            if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                PaddingValues(vertical = 90.dp)
-            } else {
-                PaddingValues(vertical = 50.dp)
-            }
-
-        val timerContentPadding =
-            if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                PaddingValues(vertical = 75.dp)
-            } else {
-                PaddingValues(vertical = 50.dp)
-            }
-
-        val timerScrollerSpacing =
-            if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                2.dp
-            } else {
-                6.dp
             }
 
         val timerBoxGradient =
@@ -131,204 +126,124 @@ fun TimerEditView(
                 Black00
             )
 
-        val labelTextSize = customFontSize(textUnit = 18.sp)
+        val labelTextSize =
+            if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
+                customFontSize(textUnit = 18.sp)
+            } else {
+                customFontSize(textUnit = 14.sp)
 
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            val colorHr by animateColorAsState(
-                if (lazyListStateHr.isScrollInProgress) Color.White else Color.Gray,
-                animationSpec = tween(
-                    durationMillis = 500,
-                    delayMillis = 0,
-                    easing = LinearEasing
-                )
-            )
-
-            Text(
-                text = "Hours",
-                modifier = Modifier.padding(bottom = 5.dp),
-                textAlign = TextAlign.Center,
-                fontSize = labelTextSize,
-                color = colorHr,
-                fontFamily = FontFamily.Default,
-                fontWeight = FontWeight.Thin,
-            )
-
-            Box {
-                LazyColumn(
-                    state = lazyListStateHr,
-                    flingBehavior = rememberSnapperFlingBehavior(
-                        lazyListStateHr,
-                        endContentPadding = timerEndContentPadding.calculateTopPadding(),
-                    ),
-                    contentPadding = timerContentPadding,
-                    modifier = Modifier.padding(horizontal = 5.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-
-                    ) {
-                    items(Int.MAX_VALUE) { index ->
-                        val hourSelectedColor by animateColorAsState(
-                            if (selectedHr == index % Variable.TIMER_HR) Cyan50 else Color.DarkGray
-                        )
-
-                        Text(
-                            text = if (index % Variable.TIMER_HR < 10) "0${index % Variable.TIMER_HR}" else "${index % Variable.TIMER_HR}",
-                            textAlign = TextAlign.Center,
-                            fontSize = timerScrollerFontSize,
-                            fontFamily = FontFamily.Default,
-                            fontWeight = FontWeight.Light,
-                            color = hourSelectedColor,
-                        )
-                    }
-                }
-
-                LaunchedEffect(selectedHr) {
-                    if (lazyListStateHr.isScrollInProgress && vm.timerEnableScrollsHapticFeedback) {
-                        haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
-                    }
-                }
-
-                Box(
-                    modifier = Modifier
-                        .background(Brush.verticalGradient(colors = timerBoxGradient))
-                        .matchParentSize()
-                )
             }
-        }
 
-        Spacer(modifier = Modifier.padding(horizontal = timerScrollerSpacing))
+        DisplayTimerScroll(
+            label = "Hours",
+            lazyListState = lazyListStateHr,
+            labelTextSize = labelTextSize,
+            flingBehavior = selectedHr,
+            timerScrollerFontSize = timerScrollerFontSize,
+            selectedItem = selectedItemHr,
+            haptic = haptic,
+            timerBoxGradient = timerBoxGradient,
+            timeUnit = TIMER_HR,
+        )
 
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            val colorMin by animateColorAsState(
-                if (lazyListStateMin.isScrollInProgress) Color.White else Color.Gray,
-                animationSpec = tween(
-                    durationMillis = 500,
-                    delayMillis = 0,
-                    easing = LinearEasing
-                )
+        DisplayTimerScroll(
+            label = "Minutes",
+            lazyListState = lazyListStateMin,
+            labelTextSize = labelTextSize,
+            flingBehavior = selectedMin,
+            timerScrollerFontSize = timerScrollerFontSize,
+            selectedItem = selectedItemMin,
+            haptic = haptic,
+            timerBoxGradient = timerBoxGradient,
+            timeUnit = TIMER_MIN,
+        )
+
+        DisplayTimerScroll(
+            label = "Seconds",
+            lazyListState = lazyListStateSec,
+            labelTextSize = labelTextSize,
+            flingBehavior = selectedSec,
+            timerScrollerFontSize = timerScrollerFontSize,
+            selectedItem = selectedItemSec,
+            haptic = haptic,
+            timerBoxGradient = timerBoxGradient,
+            timeUnit = TIMER_SEC,
+        )
+    }
+
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun DisplayTimerScroll(
+    label: String,
+    lazyListState: LazyListState,
+    labelTextSize: TextUnit,
+    flingBehavior: SnapFlingBehavior,
+    timerScrollerFontSize: TextUnit,
+    selectedItem: Int,
+    haptic: HapticFeedback,
+    timerBoxGradient: List<Color>,
+    timeUnit: Int,
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+
+    ) {
+        val color by animateColorAsState(
+            if (lazyListState.isScrollInProgress) Color.White else Color.Gray,
+            animationSpec = tween(
+                durationMillis = 500,
+                delayMillis = 0,
+                easing = EaseInOut
+            )
+        )
+
+        Text(
+            text = label,
+            textAlign = TextAlign.Center,
+            fontSize = labelTextSize,
+            color = color,
+            fontFamily = FontFamily.Default,
+            fontWeight = FontWeight.Thin,
+
             )
 
-            Text(
-                text = "Minutes",
-                modifier = Modifier.padding(bottom = 5.dp),
-                textAlign = TextAlign.Center,
-                fontSize = labelTextSize,
-                color = colorMin,
-                fontFamily = FontFamily.Default,
-                fontWeight = FontWeight.Thin,
-            )
-            Box {
-                LazyColumn(
-                    state = lazyListStateMin,
-                    flingBehavior = rememberSnapperFlingBehavior(
-                        lazyListStateMin,
-                        endContentPadding = timerEndContentPadding.calculateTopPadding(),
-                    ),
-                    contentPadding = timerContentPadding,
-                    modifier = Modifier.padding(horizontal = 5.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+        Box {
+            LazyColumn(
+                state = lazyListState,
+                modifier = Modifier.padding(horizontal = 10.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                flingBehavior = flingBehavior,
+
+
                 ) {
-                    items(Int.MAX_VALUE) { index ->
-                        val minuteSelectedColor by animateColorAsState(
-                            if (selectedMin == index % Variable.TIMER_MIN) Cyan50 else Color.DarkGray
-                        )
-
-                        Text(
-                            text = if (index % Variable.TIMER_MIN < 10) "0${index % Variable.TIMER_MIN}" else "${index % Variable.TIMER_MIN}",
-                            fontSize = timerScrollerFontSize,
-                            fontFamily = FontFamily.Default,
-                            fontWeight = FontWeight.Light,
-                            color = minuteSelectedColor,
-                        )
-                    }
+                items(Int.MAX_VALUE) { index ->
+                    Text(
+                        text = if (index % timeUnit < 10) "0${index % timeUnit}" else "${index % timeUnit}",
+                        textAlign = TextAlign.Center,
+                        fontSize = timerScrollerFontSize,
+                        fontFamily = FontFamily.Default,
+                        fontWeight = if (selectedItem == index) FontWeight.Light else FontWeight.ExtraLight,
+                        color = if (selectedItem == index) Cyan50 else Color.DarkGray,
+                    )
                 }
-
-                LaunchedEffect(selectedMin) {
-                    if (lazyListStateMin.isScrollInProgress && vm.timerEnableScrollsHapticFeedback) {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    }
-                }
-
-                Box(
-                    modifier = Modifier
-                        .background(Brush.verticalGradient(colors = timerBoxGradient))
-                        .matchParentSize()
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.padding(horizontal = timerScrollerSpacing))
-
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            val colorSec by animateColorAsState(
-                if (lazyListStateSec.isScrollInProgress) Color.White else Color.Gray,
-                animationSpec = tween(
-                    durationMillis = 500,
-                    delayMillis = 0,
-                    easing = LinearEasing
-                )
-            )
-
-            Text(
-                text = "Seconds",
-                modifier = Modifier.padding(bottom = 5.dp),
-                fontSize = labelTextSize,
-                color = colorSec,
-                fontFamily = FontFamily.Default,
-                fontWeight = FontWeight.Thin,
-            )
-
-            Box {
-                LazyColumn(
-                    state = lazyListStateSec,
-                    flingBehavior = rememberSnapperFlingBehavior(
-                        lazyListStateSec,
-                        endContentPadding = timerEndContentPadding.calculateTopPadding(),
-                    ),
-                    contentPadding = timerContentPadding,
-                    modifier = Modifier.padding(horizontal = 5.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-
-                    items(Int.MAX_VALUE) { index ->
-                        val secondSelectedColor by animateColorAsState(
-                            if (selectedSec == index % Variable.TIMER_SEC) Cyan50 else Color.DarkGray
-                        )
-
-                        Text(
-                            text = if (index % Variable.TIMER_SEC < 10) "0${index % Variable.TIMER_SEC}" else "${index % Variable.TIMER_SEC}",
-                            fontSize = timerScrollerFontSize,
-                            fontFamily = FontFamily.Default,
-                            fontWeight = FontWeight.Light,
-                            color = secondSelectedColor,
-                        )
-                    }
-                }
-
-                LaunchedEffect(selectedSec) {
-                    if (lazyListStateSec.isScrollInProgress && vm.timerEnableScrollsHapticFeedback) {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    }
-                }
-
-                Box(
-                    modifier = Modifier
-                        .background(Brush.verticalGradient(colors = timerBoxGradient))
-                        .matchParentSize()
-                )
             }
 
+            LaunchedEffect(selectedItem) {
+                if (lazyListState.isScrollInProgress && timerEnableScrollsHapticFeedback) {
+                    haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .background(Brush.verticalGradient(colors = timerBoxGradient))
+                    .matchParentSize()
+            )
         }
     }
 }

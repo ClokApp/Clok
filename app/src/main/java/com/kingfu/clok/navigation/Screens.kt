@@ -57,6 +57,13 @@ sealed class Screens(
         R.drawable.ic_sharp_fill_settings_24,
         R.drawable.ic_outline_settings_24
     )
+
+    object SettingsTimerBackgroundEffects: Screens(
+        "settingsTimerBackgroundEffects",
+        "Background Effects",
+        R.drawable.ic_sharp_fill_settings_24,
+        R.drawable.ic_outline_settings_24
+    )
 }
 
 val items = listOf(
@@ -66,6 +73,7 @@ val items = listOf(
     Screens.SettingsStopwatchLabelStyle,
     Screens.SettingsTimerProgressBarStyle,
     Screens.BugReport,
-    Screens.SettingsStopwatchBackgroundEffects
+    Screens.SettingsStopwatchBackgroundEffects,
+    Screens.SettingsTimerBackgroundEffects
 )
 

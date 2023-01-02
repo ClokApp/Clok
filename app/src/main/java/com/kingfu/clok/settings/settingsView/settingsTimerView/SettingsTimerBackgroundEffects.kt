@@ -1,4 +1,4 @@
-package com.kingfu.clok.settings.settingsView.settingsStopwatchView
+package com.kingfu.clok.settings.settingsView.settingsTimerView
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,18 +18,17 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch.SettingsViewModelStopwatchVariable.stopwatchLabelStyleSelectedOption
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerBackgroundEffectsSelectedOption
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.util.customFontSize
 
 @Composable
-fun SettingsStopwatchLabelStyle(
-    vm: SettingsViewModelStopwatch = viewModel()
+fun SettingsTimerBackgroundEffects(
+    vm: SettingsViewModelTimer
 ) {
     val haptic = LocalHapticFeedback.current
-    val radioOptions = setOf("Gray", "RGB")
+    val radioOptions = setOf("None", "Snow")
 
     Column(
         modifier = Modifier
@@ -38,7 +37,7 @@ fun SettingsStopwatchLabelStyle(
     ) {
 
         Text(
-            text = "Styles",
+            text = "Background Effects",
             modifier = Modifier.padding(start = 32.dp, end = 32.dp, top = 10.dp, bottom = 2.dp),
             fontSize = customFontSize(textUnit = 16.sp),
             fontFamily = FontFamily.Default,
@@ -52,23 +51,24 @@ fun SettingsStopwatchLabelStyle(
             Column {
                 for (i in radioOptions.indices) {
                     Row(
-                        modifier = Modifier.background(Color.Black.copy(0.4f))
+                        modifier = Modifier
+                            .background(Color.Black.copy(0.4f))
                             .fillMaxWidth()
                             .clickable {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                vm.stopwatchSetLabelStyleSelectedOption(radioOptions.elementAt(i))
-                                vm.saveStopwatchLabelStyleSelectedOption()
+                                vm.setTimerBackgroundEffectsSelectedOption(radioOptions.elementAt(i))
+                                vm.saveTimerBackgroundEffectsSelectedOption()
                             }
                             .padding(8.dp),
                         horizontalArrangement = Arrangement.Start,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
-                            selected = (radioOptions.elementAt(i) == stopwatchLabelStyleSelectedOption),
+                            selected = (radioOptions.elementAt(i) == timerBackgroundEffectsSelectedOption),
                             onClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                vm.stopwatchSetLabelStyleSelectedOption(radioOptions.elementAt(i))
-                                vm.saveStopwatchLabelStyleSelectedOption()
+                                vm.setTimerBackgroundEffectsSelectedOption(radioOptions.elementAt(i))
+                                vm.saveTimerBackgroundEffectsSelectedOption()
                             }
                         )
                         Text(

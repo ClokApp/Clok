@@ -29,7 +29,6 @@ fun AppNavHost() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val scaffoldState = rememberScaffoldState()
-
     val stopwatchViewModel: StopwatchViewModel = viewModel(
         factory = StopwatchFactory(StopwatchPreferences.getInstance(LocalContext.current))
     )
@@ -62,11 +61,12 @@ fun AppNavHost() {
             BottomBarNavigation(
                 currentDestination = currentDestination,
                 navController = navController,
-                navigationPreferences = navigationPreferences,
+                navigationPreferences = navigationPreferences
             )
         },
         content = { paddingValues ->
             Box(Modifier.padding(paddingValues)) {
+
                 Navigation(
                     navController = navController,
                     scaffoldState = scaffoldState,

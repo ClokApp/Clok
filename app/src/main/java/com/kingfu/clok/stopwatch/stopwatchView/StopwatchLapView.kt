@@ -19,7 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
-import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel.StopwatchViewModelVariable.stopwatchTime
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.util.customFontSize
 
@@ -46,35 +45,9 @@ fun StopwatchLapView(
         ) {
 
         Row(Modifier.padding(10.dp)) {
-            Text(
-                text = "Lap",
-                modifier = Modifier.weight(0.20f),
-                fontSize = customFontSize(textUnit = 16.sp),
-                fontFamily = FontFamily.Default,
-                fontWeight = FontWeight.Normal,
-                color = Color.White.copy(0.70f),
-                textAlign = TextAlign.Center
-            )
-
-            Text(
-                text = "Lap times",
-                modifier = Modifier.weight(0.40f),
-                fontSize = customFontSize(textUnit = 16.sp),
-                fontFamily = FontFamily.Default,
-                fontWeight = FontWeight.Normal,
-                color = Color.White.copy(0.70f),
-                textAlign = TextAlign.Center
-            )
-
-            Text(
-                text = "Total times",
-                modifier = Modifier.weight(0.40f),
-                fontSize = customFontSize(textUnit = 16.sp),
-                fontFamily = FontFamily.Default,
-                fontWeight = FontWeight.Normal,
-                color = Color.White.copy(0.70f),
-                textAlign = TextAlign.Center
-            )
+            LapLabel(name = "Lap", weight = 0.20f)
+            LapLabel(name = "Lap times", weight = 0.40f)
+            LapLabel(name = "Total times", weight = 0.40f)
         }
 
         Divider(
@@ -86,47 +59,18 @@ fun StopwatchLapView(
         )
         Box {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxSize(),
                 state = lazyColumnState,
             ) {
-
                 items(vm.lapNumber.size) { index ->
                     Row(
                         modifier = Modifier
                             .padding(10.dp)
                             .fillMaxWidth(),
                     ) {
-                        Text(
-                            text = if (vm.lapNumber[index].toInt() < 10) "0${vm.lapNumber[index]}" else vm.lapNumber[index],
-                            fontSize = customFontSize(textUnit = 16.sp),
-                            fontFamily = FontFamily.Default,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.White.copy(0.50f),
-                            modifier = Modifier.weight(0.20f),
-                            textAlign = TextAlign.Center
-                        )
-
-                        Text(
-                            text = if (stopwatchTime > 3_600_000) vm.lapTime[index].takeWhile { it != '-' } else vm.lapTime[index].takeWhile { it != '-' },
-                            fontSize = customFontSize(textUnit = 16.sp),
-                            fontFamily = FontFamily.Default,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.White.copy(0.70f),
-                            modifier = Modifier.weight(0.40f),
-                            textAlign = TextAlign.Center
-                        )
-
-                        Text(
-                            text = if (stopwatchTime > 3_600_000) vm.lapTotalTime[index].takeWhile { it != '-' } else vm.lapTotalTime[index].takeWhile { it != '-' },
-                            fontSize = customFontSize(textUnit = 16.sp),
-                            fontFamily = FontFamily.Default,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.White.copy(0.90f),
-                            modifier = Modifier.weight(0.40f),
-                            textAlign = TextAlign.Center
-                        )
+                        LapContent(name = vm.getLapNumber(index), weight = 0.20f, alpha = 0.50f)
+                        LapContent(name = vm.getLapTimes(index), weight = 0.40f, alpha = 0.70f)
+                        LapContent(name = vm.getLapTotalTimes(index), weight = 0.40f, alpha = 0.90f)
                     }
                 }
             }
@@ -155,3 +99,33 @@ fun StopwatchLapView(
     }
 
 }
+
+@Composable
+fun RowScope.LapLabel(name: String, weight: Float) {
+    Text(
+        text = name,
+        modifier = Modifier.weight(weight),
+        fontSize = customFontSize(textUnit = 16.sp),
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        color = Color.White.copy(0.70f),
+        textAlign = TextAlign.Center
+    )
+}
+
+@Composable
+fun RowScope.LapContent(name: String, weight: Float, alpha: Float ){
+    Text(
+        text = name,
+        fontSize = customFontSize(textUnit = 16.sp),
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        color = Color.White.copy(alpha = alpha),
+        modifier = Modifier.weight(weight = weight),
+        textAlign = TextAlign.Center
+    )
+
+}
+
+
+

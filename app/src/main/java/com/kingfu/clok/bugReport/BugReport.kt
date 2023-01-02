@@ -49,12 +49,12 @@ fun BugReport() {
             .verticalScroll(bugReportScrollState)
     ) {
         Card(
-            modifier = Modifier.padding(5.dp),
             shape = RoundedCornerShape(30.dp)
         ) {
             Column {
                 Row(
-                    modifier = Modifier.background(Color.Black.copy(0.4f))
+                    modifier = Modifier
+                        .background(Color.Black.copy(0.4f))
                         .fillMaxWidth()
                         .clickable {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -111,7 +111,8 @@ fun BugReport() {
                 )
 
                 Row(
-                    modifier = Modifier.background(Color.Black.copy(0.4f))
+                    modifier = Modifier
+                        .background(Color.Black.copy(0.4f))
                         .fillMaxWidth()
                         .clickable {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -182,6 +183,67 @@ fun BugReport() {
             }
         }
 
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Black00)
+        ) {
+
+            Text(
+                text = "Potential bug fix",
+                modifier = Modifier.padding(start = 32.dp, end = 32.dp, top = 10.dp, bottom = 2.dp),
+                fontSize = customFontSize(textUnit = 16.sp),
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Gray
+            )
+
+            Card(
+                shape = RoundedCornerShape(30.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .background(Color.Black.copy(0.4f))
+                        .fillMaxWidth()
+                        .clickable {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+
+                        }
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(8.dp),
+                    ) {
+                        Text(
+                            text = "Clear App Data",
+                            fontSize = customFontSize(textUnit = 18.sp),
+                            fontFamily = FontFamily.Default,
+                            fontWeight = FontWeight.Normal,
+                        )
+                        Text(
+                            text = "1. Go to your phone's Settings app.\n" +
+                                    "2. Tap on the \"Apps\" or \"Application Manager\" option.\n" +
+                                    "3. Find the app you want to clear data for and tap on it.\n" +
+                                    "4. Tap on the \"Clear Data\" button. (might have to go to storage tab first)\n" +
+                                    "5. Confirm that you want to clear the app data by tapping \"OK\" on the pop-up window.\n\n" +
+                            "Note: Clearing app data will erase any personalization and customization that you have done within the app.\n\n" +
+                            "Last resort would be reinstall the application.",
+
+                            fontSize = customFontSize(textUnit = 14.sp),
+                            fontFamily = FontFamily.Default,
+                            fontWeight = FontWeight.Normal,
+                            color = Color.Gray
+                        )
+                    }
+                }
+
+            }
+        }
 
     }
 }
+
