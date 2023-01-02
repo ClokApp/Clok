@@ -2,7 +2,7 @@ package com.kingfu.clok.timer.timerView
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -197,7 +197,9 @@ fun DisplayTimerScroll(
             animationSpec = tween(
                 durationMillis = 500,
                 delayMillis = 0,
-                easing = EaseInOut
+//                easing = EaseInOut
+                easing = LinearEasing
+
             )
         )
 

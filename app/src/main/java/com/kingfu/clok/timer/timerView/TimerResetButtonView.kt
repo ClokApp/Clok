@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
@@ -56,14 +56,18 @@ fun TimerResetButtonView(
             initialOffsetX = { 250 },
             animationSpec = tween(
                 durationMillis = 50,
-                easing = EaseInOut
+//                easing = EaseInOut
+                easing = LinearEasing
+
             )
         ),
         exit = slideOutHorizontally(
             targetOffsetX = { 250 },
             animationSpec = tween(
                 durationMillis = 50,
-                easing = EaseInOut
+//                easing = EaseInOut
+                easing = LinearEasing
+
             )
         ),
         content = {
