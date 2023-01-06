@@ -69,7 +69,7 @@ fun BottomBarNavigation(
                             unselectedContentColor = Color.DarkGray,
                             icon = {
                                 Icon(
-                                    painterResource(if (selected) items[screen].filledIconId else items[screen].outlinedIconId),
+                                    painterResource(if (selected) items[screen].filledIconId!! else items[screen].outlinedIconId!!),
                                     contentDescription = null
                                 )
                             },

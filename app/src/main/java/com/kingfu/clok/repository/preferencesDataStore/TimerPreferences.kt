@@ -39,7 +39,7 @@ class TimerPreferences(context: Context) {
     private val timerEnableScrollsHapticFeedbackDefault = true
     private val timerNotificationDefault = 5f
     private val timerOffsetTimeDefault = 0L
-    private val timerRGBCCounterDefault = 255
+    private val timerRGBCCounterDefault = 255.0
     private val timerBackgroundEffectsDefault = "Snow"
 
     private val _timerIsFinished = booleanPreferencesKey("timerIsFinished")
@@ -54,7 +54,7 @@ class TimerPreferences(context: Context) {
     private val _timerEnableScrollsHapticFeedback = booleanPreferencesKey("timerEnableScrollsHapticFeedback")
     private val _timerNotification = floatPreferencesKey("timerNotification")
     private val _timerOffsetTime = longPreferencesKey("timerOffsetTime")
-    private val _timerRGBCounter = intPreferencesKey("timerRGBCounter")
+    private val _timerRGBCounter = doublePreferencesKey("timerRGBCounter")
     private val _timerBackgroundEffects = stringPreferencesKey("timerBackgroundEffects")
 
 
@@ -141,9 +141,10 @@ class TimerPreferences(context: Context) {
         }
     }
 
-    suspend fun setTimerRGBCounter(int: Int) {
+//    suspend fun setTimerRGBCounter(int: Int) {
+    suspend fun setTimerRGBCounter(double: Double) {
         timerDataStore.edit { preferences ->
-            preferences[_timerRGBCounter] = int
+            preferences[_timerRGBCounter] = double
         }
     }
 
@@ -218,7 +219,7 @@ class TimerPreferences(context: Context) {
             preferences[_timerOffsetTime] ?: timerOffsetTimeDefault
         }
 
-    val getTimerRGBCounter: Flow<Int> = timerDataStore.data
+    val getTimerRGBCounter: Flow<Double> = timerDataStore.data
         .map { preferences ->
             preferences[_timerRGBCounter] ?: timerRGBCCounterDefault
         }

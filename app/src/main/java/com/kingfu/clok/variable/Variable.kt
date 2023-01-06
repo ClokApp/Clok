@@ -13,6 +13,4 @@ object Variable {
     var navigateToStartScreen by mutableStateOf(true)
     var showMenu by mutableStateOf(false)
     var showSnackbar by mutableStateOf(false)
-
-
 }

@@ -43,8 +43,7 @@ class StopwatchRGBStyle {
                 else -> 0.00005
             }
 
-        RGBColorCounter =
-            (RGBColorCounter + ((refreshRate / 200) + temp)) % Int.MAX_VALUE
+        RGBColorCounter = (RGBColorCounter + ((refreshRate / 200) + temp)) % Int.MAX_VALUE
 
 
         for (i in 0 until RGBHrColorList.size) {

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -26,10 +27,10 @@ fun StopwatchSnowEffect(size: IntSize) {
     val snowXOffsetList = mutableListOf<Float>()
     val snowYOffsetList = mutableListOf<Float>()
     val snowSizeList = mutableListOf<Float>()
-    val numberOfSnows by rememberSaveable { mutableStateOf(30) }
+    val numberOfSnows by remember { mutableStateOf(50) }
 
     for (i in 0 until numberOfSnows) {
-        val duration by rememberSaveable { mutableStateOf((4000..6000).random()) }
+        val duration by rememberSaveable { mutableStateOf((2000..5000).random()) }
 
         val snowSizeInitial by rememberSaveable { mutableStateOf((20..25).random().toFloat()) }
         val snowSizeTarget by rememberSaveable { mutableStateOf((0..1).random().toFloat()) }
@@ -39,43 +40,44 @@ fun StopwatchSnowEffect(size: IntSize) {
             initialValue = snowSizeInitial,
             targetValue = snowSizeTarget,
             animationSpec = infiniteRepeatable(
-                animation = tween(duration, easing = LinearEasing),
+                animation = tween(duration, duration/8, easing = LinearEasing),
             )
         )
         snowSizeList.add(snowSize)
 
-        val snowYInitial by rememberSaveable { mutableStateOf((-18..-9).random().toFloat()) }
+        val snowYInitial by rememberSaveable { mutableStateOf((-250..-10).random().toFloat()) }
 
         val snowYTarget by rememberSaveable {
             mutableStateOf(((size.height*0.40).toInt()..(size.height*0.50).toInt()).random().toFloat())
         }
 
+
         val snowYOffset by transition.animateFloat(
             initialValue = snowYInitial,
             targetValue = snowYTarget,
             animationSpec = infiniteRepeatable(
-                animation = tween(duration, easing = LinearEasing),
+                animation = tween(duration, duration/8, easing = LinearEasing),
             )
         )
 
         snowYOffsetList.add(snowYOffset)
 
         val snowXInitial by rememberSaveable {
-            mutableStateOf(
-                (-size.width..size.width * 2).random().toFloat()
-            )
+            mutableStateOf((-size.width..size.width * 2).random().toFloat())
         }
 
-        val snowXTarget by rememberSaveable { mutableStateOf((0..size.width).random().toFloat()) }
+
+        val snowXTarget by rememberSaveable { mutableStateOf(snowXInitial) }
 
 
         val snowXOffset by transition.animateFloat(
-            initialValue = snowXInitial,
-            targetValue = snowXTarget,
-            animationSpec = infiniteRepeatable(
-                animation = tween(duration*150, easing = LinearEasing),
-            ),
-        )
+                initialValue = snowXInitial,
+                targetValue = snowXTarget,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(duration, duration / 8, easing = LinearEasing),
+                ),
+            )
+
         snowXOffsetList.add(0, snowXOffset)
     }
 
@@ -92,7 +94,7 @@ fun StopwatchSnowEffect(size: IntSize) {
 
                         radius = if (radius > 25f) 25f else radius,
                         center = Offset(
-                            x = snowXOffsetList[i] + sin(snowSizeList[i]),
+                            x = snowXOffsetList[i] + 3*sin(snowSizeList[i]),
                             y = snowYOffsetList[i],
                         )
                     )

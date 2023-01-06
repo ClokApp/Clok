@@ -30,7 +30,6 @@ class StopwatchViewModel(
     object StopwatchViewModelVariable {
         var stopwatchIsActive by mutableStateOf(false)
         var stopwatchTime by mutableStateOf(0L)
-
     }
 
     private var _lapNumber = mutableStateListOf<String>()
@@ -152,6 +151,7 @@ class StopwatchViewModel(
                 stopwatchTime =
                     (SystemClock.elapsedRealtime() - stopwatchInitialTime) + stopwatchOffsetTime
 
+//                stopwatchTime += 50_000
                 saveStopwatchLapPreviousTime()
                 saveStopwatchOffsetTime()
                 saveStopwatchTime()
@@ -192,42 +192,36 @@ class StopwatchViewModel(
     }
 
     fun formatTimeStopWatchHr(timeMillis: Long): String {
-        val hr2 = (timeMillis / 36_000_000) % 10
-        val hr1 = (timeMillis / 3_600_000) % 10
-        return "$hr2$hr1"
+        val hours = timeMillis / 1000 / 60 / 60 % 100
+        return "%02d".format(hours)
+
     }
 
     fun formatTimeStopWatchMin(timeMillis: Long): String {
-        val min2 = (timeMillis / 600_000) % 6
-        val min1 = (timeMillis / 60_000) % 10
-        return "$min2$min1"
+        val minutes = timeMillis / 1000 / 60 % 60
+        return "%02d".format(minutes)
     }
 
     fun formatTimeStopWatchSec(timeMillis: Long): String {
-        val sec2 = (timeMillis / 10_000) % 6
-        val sec1 = (timeMillis / 1_000) % 10
-        return "$sec2$sec1"
+        val seconds = timeMillis / 1000 % 60
+        return "%02d".format(seconds)
     }
 
     fun formatTimeStopWatchMs(timeMillis: Long): String {
-        val ms2 = (timeMillis / 100) % 10
-        val ms1 = (timeMillis / 10) % 10
-        return "$ms2$ms1"
+        val milliseconds = timeMillis % 1000 / 10
+        return "%02d".format(milliseconds)
     }
 
     fun formatTimeStopWatch(timeMillis: Long): String {
-        val hr2 = (timeMillis / 36_000_000) % 10
-        val hr1 = (timeMillis / 3_600_000) % 10
-        val min2 = (timeMillis / 600_000) % 6
-        val min1 = (timeMillis / 60_000) % 10
-        val sec2 = (timeMillis / 10_000) % 6
-        val sec1 = (timeMillis / 1_000) % 10
-        val ms2 = (timeMillis / 100) % 10
-        val ms1 = (timeMillis / 10) % 10
-        var result = "$min2$min1:$sec2$sec1.$ms2$ms1"
+        var result =
+            "${formatTimeStopWatchMin(timeMillis)}:${formatTimeStopWatchSec(timeMillis)}.${
+                formatTimeStopWatchMs(
+                    timeMillis
+                )
+            }"
 
         if (stopwatchTime >= 3_600_000) {
-            result = "$hr2$hr1:$result"
+            result = "${formatTimeStopWatchHr(timeMillis)}:$result"
             return result
         }
 

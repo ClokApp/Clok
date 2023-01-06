@@ -41,8 +41,6 @@ fun Navigation(
 ) {
     val context = LocalContext.current
 
-
-
     if (navigateToStartScreen) {
         LaunchedEffect(Unit) {
             startDestination = navigationPreferences.getStartDestination.first()

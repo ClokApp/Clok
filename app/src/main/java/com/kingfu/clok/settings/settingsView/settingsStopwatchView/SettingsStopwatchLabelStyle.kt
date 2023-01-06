@@ -52,7 +52,8 @@ fun SettingsStopwatchLabelStyle(
             Column {
                 for (i in radioOptions.indices) {
                     Row(
-                        modifier = Modifier.background(Color.Black.copy(0.4f))
+                        modifier = Modifier
+                            .background(Color.Black.copy(0.4f))
                             .fillMaxWidth()
                             .clickable {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -71,13 +72,29 @@ fun SettingsStopwatchLabelStyle(
                                 vm.saveStopwatchLabelStyleSelectedOption()
                             }
                         )
-                        Text(
-                            text = radioOptions.elementAt(i),
-                            modifier = Modifier,
-                            fontSize = customFontSize(textUnit = 14.sp),
-                            fontFamily = FontFamily.Default,
-                            fontWeight = FontWeight.Normal,
-                        )
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(8.dp),
+                        ) {
+                            Text(
+                                text = radioOptions.elementAt(i),
+                                modifier = Modifier,
+                                fontSize = customFontSize(textUnit = 14.sp),
+                                fontFamily = FontFamily.Default,
+                                fontWeight = FontWeight.Normal,
+                            )
+
+                            if (radioOptions.elementAt(i) == "RGB") {
+                                Text(
+                                    text = "Scales with stopwatch refresh rate.",
+                                    fontSize = customFontSize(textUnit = 14.sp),
+                                    fontFamily = FontFamily.Default,
+                                    fontWeight = FontWeight.Normal,
+                                    color = Color.Gray
+                                )
+                            }
+                        }
 
                     }
                     if (i != radioOptions.size - 1) {

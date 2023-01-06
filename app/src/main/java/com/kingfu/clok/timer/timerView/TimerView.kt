@@ -5,8 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ScaffoldState
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -33,19 +33,6 @@ fun TimerView(
     val lazyListStateHr = rememberLazyListState()
     val lazyListStateMin = rememberLazyListState()
     val lazyListStateSec = rememberLazyListState()
-
-
-    var loadInitialTime by rememberSaveable { mutableStateOf(true) }
-
-
-    LaunchedEffect(Unit) {
-        if (loadInitialTime) {
-            lazyListStateHr.scrollToItem(Int.MAX_VALUE / 2 - 24 + vm.timerHour)
-            lazyListStateMin.scrollToItem(Int.MAX_VALUE / 2 - 4 + vm.timerMinute)
-            lazyListStateSec.scrollToItem(Int.MAX_VALUE / 2 - 4 + vm.timerSecond)
-            loadInitialTime = false
-        }
-    }
 
     Column(
         modifier = Modifier

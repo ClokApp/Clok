@@ -160,7 +160,7 @@ fun SettingsStopwatchView(
                     )
 
                     Text(
-                        text = "Enable when show label is turned on.",
+                        text = "Enable when show label is turned on and stopwatch is running.",
                         fontSize = customFontSize(textUnit = 14.sp),
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight.Normal,

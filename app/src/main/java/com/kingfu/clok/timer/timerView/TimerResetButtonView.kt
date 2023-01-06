@@ -56,7 +56,6 @@ fun TimerResetButtonView(
             initialOffsetX = { 250 },
             animationSpec = tween(
                 durationMillis = 50,
-//                easing = EaseInOut
                 easing = LinearEasing
 
             )
@@ -65,7 +64,6 @@ fun TimerResetButtonView(
             targetOffsetX = { 250 },
             animationSpec = tween(
                 durationMillis = 50,
-//                easing = EaseInOut
                 easing = LinearEasing
 
             )
@@ -85,7 +83,7 @@ fun TimerResetButtonView(
                             lazyListStateSec.scrollToItem(Int.MAX_VALUE / 2 - 4)
                         }
                     } else {
-                        vm.cancelButton()
+                        vm.cancelTimer()
                     }
                     vm.timerCancelNotification(context)
                 }

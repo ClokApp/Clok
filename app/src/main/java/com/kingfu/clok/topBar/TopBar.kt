@@ -42,11 +42,13 @@ fun TopBar(
                     Screens.SettingsTimerProgressBarStyle.route -> {
                         Screens.SettingsTimerProgressBarStyle.name
                     }
-                    Screens.SettingsStopwatchBackgroundEffects.route ->{
-                        "Stopwatch - ${Screens.SettingsStopwatchBackgroundEffects.name}"
+                    Screens.SettingsStopwatchBackgroundEffects.route -> {
+//                        "${Screens.Stopwatch.name} - ${Screens.SettingsStopwatchBackgroundEffects.name}"
+                        Screens.SettingsStopwatchBackgroundEffects.name
                     }
-                    Screens.SettingsTimerBackgroundEffects.route ->{
-                       "Timer - ${Screens.SettingsTimerBackgroundEffects.name}"
+                    Screens.SettingsTimerBackgroundEffects.route -> {
+//                        "${Screens.Timer.name} - ${Screens.SettingsTimerBackgroundEffects.name}"
+                        Screens.SettingsTimerBackgroundEffects.name
                     }
                     Screens.BugReport.route -> {
                         Screens.BugReport.name
@@ -70,7 +72,7 @@ fun TopBar(
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             painterResource(id = R.drawable.ic_arrow_back_ios_new_24),
-                            contentDescription = "Back"
+                            contentDescription = null
                         )
                     }
                 }

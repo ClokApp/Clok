@@ -1,6 +1,5 @@
 package com.kingfu.clok.timer.timerView
 
-import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
@@ -27,7 +26,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
@@ -51,20 +49,20 @@ fun TimerTimeView(
     haptic: HapticFeedback,
     configurationOrientation: Int,
 ) {
-    val activity = LocalContext.current as Activity
+
     Box(
         Modifier
             .zIndex(1f)
             .clip(CircleShape)
     ) {
-
         val animatedProgress by animateFloatAsState(
-            targetValue = vm.timerCurrentTimePercentage,
+            targetValue = if (!vm.timerCurrentTimePercentage.isNaN()) vm.timerCurrentTimePercentage else 0f,
             animationSpec = tween(
-                durationMillis = if (timerTime >= 10000) 100 else 50,
+                durationMillis = if (timerTime * 0.005 > 250) 250 else (timerTime * 0.005).toInt(),
                 easing = LinearEasing
             ),
         )
+
         val animatedCircularProgressBarColor by animateColorAsState(
             targetValue = TimerCyanStyle().cyanStyleListOfCyan(),
             animationSpec = tween(
@@ -73,7 +71,7 @@ fun TimerTimeView(
             )
         )
 
-        if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT && !animatedProgress.isNaN()) {
             Canvas(
                 modifier = Modifier
                     .size(320.dp, 320.dp)
@@ -91,13 +89,18 @@ fun TimerTimeView(
                         colors =
                         when (timerLabelStyleSelectedOption) {
                             "RGB" -> TimerRGBStyle().rgbStyleListRGB()
-
-                            else -> {
+                            "Cyan" -> {
                                 listOf(
                                     animatedCircularProgressBarColor,
-                                    animatedCircularProgressBarColor
+                                    animatedCircularProgressBarColor,
                                 )
                             }
+
+                            else -> listOf(
+                                Color.Yellow,
+                                Color.Yellow,
+                            )
+
                         }
                     ),
                     startAngle = -90f,
@@ -118,7 +121,9 @@ fun TimerTimeView(
                 .zIndex(-1f)
                 .onSizeChanged { backgroundEffectsBoxSize = it }
         ) {
-            if (backgroundEffectsBoxSize.width.dp != 0.dp && configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (vm.timerIsActive && backgroundEffectsBoxSize.width.dp != 0.dp
+                && configurationOrientation == Configuration.ORIENTATION_PORTRAIT
+            ) {
                 when (timerBackgroundEffectsSelectedOption) {
                     "Snow" -> {
                         TimerSnowEffect(size = backgroundEffectsBoxSize)
@@ -142,13 +147,13 @@ fun TimerTimeView(
                         modifier = Modifier.clickable {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             if (vm.timerIsActive) {
-                                vm.pauseTimer(activity)
+                                vm.pauseTimer()
                             } else {
                                 if (vm.timerIsEditState) {
                                     vm.convertHrMinSecToMillis()
+                                    vm.timerSetTotalTime()
                                 }
-                                vm.timerSetTotalTime()
-                                vm.startTimer(activity)
+                                vm.startTimer()
                             }
                             vm.timerCancelNotification(context)
                         }

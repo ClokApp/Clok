@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -17,18 +17,18 @@
         tools:targetApi="33">
         <activity
             android:name="com.kingfu.clok.mainActivity.MainActivity"
-            android:theme="@style/Theme.Clok"
+            android:exported="true"
             android:launchMode="singleTop"
-            android:exported="true">
+            android:theme="@style/Theme.Clok">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <receiver android:name="com.kingfu.clok.notification.timer.TimerNotificationReceiver"/>
-
+        <receiver
+            android:name="com.kingfu.clok.notification.timer.TimerNotificationReceiver"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -61,6 +62,18 @@ fun TimerEditView(
     val selectedItemMin by remember { derivedStateOf { lazyListStateMin.firstVisibleItemIndex + 1 } }
     val selectedItemSec by remember { derivedStateOf { lazyListStateSec.firstVisibleItemIndex + 1 } }
 
+
+    var loadInitialTime by rememberSaveable { mutableStateOf(true) }
+
+
+    LaunchedEffect(Unit) {
+        if (loadInitialTime && vm.timerIsEditState) {
+            lazyListStateHr.scrollToItem(Int.MAX_VALUE / 2 - 24 + vm.timerHour)
+            lazyListStateMin.scrollToItem(Int.MAX_VALUE / 2 - 4 + vm.timerMinute)
+            lazyListStateSec.scrollToItem(Int.MAX_VALUE / 2 - 4 + vm.timerSecond)
+            loadInitialTime = false
+        }
+    }
 
     LaunchedEffect(selectedItemHr) {
         vm.updateTimerHour(selectedItemHr % TIMER_HR)
@@ -197,9 +210,7 @@ fun DisplayTimerScroll(
             animationSpec = tween(
                 durationMillis = 500,
                 delayMillis = 0,
-//                easing = EaseInOut
                 easing = LinearEasing
-
             )
         )
 

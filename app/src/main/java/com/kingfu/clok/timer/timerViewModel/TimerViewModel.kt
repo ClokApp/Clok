@@ -1,9 +1,7 @@
 package com.kingfu.clok.timer.timerViewModel
 
-import android.app.Activity
 import android.content.Context
 import android.os.SystemClock
-import android.view.WindowManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,6 +14,7 @@ import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.Setting
 import com.kingfu.clok.timer.styles.TimerRGBStyle
 import com.kingfu.clok.timer.styles.TimerRGBStyle.TimerRGBStyleVariable.timerRGBCounter
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel.TimerViewModelVariable.timerTime
+import com.kingfu.clok.timer.timerViewModel.TimerViewModel.TimerViewModelVariable.timerTotalTime
 import com.kingfu.clok.variable.Variable.showSnackbar
 import com.kingfu.clok.variable.Variable.timerShowNotification
 import kotlinx.coroutines.delay
@@ -30,6 +29,7 @@ class TimerViewModel(
 
     object TimerViewModelVariable {
         var timerTime by mutableStateOf(0L)
+        var timerTotalTime by mutableStateOf(0.0)
     }
 
     var timerIsFinished by mutableStateOf(false)
@@ -45,9 +45,6 @@ class TimerViewModel(
         private set
 
     var timerSecond by mutableStateOf(0)
-        private set
-
-    var timerTotalTime by mutableStateOf(0.0)
         private set
 
     var timerCurrentTimePercentage by mutableStateOf(0.0f)
@@ -93,27 +90,25 @@ class TimerViewModel(
     }
 
     fun timerSetTotalTime() {
-        if (timerIsEditState) {
-            timerIsEditState = false
-            timerTotalTime = timerTime.toDouble()
-        }
+        timerTotalTime = timerTime.toDouble()
     }
 
-    fun startTimer(activity: Activity) {
-
-        if (timerCountOvertime && timerIsFinished) {
-            pauseTimer(activity)
-        }
+    fun startTimer() {
         timerIsActive = true
-        timerInitialTime = SystemClock.elapsedRealtime()
-        activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
         viewModelScope.launch {
+            delay(1)
+            if (timerCountOvertime && timerIsFinished) {
+                pauseTimer()
+            }
+            timerIsEditState = false
+            timerInitialTime = SystemClock.elapsedRealtime()
             while (timerIsActive) {
-                timerLabelStyles()
+                delay(1L)
+
                 if (timerTime >= 0L && !timerIsFinished) {
                     timerCurrentTimePercentage = (timerTime.toDouble() / timerTotalTime).toFloat()
                     timerTime = timerOffsetTime + (timerInitialTime - SystemClock.elapsedRealtime())
+                    timerLabelStyles()
                 } else {
                     if (!timerIsFinished) {
                         timerIsFinished = true
@@ -128,18 +123,18 @@ class TimerViewModel(
                         timerTime =
                             timerOffsetTime + (SystemClock.elapsedRealtime() - timerInitialTime)
                     } else {
-                        pauseTimer(activity)
+                        pauseTimer()
                     }
                 }
-                delay(55L)
+
             }
         }
     }
 
-    fun pauseTimer(activity: Activity) {
+    fun pauseTimer() {
         timerIsActive = false
-        activity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         viewModelScope.launch {
+            delay(1)
             timerOffsetTime = timerTime
             saveTimerOffsetTime()
             saveTimerCurrentPercentage()
@@ -150,37 +145,33 @@ class TimerViewModel(
     }
 
     fun cancelTimer() {
-        timerIsEditState = true
         timerIsActive = false
-        timerIsFinished = false
-        timerTime = 0L
-        timerCurrentTimePercentage = 0f
-        timerOffsetTime = 0L
         viewModelScope.launch {
+            delay(1)
+            timerCurrentTimePercentage = 0f
+            timerIsFinished = false
+            timerOffsetTime = 0L
+            timerIsEditState = true
+
             saveTimerIsFinished()
+            saveTimerOffsetTime()
             saveTimerIsEditState()
-            saveTimerOffsetTime()
-
-            saveTimerOffsetTime()
-            saveTimerCurrentPercentage()
-            saveTimerOffsetTime()
-
         }
     }
 
     fun resetTimer() {
+
         timerIsActive = false
-        timerIsFinished = false
-        timerTime = 0L
-        timerHour = 0
-        timerMinute = 0
-        timerSecond = 0
-        timerOffsetTime = 0L
+
         viewModelScope.launch {
+            delay(1)
+            timerIsFinished = false
+            timerHour = 0
+            timerMinute = 0
+            timerSecond = 0
             saveTimerHour()
             saveTimerMinute()
             saveTimerSecond()
-            saveTimerOffsetTime()
         }
     }
 
@@ -215,23 +206,39 @@ class TimerViewModel(
 
     fun formatTimerTime(timeMillis: Long): String {
 
-        val hr2 = (timerTime / 36_000_000) % 10
-        val hr1 = (timerTime / 3_600_000) % 10
-        val min2 = (timerTime / 600_000) % 6
-        val min1 = (timerTime / 60_000) % 10
-        val sec2 = (timerTime / 10_000) % 6
-        val sec1 = (timerTime / 1_000) % 10
-        val ms2 = (timerTime / 100) % 10
-        val ms1 = (timerTime / 10) % 10
+        val hours = timerTime / 1000 / 60 / 60 % 100
+        val minutes = timerTime / 1000 / 60 % 60
+        val seconds = timerTime / 1000 % 60
+        val milliseconds = timerTime % 1000 / 10
 
         var time =
             when {
-                timeMillis >= 36_000_000L -> "$hr2$hr1:$min2$min1:$sec2$sec1"
-                timeMillis in 3_600_000L until 36_000_000 -> "$hr1:$min2$min1:$sec2$sec1"
-                timeMillis in 600_000L until 3_600_000L -> "$min2$min1:$sec2$sec1"
-                timeMillis in 60_000 until 600_000L -> "$min1:$sec2$sec1"
-                timeMillis in 10_000L until 60_000L -> "$sec2$sec1"
-                timeMillis in 0L until 10_000L -> "$sec1.$ms2$ms1"
+                timeMillis >= 36_000_000L -> "${"%02d".format(hours)}:${"%02d".format(minutes)}:${
+                    "%02d".format(
+                        seconds
+                    )
+                }"
+                timeMillis in 3_600_000L until 36_000_000 -> "${"%01d".format(hours)}:${
+                    "%02d".format(
+                        minutes
+                    )
+                }:${"%02d".format(seconds)}"
+                timeMillis in 600_000L until 3_600_000L -> "${"%02d".format(minutes)}:${
+                    "%02d".format(
+                        seconds
+                    )
+                }"
+                timeMillis in 60_000 until 600_000L -> "${"%01d".format(minutes)}:${
+                    "%02d".format(
+                        seconds
+                    )
+                }"
+                timeMillis in 10_000L until 60_000L -> "%02d".format(seconds)
+                timeMillis in 0L until 10_000L -> "${"%01d".format(seconds)}.${
+                    "%02d".format(
+                        milliseconds
+                    )
+                }"
                 else -> "0"
             }
 
@@ -271,11 +278,6 @@ class TimerViewModel(
         }
     }
 
-
-    fun cancelButton() {
-        cancelTimer()
-    }
-
     suspend fun clearAllDataPreferences() {
         timerPreferences.clearAll()
     }
@@ -292,66 +294,64 @@ class TimerViewModel(
         timerPreferences.setTimerSecond(timerSecond)
     }
 
-    suspend fun saveTimerIsFinished() {
+    private suspend fun saveTimerIsFinished() {
         timerPreferences.setTimerIsFinished(timerIsFinished)
     }
 
-    suspend fun saveTimerTotalTime() {
+    private suspend fun saveTimerTotalTime() {
         timerPreferences.setTimerTotalTime(timerTotalTime)
     }
 
-    suspend fun saveTimerIsEditState() {
+    private suspend fun saveTimerIsEditState() {
         timerPreferences.setTimerIsEditState(timerIsEditState)
     }
 
-    suspend fun saveTimerCurrentPercentage() {
+    private suspend fun saveTimerCurrentPercentage() {
         timerPreferences.setTimerCurrentPercentage(timerCurrentTimePercentage)
     }
 
-    suspend fun saveTimerOffsetTime() {
+    private suspend fun saveTimerOffsetTime() {
         timerPreferences.setTimerOffsetTime(timerOffsetTime)
     }
 
-    suspend fun saveTimerRGBCounter() {
+    private suspend fun saveTimerRGBCounter() {
         timerPreferences.setTimerRGBCounter(timerRGBCounter)
     }
 
-    suspend fun loadTimerRGBCounter() {
+    private suspend fun loadTimerRGBCounter() {
         timerRGBCounter = timerPreferences.getTimerRGBCounter.first()
     }
 
-    suspend fun loadTimerHour(){
+    private suspend fun loadTimerHour() {
         timerHour = timerPreferences.getTimerHour.first()
     }
 
-    suspend fun loadTimerMinute(){
+    private suspend fun loadTimerMinute() {
         timerMinute = timerPreferences.getTimerMinute.first()
     }
 
-    suspend fun loadTimerSecond(){
+    private suspend fun loadTimerSecond() {
         timerSecond = timerPreferences.getTimerSecond.first()
     }
 
-    suspend fun loadTimerIsFinished(){
+    private suspend fun loadTimerIsFinished() {
         timerIsFinished = timerPreferences.getTimerIsFinished.first()
     }
 
-    suspend fun loadTImerIsEditState(){
+    private suspend fun loadTImerIsEditState() {
         timerIsEditState = timerPreferences.getTimerIsEditState.first()
     }
 
-    suspend fun loadTimerTotalTime(){
+    private suspend fun loadTimerTotalTime() {
         timerTotalTime = timerPreferences.getTimerTotalTime.first()
     }
 
-    suspend fun loadTimerCurrentTimePercentage(){
+    private suspend fun loadTimerCurrentTimePercentage() {
         timerCurrentTimePercentage = timerPreferences.getTimerCurrentPercentage.first()
     }
 
-    suspend fun loadTimerOffsetTime(){
+    private suspend fun loadTimerOffsetTime() {
         timerOffsetTime = timerPreferences.getTimerOffsetTime.first()
     }
-
-
 
 }

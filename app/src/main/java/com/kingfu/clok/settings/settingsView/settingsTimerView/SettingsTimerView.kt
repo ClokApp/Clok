@@ -109,7 +109,7 @@ fun SettingsTimerView(
                     )
 
                     Text(
-                        text = "Enable when progress bar is visible.",
+                        text = "Enable when progress bar is visible and timer is running.",
                         fontSize = customFontSize(textUnit = 14.sp),
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight.Normal,

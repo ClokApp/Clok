@@ -10,8 +10,8 @@ android {
         applicationId "com.kingfu.clok"
         minSdk 26
         targetSdk 33
-        versionCode 4
-        versionName "1.2"
+        versionCode 5
+        versionName "1.2.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -75,4 +75,7 @@ dependencies {
 
     // preferences DataStore
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
+
+    // Notification media style
+    implementation 'androidx.media:media:1.6.0'
 }

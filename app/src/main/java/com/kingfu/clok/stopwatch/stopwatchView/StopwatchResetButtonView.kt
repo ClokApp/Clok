@@ -55,7 +55,6 @@ fun StopwatchResetButton(
             initialOffsetX = { 250 },
             animationSpec = tween(
                 durationMillis = 50,
-//                easing = EaseInOut
                 easing = LinearEasing
             )
         ),
@@ -63,7 +62,6 @@ fun StopwatchResetButton(
             targetOffsetX = { 250 },
             animationSpec = tween(
                 durationMillis = 50,
-//                easing = EaseInOut
                 easing = LinearEasing
 
             )

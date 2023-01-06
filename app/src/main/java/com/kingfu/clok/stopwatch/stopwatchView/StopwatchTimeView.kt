@@ -57,7 +57,7 @@ fun StopwatchTimeView(
                 .onSizeChanged { backgroundEffectsBoxSize = it }
                 .zIndex(-1f)
         ) {
-            if (backgroundEffectsBoxSize.width.dp != 0.dp && stopwatchShowLabel) {
+            if (stopwatchIsActive && backgroundEffectsBoxSize.width.dp != 0.dp && stopwatchShowLabel) {
                 when (stopwatchBackgroundEffectsSelectedOption) {
                     "Snow" -> StopwatchSnowEffect(backgroundEffectsBoxSize)
                 }

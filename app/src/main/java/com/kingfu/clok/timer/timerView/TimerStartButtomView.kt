@@ -1,6 +1,5 @@
 package com.kingfu.clok.timer.timerView
 
-import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
@@ -12,11 +11,11 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,6 +35,7 @@ fun TimerStartButtonView(
     context: Context,
     configurationOrientation: Int,
 ) {
+    val coroutineScope = rememberCoroutineScope()
 
     val startTimerColor by animateColorAsState(
         if (lazyListStateHr.isScrollInProgress ||
@@ -53,7 +53,6 @@ fun TimerStartButtonView(
             Green50,
     )
 
-    val activity = LocalContext.current as Activity
     val enableStartBtn = startTimerColor != Color.Gray
 
     OutlinedButton(
@@ -64,13 +63,13 @@ fun TimerStartButtonView(
         {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             if (vm.timerIsActive) {
-                vm.pauseTimer(activity)
+                vm.pauseTimer()
             } else {
                 if (vm.timerIsEditState) {
                     vm.convertHrMinSecToMillis()
+                    vm.timerSetTotalTime()
                 }
-                vm.timerSetTotalTime()
-                vm.startTimer(activity)
+                vm.startTimer()
             }
             vm.timerCancelNotification(context)
         }

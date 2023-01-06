@@ -44,8 +44,7 @@ fun AppNavHost() {
         factory = TimerFactory(TimerPreferences.getInstance(LocalContext.current))
     )
 
-    val navigationPreferences: NavigationPreferences =
-        NavigationPreferences.getInstance(LocalContext.current)
+    val navigationPreferences: NavigationPreferences = NavigationPreferences.getInstance(LocalContext.current)
 
     Scaffold(
         scaffoldState = scaffoldState,

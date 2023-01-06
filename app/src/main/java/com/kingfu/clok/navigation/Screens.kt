@@ -6,8 +6,8 @@ import com.kingfu.clok.R
 sealed class Screens(
     val route: String,
     val name: String,
-    val filledIconId: Int,
-    val outlinedIconId: Int
+    val filledIconId: Int?,
+    val outlinedIconId: Int?
 ) {
     object Stopwatch : Screens(
         "stopwatch",
@@ -26,43 +26,55 @@ sealed class Screens(
     object Settings : Screens(
         "settings",
         "Settings",
-        R.drawable.ic_sharp_fill_settings_24,
-        outlinedIconId = R.drawable.ic_outline_settings_24
+//        filledIconId = R.drawable.ic_sharp_fill_settings_24,
+//        outlinedIconId = R.drawable.ic_outline_settings_24
+        filledIconId = null,
+        outlinedIconId = null
     )
 
     object SettingsStopwatchLabelStyle : Screens(
         "settingsStopwatchLabelStyle",
         "Label styles",
-        R.drawable.ic_sharp_fill_settings_24,
-        R.drawable.ic_outline_settings_24
+//        R.drawable.ic_sharp_fill_settings_24,
+//        R.drawable.ic_outline_settings_24
+        filledIconId = null,
+        outlinedIconId = null
     )
 
     object SettingsTimerProgressBarStyle : Screens(
         "settingsTimerProgressBarStyle",
         "Progress bar styles",
-        R.drawable.ic_sharp_fill_settings_24,
-        R.drawable.ic_outline_settings_24
+//        R.drawable.ic_sharp_fill_settings_24,
+//        R.drawable.ic_outline_settings_24
+        filledIconId = null,
+        outlinedIconId = null
     )
 
     object BugReport : Screens(
         "bugReport",
         "Bug report",
-        filledIconId = R.drawable.ic_sharp_fill_settings_24,
-        R.drawable.ic_outline_settings_24
+//        filledIconId = R.drawable.ic_sharp_fill_settings_24,
+//        R.drawable.ic_outline_settings_24
+        filledIconId = null,
+        outlinedIconId = null
     )
 
-    object SettingsStopwatchBackgroundEffects: Screens(
+    object SettingsStopwatchBackgroundEffects : Screens(
         "settingsStopwatchBackgroundEffects",
-        "Background Effects",
-        R.drawable.ic_sharp_fill_settings_24,
-        R.drawable.ic_outline_settings_24
+        "Label background effects",
+//        R.drawable.ic_sharp_fill_settings_24,
+//        R.drawable.ic_outline_settings_24
+        filledIconId = null,
+        outlinedIconId = null
     )
 
-    object SettingsTimerBackgroundEffects: Screens(
+    object SettingsTimerBackgroundEffects : Screens(
         "settingsTimerBackgroundEffects",
-        "Background Effects",
-        R.drawable.ic_sharp_fill_settings_24,
-        R.drawable.ic_outline_settings_24
+        "Progress bar background effects",
+//        R.drawable.ic_sharp_fill_settings_24,
+//        R.drawable.ic_outline_settings_24
+        filledIconId = null,
+        outlinedIconId = null
     )
 }
 
