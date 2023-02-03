@@ -1,10 +1,11 @@
 package com.kingfu.clok.stopwatch.stopwatchView
 
 import android.content.res.Configuration
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,34 +28,31 @@ fun StopwatchView(
     val haptic = LocalHapticFeedback.current
     val configurationOrientation = LocalConfiguration.current.orientation
     val coroutineScopeStopwatch = rememberCoroutineScope()
-
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Black00),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(color = Black00)
     ) {
         if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize(),
+                modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 StopwatchTimeView(vm = vm)
 
                 StopwatchLapView(
-                    vm,
-                    lazyColumnState,
-                    configurationOrientation
+                    vm = vm,
+                    lazyColumnState = lazyColumnState,
+                    configurationOrientation = configurationOrientation
                 )
 
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .animateContentSize(),
+                        .verticalScroll(state = scrollState),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     StopwatchResetButton(
@@ -67,19 +65,17 @@ fun StopwatchView(
                     StopwatchStartButtonView(
                         vm = vm,
                         haptic = haptic,
-                        coroutineScopeStopwatch,
+                        coroutineScopeStopwatch = coroutineScopeStopwatch,
                     )
                 }
             }
         } else {
-            Row(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(modifier = Modifier.fillMaxSize()) {
                 Column(
-                    modifier = Modifier.weight(0.5f),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(weight = 0.5f)
+                        .verticalScroll(state = scrollState),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -104,11 +100,13 @@ fun StopwatchView(
                     }
                 }
 
-                StopwatchLapView(
-                    vm,
-                    lazyColumnState,
-                    configurationOrientation
-                )
+                Box(modifier = Modifier.weight(weight = 0.5f)) {
+                    StopwatchLapView(
+                        vm = vm,
+                        lazyColumnState = lazyColumnState,
+                        configurationOrientation = configurationOrientation
+                    )
+                }
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.kingfu.clok.bottomBar
+package com.kingfu.clok.components.bottomBar
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -24,11 +23,9 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.kingfu.clok.navigation.Screens
-import com.kingfu.clok.navigation.items
 import com.kingfu.clok.repository.preferencesDataStore.NavigationPreferences
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.util.NoRippleTheme
-import com.kingfu.clok.util.customFontSize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,6 +37,7 @@ fun BottomBarNavigation(
     navigationPreferences: NavigationPreferences,
 ) {
     val currentRoute = currentDestination?.route
+    val items = listOf( Screens.Stopwatch, Screens.Timer)
 
     AnimatedVisibility(
         visible = currentRoute == Screens.Stopwatch.route || currentRoute == Screens.Timer.route,
@@ -60,7 +58,7 @@ fun BottomBarNavigation(
         modifier = Modifier.background(Black00),
         content = {
             BottomNavigation(backgroundColor = Black00) {
-                for (screen in 0 until 2) {
+                for (screen in items.indices) {
                     val selected =
                         currentDestination?.hierarchy?.any { it.route == items[screen].route } == true
                     CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
@@ -69,14 +67,14 @@ fun BottomBarNavigation(
                             unselectedContentColor = Color.DarkGray,
                             icon = {
                                 Icon(
-                                    painterResource(if (selected) items[screen].filledIconId!! else items[screen].outlinedIconId!!),
+                                    imageVector = if (selected) items[screen].filledIconId!! else items[screen].outlinedIconId!!,
                                     contentDescription = null
                                 )
                             },
                             label = {
                                 Text(
                                     items[screen].name,
-                                    fontSize = customFontSize(textUnit = 10.sp),
+                                    fontSize = 10.sp,
                                     fontFamily = FontFamily.Default,
                                     fontWeight = FontWeight.Normal
                                 )

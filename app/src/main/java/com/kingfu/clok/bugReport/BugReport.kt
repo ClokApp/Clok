@@ -10,8 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.rounded.ArrowForward
+import androidx.compose.material.icons.rounded.Email
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -96,7 +96,7 @@ fun BugReport() {
                         }
                     ) {
                         Icon(
-                            Icons.Filled.ArrowForward,
+                            Icons.Rounded.ArrowForward,
                             contentDescription = null,
                             tint = Color.White
                         )
@@ -116,11 +116,9 @@ fun BugReport() {
                         .fillMaxWidth()
                         .clickable {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            context.startActivity(
-                                Intent.createChooser(
-                                    bugReportEmailIntent,
-                                    "Send email..."
-                                )
+                            context.startActivity(Intent.createChooser(
+                                bugReportEmailIntent,
+                                "Send email...")
                             )
                         }
                         .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -173,7 +171,7 @@ fun BugReport() {
                         }
                     ) {
                         Icon(
-                            Icons.Filled.Email,
+                            Icons.Rounded.Email,
                             contentDescription = null,
                             tint = Color.White
                         )

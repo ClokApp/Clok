@@ -4,10 +4,15 @@ import android.os.SystemClock
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.runtime.*
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kingfu.clok.bottomBar.showSnackbar
+import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
+import androidx.lifecycle.viewmodel.compose.saveable
+import com.kingfu.clok.components.showSnackBar
 import com.kingfu.clok.repository.preferencesDataStore.StopwatchPreferences
+import com.kingfu.clok.repository.room.stopwatchRoom.StopwatchLapData
+import com.kingfu.clok.repository.room.stopwatchRoom.StopwatchLapDatabase
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch.SettingsViewModelStopwatchVariable.stopwatchLabelStyleSelectedOption
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch.SettingsViewModelStopwatchVariable.stopwatchRefreshRateValue
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch.SettingsViewModelStopwatchVariable.stopwatchShowLabel
@@ -15,65 +20,57 @@ import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel.Stopwatch
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel.StopwatchViewModelVariable.stopwatchTime
 import com.kingfu.clok.stopwatch.styles.StopwatchRGBStyle
 import com.kingfu.clok.stopwatch.styles.StopwatchRGBStyle.RGBVariable.RGBColorCounter
-import com.kingfu.clok.variable.Variable.showSnackbar
+import com.kingfu.clok.variable.Variable.showSnackBar
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-
+@OptIn(SavedStateHandleSaveableApi::class)
 class StopwatchViewModel(
     private val stopwatchPreferences: StopwatchPreferences,
+    private val stopwatchLapDatabase: StopwatchLapDatabase,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     /******************************** Stopwatch ********************************/
 
     object StopwatchViewModelVariable {
-        var stopwatchIsActive by mutableStateOf(false)
-        var stopwatchTime by mutableStateOf(0L)
+        var stopwatchIsActive by mutableStateOf(value = false)
+        var stopwatchTime by mutableStateOf(value = 0L)
     }
 
-    private var _lapNumber = mutableStateListOf<String>()
-    val lapNumber: List<String>
-        get() = _lapNumber
-
-    private var _lapTime = mutableStateListOf<String>()
-    val lapTime: List<String>
-        get() = _lapTime
-
-    var lapCounter by mutableStateOf(0)
+    var lapPreviousTime by savedStateHandle.saveable { mutableStateOf(value = 0L) }
         private set
 
-    var lapPreviousTime by mutableStateOf(0L)
+    private var _lapList = mutableStateListOf<StopwatchLapData>()
+    val lapList: List<StopwatchLapData>
+        get() = _lapList
+
+    var stopwatchInitialTime by savedStateHandle.saveable { mutableStateOf(value = 0L) }
         private set
 
-    private var _lapTotalTime = mutableStateListOf<String>()
-    val lapTotalTime: List<String>
-        get() = _lapTotalTime
-
-    var stopwatchInitialTime by mutableStateOf(0L)
+    var stopwatchOffsetTime by savedStateHandle.saveable { mutableStateOf(value = 0L) }
         private set
 
-    var stopwatchOffsetTime by mutableStateOf(0L)
-        private set
-
-    var labelStyleSelectedOption by mutableStateOf("RGB")
+    var labelStyleSelectedOption by savedStateHandle.saveable { mutableStateOf(value = "RGB") }
         private set
 
     init {
         viewModelScope.launch {
             loadStopwatchOffset()
             loadStopwatchTime()
-            loadStopwatchLapCounter()
-            loadStopwatchLapNumber()
-            loadStopwatchLapTimes()
-            loadStopwatchLapTotalTimes()
+            withContext(Dispatchers.IO) {
+                loadLap()
+            }
             loadLabelStyleSelectedOption()
             loadLapPreviousTime()
 
             stopwatchOffsetTime = stopwatchTime
 
             if (stopwatchPreferences.getStopwatchLabelStyleSelectedOption.first() == "RGB") {
-                RGBColorCounter = stopwatchPreferences.getLabelStyleRGBColorCounter.first()
+                RGBColorCounter = stopwatchPreferences.getStopwatchLabelStyleRGBColorCounter.first()
             }
 
             when (labelStyleSelectedOption) {
@@ -82,54 +79,13 @@ class StopwatchViewModel(
         }
     }
 
-    fun addLap(scaffoldState: ScaffoldState) {
-        if (lapCounter < 1_000_000) {
-            lapCounter += 1
-            _lapNumber.add(0, lapCounter.toString())
-            _lapTime.add(
-                0,
-                formatTimeStopWatch(stopwatchTime - lapPreviousTime) + "-$lapCounter"
-            )
-            _lapTotalTime.add(
-                0,
-                formatTimeStopWatch(stopwatchTime) + "-$lapCounter"
-            )
-            lapPreviousTime = stopwatchTime
-        } else {
-            viewModelScope.launch {
-                showSnackbar = true
-                showSnackbar(
-                    message = "Lap time is maxed",
-                    actionLabel = "cancel",
-                    duration = SnackbarDuration.Short,
-                    scaffoldState = scaffoldState,
-                    action = {},
-                    dismiss = {}
-                )
-            }
-        }
-    }
-
-    fun saveLapTimes() {
-        viewModelScope.launch {
-            saveStopwatchLapNumber()
-            saveStopwatchLapCounter()
-            saveStopwatchLapTime()
-            saveStopwatchLapTotalTimes()
-        }
-    }
-
     fun clearLapTimes() {
         viewModelScope.launch {
-            lapCounter = 0
             lapPreviousTime = 0
-            _lapTime.clear()
-            _lapNumber.clear()
-            _lapTotalTime.clear()
-            stopwatchPreferences.clearStopwatchLapNumber()
-            stopwatchPreferences.clearStopwatchLapCounter()
-            stopwatchPreferences.clearStopwatchLapTime()
-            stopwatchPreferences.clearStopwatchLapTotalTime()
+            _lapList.clear()
+            withContext(Dispatchers.IO) {
+                clearAllLap()
+            }
             stopwatchPreferences.clearStopwatchLapPreviousTime()
         }
     }
@@ -175,7 +131,7 @@ class StopwatchViewModel(
     fun pauseStopWatch() {
         stopwatchIsActive = false
         viewModelScope.launch {
-            delay(100)
+            delay(timeMillis = 100)
             stopwatchOffsetTime = stopwatchTime
         }
     }
@@ -194,7 +150,6 @@ class StopwatchViewModel(
     fun formatTimeStopWatchHr(timeMillis: Long): String {
         val hours = timeMillis / 1000 / 60 / 60 % 100
         return "%02d".format(hours)
-
     }
 
     fun formatTimeStopWatchMin(timeMillis: Long): String {
@@ -212,13 +167,19 @@ class StopwatchViewModel(
         return "%02d".format(milliseconds)
     }
 
+    fun formatLapTime(timeMillis: Long, index: Int): String {
+        val hr = formatTimeStopWatchHr(timeMillis = timeMillis)
+        val min = formatTimeStopWatchMin(timeMillis = timeMillis)
+        val sec = formatTimeStopWatchSec(timeMillis = timeMillis)
+        val ms = formatTimeStopWatchMs(timeMillis = timeMillis)
+
+        return if (lapList[index].lapTotalTime >= 3_600_000) "$hr:$min:$sec.$ms" else "$min:$sec.$ms"
+    }
+
     fun formatTimeStopWatch(timeMillis: Long): String {
         var result =
             "${formatTimeStopWatchMin(timeMillis)}:${formatTimeStopWatchSec(timeMillis)}.${
-                formatTimeStopWatchMs(
-                    timeMillis
-                )
-            }"
+                formatTimeStopWatchMs(timeMillis)}"
 
         if (stopwatchTime >= 3_600_000) {
             result = "${formatTimeStopWatchHr(timeMillis)}:$result"
@@ -229,15 +190,18 @@ class StopwatchViewModel(
     }
 
     fun getLapNumber(index: Int): String {
-        return if (lapNumber[index].toInt() < 10) "0${lapNumber[index]}" else lapNumber[index]
+        val lapNumber = lapList[index].lapNumber
+        return if (lapNumber < 10) "0${lapNumber}" else lapNumber.toString()
     }
 
-    fun getLapTimes(index: Int): String {
-        return if (stopwatchTime > 3_600_000) lapTime[index].takeWhile { it != '-' } else lapTime[index].takeWhile { it != '-' }
+    fun getLapTime(index: Int): String {
+        val time = lapList[index].lapTime
+        return formatLapTime(timeMillis = time, index = index)
     }
 
-    fun getLapTotalTimes(index: Int): String {
-        return if (stopwatchTime > 3_600_000) lapTotalTime[index].takeWhile { it != '-' } else lapTotalTime[index].takeWhile { it != '-' }
+    fun getLapTotalTime(index: Int): String {
+        val time = lapList[index].lapTotalTime
+        return formatLapTime(timeMillis = time, index = index)
     }
 
     suspend fun stopwatchTimeClearAll() {
@@ -245,7 +209,7 @@ class StopwatchViewModel(
     }
 
     suspend fun saveStopwatchTime() {
-        stopwatchPreferences.setStopwatchTime(stopwatchTime)
+        stopwatchPreferences.setStopwatchTime(long = stopwatchTime)
     }
 
     suspend fun loadStopwatchTime() {
@@ -256,61 +220,75 @@ class StopwatchViewModel(
         stopwatchOffsetTime = stopwatchPreferences.getStopwatchOffsetTime.first()
     }
 
-    suspend fun saveStopwatchLapNumber() {
-        stopwatchPreferences.setStopwatchLapNumber(lapNumber.toSet())
-    }
-
-    suspend fun loadStopwatchLapNumber() {
-        _lapNumber = stopwatchPreferences.getStopwatchLabNumber.first().toMutableStateList()
-    }
-
-    suspend fun loadStopwatchLapCounter() {
-        lapCounter = stopwatchPreferences.getStopwatchLapCounter.first()
-    }
-
-    suspend fun saveStopwatchLapCounter() {
-        stopwatchPreferences.setStopwatchLapCounter(lapCounter)
-    }
-
-    suspend fun saveStopwatchLapTime() {
-        stopwatchPreferences.setStopwatchLapTime(_lapTime.toSet())
-    }
-
-    suspend fun loadStopwatchLapTimes() {
-        _lapTime = stopwatchPreferences.getStopwatchLapTime.first().toMutableStateList()
-    }
-
-    suspend fun saveStopwatchLapTotalTimes() {
-        stopwatchPreferences.setStopwatchLapTotalTime(_lapTotalTime.toSet())
-    }
-
-    suspend fun loadStopwatchLapTotalTimes() {
-        _lapTotalTime = stopwatchPreferences.getStopwatchLapTotalTime.first().toMutableStateList()
-    }
-
     suspend fun saveStopwatchLapPreviousTime() {
-        stopwatchPreferences.setStopwatchLapPreviousTime(lapPreviousTime)
+        stopwatchPreferences.setStopwatchLapPreviousTime(long = lapPreviousTime)
     }
 
     suspend fun saveStopwatchOffsetTime() {
-        stopwatchPreferences.setStopwatchOffsetTime(stopwatchOffsetTime)
+        stopwatchPreferences.setStopwatchOffsetTime(long = stopwatchOffsetTime)
     }
 
     suspend fun loadRGBColorCounter() {
-        RGBColorCounter = stopwatchPreferences.getLabelStyleRGBColorCounter.first()
+        RGBColorCounter = stopwatchPreferences.getStopwatchLabelStyleRGBColorCounter.first()
     }
 
     suspend fun saveRGBColorCounter() {
-        stopwatchPreferences.setLabelStyleRGBColorCounter(RGBColorCounter)
+        stopwatchPreferences.setLabelStyleRGBColorCounter(double = RGBColorCounter)
     }
 
     suspend fun loadLabelStyleSelectedOption() {
         labelStyleSelectedOption = stopwatchPreferences.getStopwatchLabelStyleSelectedOption.first()
     }
 
-
     suspend fun loadLapPreviousTime() {
         lapPreviousTime = stopwatchPreferences.getStopwatchLapPreviousTime.first()
+    }
+
+    suspend fun loadLap() {
+        _lapList.addAll(stopwatchLapDatabase.itemDao().getAll())
+    }
+
+    fun addLapHelper(scaffoldState: ScaffoldState) {
+
+        if (lapList.size + 1 < 1_000_000) {
+            val lap = StopwatchLapData(
+                lapNumber = lapList.size + 1,
+                lapTime = stopwatchTime - lapPreviousTime,
+                lapTotalTime = stopwatchTime
+            )
+            addLap(lap)
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    saveLap(lap)
+                }
+            }
+            lapPreviousTime = stopwatchTime
+        } else {
+            viewModelScope.launch {
+                showSnackBar = true
+                showSnackBar(
+                    message = "Lap time is maxed",
+                    actionLabel = "cancel",
+                    duration = SnackbarDuration.Short,
+                    scaffoldState = scaffoldState,
+                    action = {},
+                    dismiss = {}
+                )
+            }
+        }
+
+    }
+
+    private fun addLap(lap: StopwatchLapData) {
+        _lapList.add(index = 0, lap)
+    }
+
+    suspend fun saveLap(lap: StopwatchLapData) {
+        stopwatchLapDatabase.itemDao().insert(lap)
+    }
+
+    suspend fun clearAllLap() {
+        stopwatchLapDatabase.itemDao().deleteAllItems()
     }
 
 

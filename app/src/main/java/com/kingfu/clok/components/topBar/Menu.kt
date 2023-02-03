@@ -1,4 +1,4 @@
-package com.kingfu.clok.topBar
+package com.kingfu.clok.components.topBar
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenu
@@ -12,9 +12,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.kingfu.clok.navigation.Screens
-import com.kingfu.clok.util.customFontSize
-import com.kingfu.clok.variable.Variable
+import com.kingfu.clok.variable.Variable.showMenu
 
 @Composable
 fun ShowMenu(navController: NavController) {
@@ -23,8 +23,8 @@ fun ShowMenu(navController: NavController) {
         shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(16.dp))
     ) {
         DropdownMenu(
-            expanded = Variable.showMenu,
-            onDismissRequest = { Variable.showMenu = false }
+            expanded = showMenu,
+            onDismissRequest = { showMenu = false }
         ) {
             DropdownMenuItem(
                 onClick = {
@@ -33,12 +33,12 @@ fun ShowMenu(navController: NavController) {
                         launchSingleTop = true
                         restoreState = true
                     }
-                    Variable.showMenu = false
+                    showMenu = false
                 },
             ) {
                 Text(
                     text = "Settings",
-                    fontSize = customFontSize(textUnit = 16.sp),
+                    fontSize = 16.sp,
                     fontFamily = FontFamily.Default,
                     fontWeight = FontWeight.Normal
                 )
@@ -47,15 +47,18 @@ fun ShowMenu(navController: NavController) {
             DropdownMenuItem(
                 onClick = {
                     navController.navigate(Screens.BugReport.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
                         launchSingleTop = true
                         restoreState = true
                     }
-                    Variable.showMenu = false
+                    showMenu = false
                 },
             ) {
                 Text(
                     text = "Bug report",
-                    fontSize = customFontSize(textUnit = 16.sp),
+                    fontSize = 16.sp,
                     fontFamily = FontFamily.Default,
                     fontWeight = FontWeight.Normal
                 )

@@ -5,8 +5,11 @@ import android.os.SystemClock
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
+import androidx.lifecycle.viewmodel.compose.saveable
 import com.kingfu.clok.notification.timer.TimerNotificationService
 import com.kingfu.clok.repository.preferencesDataStore.TimerPreferences
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerCountOvertime
@@ -15,48 +18,53 @@ import com.kingfu.clok.timer.styles.TimerRGBStyle
 import com.kingfu.clok.timer.styles.TimerRGBStyle.TimerRGBStyleVariable.timerRGBCounter
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel.TimerViewModelVariable.timerTime
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel.TimerViewModelVariable.timerTotalTime
-import com.kingfu.clok.variable.Variable.showSnackbar
+import com.kingfu.clok.variable.Variable.showSnackBar
 import com.kingfu.clok.variable.Variable.timerShowNotification
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
+@OptIn(SavedStateHandleSaveableApi::class)
 class TimerViewModel(
     private val timerPreferences: TimerPreferences,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     /******************************** Timer ********************************/
 
     object TimerViewModelVariable {
-        var timerTime by mutableStateOf(0L)
-        var timerTotalTime by mutableStateOf(0.0)
+        var timerTime by mutableStateOf(value = 0L)
+        var timerTotalTime by mutableStateOf(value = 0.0)
     }
 
-    var timerIsFinished by mutableStateOf(false)
+    var timerIsFinished by savedStateHandle.saveable{mutableStateOf(value = false)}
         private set
 
-    var timerIsActive by mutableStateOf(false)
+    var timerIsActive by savedStateHandle.saveable{mutableStateOf(value = false)}
         private set
 
-    var timerHour by mutableStateOf(0)
+    var timerHour by savedStateHandle.saveable{mutableStateOf(value = 0)}
         private set
 
-    var timerMinute by mutableStateOf(0)
+    var timerMinute by savedStateHandle.saveable{mutableStateOf(value = 0)}
         private set
 
-    var timerSecond by mutableStateOf(0)
+    var timerSecond by savedStateHandle.saveable{mutableStateOf(value = 0)}
         private set
 
-    var timerCurrentTimePercentage by mutableStateOf(0.0f)
+    var timerCurrentTimePercentage by savedStateHandle.saveable{mutableStateOf(value = 0.0f)}
         private set
 
-    var timerIsEditState by mutableStateOf(true)
+    var timerIsEditState by savedStateHandle.saveable{mutableStateOf(value = true)}
         private set
 
-    var timerInitialTime by mutableStateOf(0L)
+    var timerInitialTime by savedStateHandle.saveable{mutableStateOf(value = 0L)}
         private set
 
-    var timerOffsetTime by mutableStateOf(0L)
+    var timerOffsetTime by savedStateHandle.saveable{mutableStateOf(value = 0L)}
+        private set
+
+    var delay by savedStateHandle.saveable{mutableStateOf(value = 15L)}
         private set
 
 
@@ -73,7 +81,6 @@ class TimerViewModel(
 
             timerTime = timerOffsetTime
 
-
             if (timerIsEditState) {
                 timerCurrentTimePercentage = 0f
             }
@@ -86,24 +93,26 @@ class TimerViewModel(
             }
             initializeTimer()
         }
-
     }
 
     fun timerSetTotalTime() {
         timerTotalTime = timerTime.toDouble()
     }
 
+
     fun startTimer() {
         timerIsActive = true
+
         viewModelScope.launch {
-            delay(1)
-            if (timerCountOvertime && timerIsFinished) {
+            if (!timerCountOvertime && timerIsFinished) {
                 pauseTimer()
             }
             timerIsEditState = false
+
             timerInitialTime = SystemClock.elapsedRealtime()
             while (timerIsActive) {
-                delay(1L)
+
+                delay(delay)
 
                 if (timerTime >= 0L && !timerIsFinished) {
                     timerCurrentTimePercentage = (timerTime.toDouble() / timerTotalTime).toFloat()
@@ -116,7 +125,7 @@ class TimerViewModel(
                         timerCurrentTimePercentage = 0f
                         timerOffsetTime = 0L
                         timerInitialTime = SystemClock.elapsedRealtime()
-                        showSnackbar = true
+                        showSnackBar = true
                     }
 
                     if (timerCountOvertime) {
@@ -134,7 +143,7 @@ class TimerViewModel(
     fun pauseTimer() {
         timerIsActive = false
         viewModelScope.launch {
-            delay(1)
+            delay(delay)
             timerOffsetTime = timerTime
             saveTimerOffsetTime()
             saveTimerCurrentPercentage()
@@ -146,9 +155,11 @@ class TimerViewModel(
 
     fun cancelTimer() {
         timerIsActive = false
+
         viewModelScope.launch {
-            delay(1)
+            delay(delay)
             timerCurrentTimePercentage = 0f
+            timerTotalTime = 0.0
             timerIsFinished = false
             timerOffsetTime = 0L
             timerIsEditState = true
@@ -164,7 +175,7 @@ class TimerViewModel(
         timerIsActive = false
 
         viewModelScope.launch {
-            delay(1)
+            delay(delay)
             timerIsFinished = false
             timerHour = 0
             timerMinute = 0
@@ -196,12 +207,8 @@ class TimerViewModel(
                 }
             }
             timerShowNotification = false
-        }
-    }
 
-    fun timerCancelNotification(context: Context) {
-        timerShowNotification = false
-        TimerNotificationService(context).notificationManager.cancel(1)
+        }
     }
 
     fun formatTimerTime(timeMillis: Long): String {
@@ -283,39 +290,39 @@ class TimerViewModel(
     }
 
     suspend fun saveTimerHour() {
-        timerPreferences.setTimerHour(timerHour)
+        timerPreferences.setTimerHour(duration = timerHour)
     }
 
     suspend fun saveTimerMinute() {
-        timerPreferences.setTimerMinute(timerMinute)
+        timerPreferences.setTimerMinute(duration = timerMinute)
     }
 
     suspend fun saveTimerSecond() {
-        timerPreferences.setTimerSecond(timerSecond)
+        timerPreferences.setTimerSecond(duration = timerSecond)
     }
 
     private suspend fun saveTimerIsFinished() {
-        timerPreferences.setTimerIsFinished(timerIsFinished)
+        timerPreferences.setTimerIsFinished(isFinished = timerIsFinished)
     }
 
     private suspend fun saveTimerTotalTime() {
-        timerPreferences.setTimerTotalTime(timerTotalTime)
+        timerPreferences.setTimerTotalTime(double = timerTotalTime)
     }
 
     private suspend fun saveTimerIsEditState() {
-        timerPreferences.setTimerIsEditState(timerIsEditState)
+        timerPreferences.setTimerIsEditState(boolean = timerIsEditState)
     }
 
     private suspend fun saveTimerCurrentPercentage() {
-        timerPreferences.setTimerCurrentPercentage(timerCurrentTimePercentage)
+        timerPreferences.setTimerCurrentPercentage(float = timerCurrentTimePercentage)
     }
 
     private suspend fun saveTimerOffsetTime() {
-        timerPreferences.setTimerOffsetTime(timerOffsetTime)
+        timerPreferences.setTimerOffsetTime(long = timerOffsetTime)
     }
 
     private suspend fun saveTimerRGBCounter() {
-        timerPreferences.setTimerRGBCounter(timerRGBCounter)
+        timerPreferences.setTimerRGBCounter(double = timerRGBCounter)
     }
 
     private suspend fun loadTimerRGBCounter() {

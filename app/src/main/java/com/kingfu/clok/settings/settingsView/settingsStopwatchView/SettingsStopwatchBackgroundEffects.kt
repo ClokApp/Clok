@@ -4,10 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch.SettingsViewModelStopwatchVariable.stopwatchBackgroundEffectsSelectedOption
 import com.kingfu.clok.ui.theme.Black00
-import com.kingfu.clok.util.customFontSize
+import com.kingfu.clok.ui.theme.Green50
 
 @Composable
 fun SettingsStopwatchBackgroundEffects(
@@ -34,45 +31,52 @@ fun SettingsStopwatchBackgroundEffects(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Black00)
+            .background(color = Black00)
     ) {
 
         Text(
             text = "Background Effects",
-            modifier = Modifier.padding(start = 32.dp, end = 32.dp, top = 10.dp, bottom = 2.dp),
-            fontSize = customFontSize(textUnit = 16.sp),
+            modifier = Modifier.padding(start = 32.dp, end = 32.dp, top = 10.dp, bottom = 4.dp),
+            fontSize = 16.sp,
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.SemiBold,
-            color = Color.Gray
+            color = Green50.copy(alpha = 0.5f),
         )
 
-        Card(shape = RoundedCornerShape(30.dp)) {
+        Card(shape = RoundedCornerShape(size = 30.dp)) {
             Column {
                 for (i in radioOptions.indices) {
                     Row(
-                        modifier = Modifier.background(Color.Black.copy(0.4f))
+                        modifier = Modifier
+                            .background(color = Color.Black.copy(alpha = 0.4f))
                             .fillMaxWidth()
                             .clickable {
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                vm.stopwatchSetBackgroundEffectSelectedOption(radioOptions.elementAt(i))
+                                haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
+                                vm.setStopwatchBackgroundEffectSelectedOption(
+                                    radioOptions.elementAt(index = i)
+                                )
                                 vm.saveStopwatchBackgroundEffectsSelectedOption()
                             }
-                            .padding(8.dp),
+                            .padding(all = 8.dp),
                         horizontalArrangement = Arrangement.Start,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
-                            selected = (radioOptions.elementAt(i) == stopwatchBackgroundEffectsSelectedOption),
+                            selected = (radioOptions.elementAt(index = i) == stopwatchBackgroundEffectsSelectedOption),
                             onClick = {
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                vm.stopwatchSetBackgroundEffectSelectedOption(radioOptions.elementAt(i))
+                                haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
+                                vm.setStopwatchBackgroundEffectSelectedOption(
+                                    radioOptions.elementAt(i)
+                                )
                                 vm.saveStopwatchBackgroundEffectsSelectedOption()
-                            }
+                            },
+                            colors = RadioButtonDefaults.colors(selectedColor = Green50)
+
                         )
                         Text(
-                            text = radioOptions.elementAt(i),
+                            text = radioOptions.elementAt(index = i),
                             modifier = Modifier,
-                            fontSize = customFontSize(textUnit = 14.sp),
+                            fontSize = 14.sp,
                             fontFamily = FontFamily.Default,
                             fontWeight = FontWeight.Normal,
                         )
@@ -81,7 +85,7 @@ fun SettingsStopwatchBackgroundEffects(
                     if (i != radioOptions.size - 1) {
                         Divider(
                             modifier = Modifier
-                                .background(Color.Black.copy(0.4f))
+                                .background(color = Color.Black.copy(alpha = 0.4f))
                                 .padding(horizontal = 24.dp),
                             color = Color.DarkGray,
                         )

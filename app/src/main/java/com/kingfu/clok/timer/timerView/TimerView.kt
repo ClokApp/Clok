@@ -30,9 +30,10 @@ fun TimerView(
 
     val coroutineScopeTimer = rememberCoroutineScope()
 
-    val lazyListStateHr = rememberLazyListState()
+    val lazyListStateHr = rememberLazyListState(initialFirstVisibleItemScrollOffset = 2)
     val lazyListStateMin = rememberLazyListState()
     val lazyListStateSec = rememberLazyListState()
+
 
     Column(
         modifier = Modifier
@@ -63,9 +64,7 @@ fun TimerView(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    top = if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 20.dp else 0.dp
-                ),
+                .padding(top = if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 20.dp else 0.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             TimerResetButtonView(
@@ -76,7 +75,7 @@ fun TimerView(
                 coroutineScopeTimer = coroutineScopeTimer,
                 haptic = haptic,
                 context = context,
-                configurationOrientation
+                configurationOrientation = configurationOrientation
             )
 
             TimerStartButtonView(

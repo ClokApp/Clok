@@ -11,7 +11,6 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedback
@@ -20,6 +19,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kingfu.clok.notification.timer.TimerNotificationService
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import com.kingfu.clok.ui.theme.Green50
 import com.kingfu.clok.ui.theme.Red50
@@ -35,7 +35,6 @@ fun TimerStartButtonView(
     context: Context,
     configurationOrientation: Int,
 ) {
-    val coroutineScope = rememberCoroutineScope()
 
     val startTimerColor by animateColorAsState(
         if (lazyListStateHr.isScrollInProgress ||
@@ -57,8 +56,8 @@ fun TimerStartButtonView(
 
     OutlinedButton(
         enabled = enableStartBtn,
-        shape = RoundedCornerShape(50),
-        border = BorderStroke(0.5.dp, startTimerColor.copy(0.5f)),
+        shape = RoundedCornerShape(percent = 50),
+        border = BorderStroke(width = 0.5.dp, color = startTimerColor.copy(alpha = 0.5f)),
         onClick =
         {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -71,7 +70,7 @@ fun TimerStartButtonView(
                 }
                 vm.startTimer()
             }
-            vm.timerCancelNotification(context)
+            TimerNotificationService(context).cancelNotification()
         }
     ) {
         Text(

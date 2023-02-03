@@ -19,21 +19,23 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.kingfu.clok.notification.timer.TimerNotificationService
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerBackgroundEffectsSelectedOption
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerLabelStyleSelectedOption
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerTimeFontStyleSelectedOption
 import com.kingfu.clok.timer.backgroundEffects.TimerSnowEffect
 import com.kingfu.clok.timer.styles.TimerCyanStyle
 import com.kingfu.clok.timer.styles.TimerRGBStyle
@@ -42,6 +44,7 @@ import com.kingfu.clok.timer.timerViewModel.TimerViewModel.TimerViewModelVariabl
 import com.kingfu.clok.util.NoRippleTheme
 import com.kingfu.clok.util.customFontSize
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
 fun TimerTimeView(
     vm: TimerViewModel,
@@ -52,15 +55,15 @@ fun TimerTimeView(
 
     Box(
         Modifier
-            .zIndex(1f)
-            .clip(CircleShape)
+            .zIndex(zIndex = 1f)
+            .clip(if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) CircleShape else RectangleShape)
     ) {
         val animatedProgress by animateFloatAsState(
             targetValue = if (!vm.timerCurrentTimePercentage.isNaN()) vm.timerCurrentTimePercentage else 0f,
             animationSpec = tween(
                 durationMillis = if (timerTime * 0.005 > 250) 250 else (timerTime * 0.005).toInt(),
                 easing = LinearEasing
-            ),
+            )
         )
 
         val animatedCircularProgressBarColor by animateColorAsState(
@@ -74,15 +77,15 @@ fun TimerTimeView(
         if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT && !animatedProgress.isNaN()) {
             Canvas(
                 modifier = Modifier
-                    .size(320.dp, 320.dp)
-                    .padding(5.dp)
+                    .size(width = 320.dp, height = 320.dp)
+                    .padding(all = 5.dp)
             ) {
                 drawArc(
                     color = Color.DarkGray,
                     startAngle = -90f,
                     sweepAngle = 360f,
                     useCenter = false,
-                    style = Stroke(10f),
+                    style = Stroke(width = 10f),
                 )
                 drawArc(
                     brush = Brush.linearGradient(
@@ -95,16 +98,11 @@ fun TimerTimeView(
                                     animatedCircularProgressBarColor,
                                 )
                             }
-
-                            else -> listOf(
-                                Color.Yellow,
-                                Color.Yellow,
-                            )
-
+                            else -> listOf(Color.Yellow, Color.Yellow)
                         }
                     ),
                     startAngle = -90f,
-                    sweepAngle = 360 * animatedProgress,
+                    sweepAngle = 360f * animatedProgress,
                     useCenter = false,
                     style = Stroke(20f, cap = StrokeCap.Round),
                 )
@@ -116,9 +114,9 @@ fun TimerTimeView(
         Box(
             modifier = Modifier
                 .matchParentSize()
-                .padding(5.dp)
-                .clip(CircleShape)
-                .zIndex(-1f)
+                .padding(all = 5.dp)
+                .clip(shape = CircleShape)
+                .zIndex(zIndex = -1f)
                 .onSizeChanged { backgroundEffectsBoxSize = it }
         ) {
             if (vm.timerIsActive && backgroundEffectsBoxSize.width.dp != 0.dp
@@ -134,12 +132,12 @@ fun TimerTimeView(
         }
 
         Box(
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.align(alignment = Alignment.Center)
         ) {
             Row {
                 CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
                     Text(
-                        text = vm.formatTimerTime(timerTime),
+                        text = vm.formatTimerTime(timeMillis = timerTime),
                         color = Color.White,
                         fontSize = customFontSize(textUnit = 65.sp),
                         fontFamily = FontFamily.Default,
@@ -155,8 +153,17 @@ fun TimerTimeView(
                                 }
                                 vm.startTimer()
                             }
-                            vm.timerCancelNotification(context)
-                        }
+                            TimerNotificationService(context).cancelNotification()
+                        },
+                        style = TextStyle(
+                            drawStyle = if (timerTimeFontStyleSelectedOption == "Inner stroke")
+                                Stroke(
+                                    miter = 10f,
+                                    width = 5f,
+                                    join = StrokeJoin.Round,
+                                    cap = StrokeCap.Round
+                                ) else null
+                        )
                     )
                 }
             }

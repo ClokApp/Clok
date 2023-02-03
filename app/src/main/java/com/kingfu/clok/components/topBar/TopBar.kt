@@ -1,23 +1,24 @@
-package com.kingfu.clok.topBar
+package com.kingfu.clok.components.topBar
 
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.rounded.ArrowBackIosNew
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import com.kingfu.clok.R
 import com.kingfu.clok.navigation.Screens
 import com.kingfu.clok.ui.theme.Black00
-import com.kingfu.clok.util.customFontSize
+import com.kingfu.clok.variable.Variable.settingsStopwatchSelectedFontStyleTopBarName
+import com.kingfu.clok.variable.Variable.settingsTimerSelectedFontStyleTopBarName
 import com.kingfu.clok.variable.Variable.showMenu
 
 
@@ -36,33 +37,45 @@ fun TopBar(
                     Screens.Settings.route -> {
                         Screens.Settings.name
                     }
-                    Screens.SettingsStopwatchLabelStyle.route -> {
-                        Screens.SettingsStopwatchLabelStyle.name
+                    Screens.SettingsStopwatchLabelStyles.route -> {
+                        Screens.SettingsStopwatchLabelStyles.name
                     }
-                    Screens.SettingsTimerProgressBarStyle.route -> {
-                        Screens.SettingsTimerProgressBarStyle.name
+                    Screens.SettingsTimerProgressBarStyles.route -> {
+                        Screens.SettingsTimerProgressBarStyles.name
                     }
                     Screens.SettingsStopwatchBackgroundEffects.route -> {
-//                        "${Screens.Stopwatch.name} - ${Screens.SettingsStopwatchBackgroundEffects.name}"
                         Screens.SettingsStopwatchBackgroundEffects.name
                     }
                     Screens.SettingsTimerBackgroundEffects.route -> {
-//                        "${Screens.Timer.name} - ${Screens.SettingsTimerBackgroundEffects.name}"
                         Screens.SettingsTimerBackgroundEffects.name
                     }
                     Screens.BugReport.route -> {
                         Screens.BugReport.name
                     }
+                    Screens.SettingsTimerFontStyles.route->{
+                        "${Screens.Timer.name} ${Screens.SettingsTimerFontStyles.name}"
+                    }
+                    Screens.SettingsTimerSelectedFontStyle.route->{
+                        settingsTimerSelectedFontStyleTopBarName
+                    }
+                    Screens.SettingsStopwatchFontStyles.route->{
+                        "${Screens.Stopwatch.name} ${Screens.SettingsStopwatchFontStyles.name}"
+                    }
+                    Screens.SettingsStopwatchSelectedFontStyle.route->{
+                        settingsStopwatchSelectedFontStyleTopBarName
+                    }
                     else -> {
                         ""
                     }
                 },
-                fontSize = customFontSize(textUnit = 20.sp),
+                fontSize = 20.sp,
                 fontFamily = FontFamily.Default,
                 fontWeight = FontWeight.Normal
             )
         },
         backgroundColor = Black00,
+        contentColor = Color.White,
+        elevation = 0.dp,
         navigationIcon =
         {
             if (navController.previousBackStackEntry != null && currentRoute != Screens.Stopwatch.route
@@ -71,7 +84,7 @@ fun TopBar(
                 run {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
-                            painterResource(id = R.drawable.ic_arrow_back_ios_new_24),
+                            imageVector = Icons.Rounded.ArrowBackIosNew,
                             contentDescription = null
                         )
                     }
@@ -82,7 +95,7 @@ fun TopBar(
             if (currentRoute == Screens.Timer.route || currentRoute == Screens.Stopwatch.route) {
                 IconButton(onClick = { showMenu = !showMenu }) {
                     Icon(
-                        Icons.Filled.MoreVert,
+                        imageVector = Icons.Rounded.MoreVert,
                         contentDescription = null,
                         tint = Color.White
                     )

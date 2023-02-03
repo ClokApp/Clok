@@ -15,26 +15,28 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerBackgroundEffectsSelectedOption
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerLabelStyleSelectedOption
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.ui.theme.Green50
 
 @Composable
-fun SettingsTimerBackgroundEffects(
-    vm: SettingsViewModelTimer
+fun SettingsTimerProgressBarStyle(
+    vm: SettingsViewModelTimer = viewModel()
 ) {
+
     val haptic = LocalHapticFeedback.current
-    val radioOptions = setOf("None", "Snow")
+    val radioOptions = setOf("Cyan", "RGB")
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Black00)
+            .background(color = Black00)
     ) {
 
         Text(
-            text = "Background Effects",
+            text = "Styles",
             modifier = Modifier.padding(start = 32.dp, end = 32.dp, top = 10.dp, bottom = 4.dp),
             fontSize = 16.sp,
             fontFamily = FontFamily.Default,
@@ -45,7 +47,9 @@ fun SettingsTimerBackgroundEffects(
         Card(
             shape = RoundedCornerShape(size = 30.dp)
         ) {
+
             Column {
+
                 for (i in radioOptions.indices) {
                     Row(
                         modifier = Modifier
@@ -53,22 +57,21 @@ fun SettingsTimerBackgroundEffects(
                             .fillMaxWidth()
                             .clickable {
                                 haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
-                                vm.setTimerBackgroundEffectsSelectedOption(name = radioOptions.elementAt(index = i))
-                                vm.saveTimerBackgroundEffectsSelectedOption()
+                                vm.timerSetLabelStyleSelectedOption(name = radioOptions.elementAt(index = i))
+                                vm.saveTimerLabelStyleSelectedOption()
                             }
-                            .padding(8.dp),
+                            .padding(all = 8.dp),
                         horizontalArrangement = Arrangement.Start,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
-                            selected = (radioOptions.elementAt(index = i) == timerBackgroundEffectsSelectedOption),
+                            selected = (radioOptions.elementAt(index = i) == timerLabelStyleSelectedOption),
                             onClick = {
-                                haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
-                                vm.setTimerBackgroundEffectsSelectedOption(name = radioOptions.elementAt(index = i))
-                                vm.saveTimerBackgroundEffectsSelectedOption()
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                vm.timerSetLabelStyleSelectedOption(radioOptions.elementAt(i))
+                                vm.saveTimerLabelStyleSelectedOption()
                             },
                             colors = RadioButtonDefaults.colors(selectedColor = Green50)
-
                         )
                         Text(
                             text = radioOptions.elementAt(index = i),
@@ -77,7 +80,6 @@ fun SettingsTimerBackgroundEffects(
                             fontFamily = FontFamily.Default,
                             fontWeight = FontWeight.Normal,
                         )
-
                     }
                     if (i != radioOptions.size - 1) {
                         Divider(
@@ -88,6 +90,7 @@ fun SettingsTimerBackgroundEffects(
                         )
                     }
                 }
+
             }
 
         }

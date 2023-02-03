@@ -26,7 +26,6 @@ import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.Setting
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerEnableScrollsHapticFeedback
 import com.kingfu.clok.ui.theme.Green50
 import com.kingfu.clok.util.NoRippleTheme
-import com.kingfu.clok.util.customFontSize
 
 @Composable
 fun SettingsTimerView(
@@ -37,80 +36,97 @@ fun SettingsTimerView(
 
     Text(
         text = "Timer",
-        modifier = Modifier.padding(start = 32.dp, end = 32.dp, top = 10.dp, bottom = 2.dp),
-        fontSize = customFontSize(textUnit = 16.sp),
+        modifier = Modifier.padding(start = 32.dp, end = 32.dp, top = 10.dp, bottom = 4.dp),
+        fontSize = 16.sp,
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.SemiBold,
-        color = Color.Gray
+        color = Green50.copy(alpha = 0.5f),
     )
 
     Card(
         modifier = Modifier,
-        shape = RoundedCornerShape(30.dp)
+        shape = RoundedCornerShape(size = 30.dp)
     ) {
         Column {
             Row(
                 modifier = Modifier
-                    .background(Color.Black.copy(0.4f))
+                    .background(color = Color.Black.copy(alpha = 0.4f))
                     .fillMaxWidth()
                     .clickable(enabled = navController.currentDestination?.route == "settings") {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        navController.navigate("settingsTimerProgressBarStyle")
+                        haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
+                        navController.navigate(route = "settingsTimerProgressBarStyles")
                     }
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp),
-
-                    ) {
-                    Text(
-                        text = "Progress bar styles",
-                        fontSize = customFontSize(textUnit = 18.sp),
-                        fontFamily = FontFamily.Default,
-                        fontWeight = FontWeight.Normal,
-                    )
-                }
+                Text(
+                    text = "Progress bar styles",
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily.Default,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier.padding(all = 8.dp)
+                )
             }
 
             Divider(
                 modifier = Modifier
-                    .background(Color.Black.copy(0.4f))
+                    .background(color = Color.Black.copy(alpha = 0.4f))
                     .padding(horizontal = 24.dp),
                 color = Color.DarkGray,
             )
 
             Row(
                 modifier = Modifier
-                    .background(Color.Black.copy(0.4f))
+                    .background(color = Color.Black.copy(alpha = 0.4f))
                     .fillMaxWidth()
                     .clickable(enabled = navController.currentDestination?.route == "settings") {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        navController.navigate("settingsTimerBackgroundEffects")
+                        haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
+                        navController.navigate(route = "settingsTimerFontStyles")
                     }
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp),
+                Text(
+                    text = "Font styles",
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily.Default,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier.padding(all = 8.dp)
+                )
+            }
 
-                    ) {
+            Divider(
+                modifier = Modifier
+                    .background(color = Color.Black.copy(alpha = 0.4f))
+                    .padding(horizontal = 24.dp),
+                color = Color.DarkGray,
+            )
+
+            Row(
+                modifier = Modifier
+                    .background(color = Color.Black.copy(alpha = 0.4f))
+                    .fillMaxWidth()
+                    .clickable(enabled = navController.currentDestination?.route == "settings") {
+                        haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
+                        navController.navigate(route = "settingsTimerBackgroundEffects")
+                    }
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.padding(all = 8.dp)) {
                     Text(
                         text = "Progress bar background effects",
-                        fontSize = customFontSize(textUnit = 18.sp),
+                        fontSize = 18.sp,
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight.Normal,
                     )
 
                     Text(
                         text = "Enable when progress bar is visible and timer is running.",
-                        fontSize = customFontSize(textUnit = 14.sp),
+                        fontSize = 14.sp,
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight.Normal,
                         color = Color.Gray
@@ -120,39 +136,34 @@ fun SettingsTimerView(
 
             Divider(
                 modifier = Modifier
-                    .background(Color.Black.copy(0.4f))
+                    .background(color = Color.Black.copy(alpha = 0.4f))
                     .padding(horizontal = 24.dp),
                 color = Color.DarkGray,
             )
 
             Row(
                 modifier = Modifier
-                    .background(Color.Black.copy(0.4f))
+                    .background(color = Color.Black.copy(alpha = 0.4f))
                     .fillMaxWidth()
                     .clickable {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        vm.timerCountOvertime()
+                        haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
+                        vm.timerToggleCountOvertime()
                         vm.saveTimerCountOvertime()
                     }
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 8.dp),
-
-                    ) {
+                Column(modifier = Modifier.padding(horizontal = 8.dp)) {
                     Text(
                         text = "Count overtime",
-                        fontSize = customFontSize(textUnit = 18.sp),
+                        fontSize = 18.sp,
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight.Normal,
                     )
                     Text(
                         text = "Continue counting after the timer is finished.",
-                        fontSize = customFontSize(textUnit = 14.sp),
+                        fontSize = 14.sp,
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight.Normal,
                         color = Color.Gray
@@ -162,8 +173,8 @@ fun SettingsTimerView(
                     Switch(
                         checked = timerCountOvertime,
                         onCheckedChange = {
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            vm.timerCountOvertime()
+                            haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
+                            vm.timerToggleCountOvertime()
                             vm.saveTimerCountOvertime()
                         },
                         colors = SwitchDefaults.colors(
@@ -178,17 +189,17 @@ fun SettingsTimerView(
 
             Divider(
                 modifier = Modifier
-                    .background(Color.Black.copy(0.4f))
+                    .background(color = Color.Black.copy(alpha = 0.4f))
                     .padding(horizontal = 24.dp),
                 color = Color.DarkGray,
             )
 
             Row(
                 modifier = Modifier
-                    .background(Color.Black.copy(0.4f))
+                    .background(color = Color.Black.copy(alpha = 0.4f))
                     .fillMaxWidth()
                     .clickable {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
                         vm.timerSetEnableScrollsHapticFeedback()
                         vm.saveTimerEnableScrollsHapticFeedback()
                     }
@@ -196,15 +207,10 @@ fun SettingsTimerView(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 8.dp),
-
-                    ) {
+                Column(modifier = Modifier.padding(horizontal = 8.dp)) {
                     Text(
                         text = "Enable scrolls Haptic feedback",
-                        fontSize = customFontSize(textUnit = 18.sp),
+                        fontSize = 18.sp,
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight.Normal,
                     )
@@ -213,7 +219,7 @@ fun SettingsTimerView(
                     Switch(
                         checked = timerEnableScrollsHapticFeedback,
                         onCheckedChange = {
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
                             vm.timerSetEnableScrollsHapticFeedback()
                             vm.saveTimerEnableScrollsHapticFeedback()
                         },
@@ -229,28 +235,23 @@ fun SettingsTimerView(
 
             Divider(
                 modifier = Modifier
-                    .background(Color.Black.copy(0.4f))
+                    .background(color = Color.Black.copy(alpha = 0.4f))
                     .padding(horizontal = 24.dp),
                 color = Color.DarkGray,
             )
 
             Row(
                 modifier = Modifier
-                    .background(Color.Black.copy(0.4f))
+                    .background(color = Color.Black.copy(alpha = 0.4f))
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 8.dp),
-                ) {
-
+                Column(modifier = Modifier.padding(horizontal = 8.dp)) {
                     Text(
                         text = "Notification",
-                        fontSize = customFontSize(textUnit = 18.sp),
+                        fontSize = 18.sp,
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight.Normal,
                     )
@@ -259,18 +260,16 @@ fun SettingsTimerView(
                         text = buildAnnotatedString {
                             append("Number of notifications: ")
                             withStyle(
-                                style = SpanStyle(
-                                    color = Green50
-                                )
+                                style = SpanStyle(color = Green50)
                             ) {
-                                append(vm.timerNotification.toInt().toString())
+                                append(text = vm.timerNotification.toInt().toString())
                             }
                             append(" will be sent when timer is finished.")
                         },
-                        fontSize = customFontSize(textUnit = 14.sp),
+                        fontSize = 14.sp,
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight.Normal,
-                        color = Color.Gray
+                        color = Color.Gray,
                     )
 
                     CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
@@ -279,12 +278,12 @@ fun SettingsTimerView(
                             value = vm.timerNotification,
                             valueRange = 1f..100f,
                             onValueChange = {
-                                vm.timerSetNotification(it)
+                                vm.timerSetNotification(float = it)
                                 vm.saveTimerNotification()
                             },
                             colors = SliderDefaults.colors(
                                 thumbColor = Green50,
-                                activeTrackColor = Green50.copy(0.5f),
+                                activeTrackColor = Green50.copy(alpha = 0.5f),
                             )
                         )
                     }
@@ -294,3 +293,4 @@ fun SettingsTimerView(
         }
     }
 }
+

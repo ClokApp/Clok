@@ -9,9 +9,10 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class NavigationPreferences(context: Context) {
-    companion object {
+class NavigationPreferences private constructor(context: Context) {
 
+    companion object {
+        @Volatile
         private var INSTANCE: NavigationPreferences? = null
 
         fun getInstance(context: Context): NavigationPreferences {
@@ -21,7 +22,7 @@ class NavigationPreferences(context: Context) {
                 }
                 val instance = NavigationPreferences(context)
                 INSTANCE = instance
-                instance
+                return instance
             }
         }
     }

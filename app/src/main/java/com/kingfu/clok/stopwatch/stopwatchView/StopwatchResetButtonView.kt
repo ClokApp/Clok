@@ -20,6 +20,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
@@ -46,7 +47,7 @@ fun StopwatchResetButton(
 
     val padding by animateDpAsState(
         targetValue = if (stopwatchTime > 0) 25.dp else 0.dp,
-        animationSpec = tween(100)
+        animationSpec = tween(durationMillis = 100)
     )
 
     AnimatedVisibility(
@@ -69,13 +70,12 @@ fun StopwatchResetButton(
         content = {
             OutlinedButton(
                 modifier = Modifier.padding(end = padding),
-                shape = RoundedCornerShape(50),
-                border = BorderStroke(0.5.dp, stopwatchResetButtonColor.copy(0.5f)),
+                shape = RoundedCornerShape(percent = 50),
+                border = BorderStroke(width = 0.5.dp, stopwatchResetButtonColor.copy(alpha = 0.5f)),
                 onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
                     if (stopwatchIsActive) {
-                        vm.addLap(scaffoldState = scaffoldState)
-                        vm.saveLapTimes()
+                        vm.addLapHelper(scaffoldState = scaffoldState)
                         coroutineScopeStopwatch.launch {
                             vm.saveStopwatchLapPreviousTime()
                         }
@@ -83,8 +83,6 @@ fun StopwatchResetButton(
                         vm.resetStopWatch()
                         vm.clearLapTimes()
                     }
-
-                    vm.saveLapTimes()
                     coroutineScopeStopwatch.launch {
                         vm.saveStopwatchLapPreviousTime()
                     }
@@ -98,6 +96,8 @@ fun StopwatchResetButton(
                     color = if (stopwatchIsActive) Cyan50 else Yellow50,
                     fontFamily = FontFamily.Default,
                     fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

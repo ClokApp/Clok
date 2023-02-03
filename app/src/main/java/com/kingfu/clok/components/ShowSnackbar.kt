@@ -1,11 +1,11 @@
-package com.kingfu.clok.bottomBar
+package com.kingfu.clok.components
 
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarResult
-import com.kingfu.clok.variable.Variable.showSnackbar
+import com.kingfu.clok.variable.Variable.showSnackBar
 
-suspend fun showSnackbar(
+suspend fun showSnackBar(
     message: String,
     actionLabel: String?,
     duration: SnackbarDuration,
@@ -13,14 +13,15 @@ suspend fun showSnackbar(
     action: () -> Unit,
     dismiss: () -> Unit
 ) {
-    if (showSnackbar) {
-        val snackbarResult = scaffoldState.snackbarHostState.showSnackbar(
+
+    if (showSnackBar) {
+        val snackBarResult = scaffoldState.snackbarHostState.showSnackbar(
             message = message,
             actionLabel = actionLabel,
             duration = duration
         )
 
-        when (snackbarResult) {
+        when (snackBarResult) {
             SnackbarResult.Dismissed -> {
                 dismiss()
             }
@@ -28,6 +29,6 @@ suspend fun showSnackbar(
                 action()
             }
         }
-        showSnackbar = false
+        showSnackBar = false
     }
 }

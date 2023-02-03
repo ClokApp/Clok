@@ -10,6 +10,8 @@ import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.Setting
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerCountOvertime
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerEnableScrollsHapticFeedback
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerLabelStyleSelectedOption
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerScrollsFontStyleSelectedOption
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerTimeFontStyleSelectedOption
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -18,15 +20,16 @@ class SettingsViewModelTimer(
 ) : ViewModel() {
 
     object SettingsViewModelTimerVariables {
-        var timerLabelStyleSelectedOption by mutableStateOf("RGB")
-        var timerCountOvertime by mutableStateOf(true)
-        var timerEnableScrollsHapticFeedback by mutableStateOf(true)
-        var timerBackgroundEffectsSelectedOption by mutableStateOf("Snow")
+        var timerLabelStyleSelectedOption by mutableStateOf(value = "RGB")
+        var timerCountOvertime by mutableStateOf(value = true)
+        var timerEnableScrollsHapticFeedback by mutableStateOf(value = true)
+        var timerBackgroundEffectsSelectedOption by mutableStateOf(value ="Snow")
+        var timerScrollsFontStyleSelectedOption by mutableStateOf(value = "Default")
+        var timerTimeFontStyleSelectedOption by mutableStateOf(value = "Default")
     }
 
-    var timerNotification by mutableStateOf(5f)
+    var timerNotification by mutableStateOf(value = 5f)
         private set
-
     init {
         viewModelScope.launch {
             loadTimerCountOvertime()
@@ -34,21 +37,37 @@ class SettingsViewModelTimer(
             loadTimerEnableScrollsHapticFeedback()
             loadTimerNotification()
             loadTimerBackgroundEffectsSelectedOption()
+            loadTimerScrollsFontStyleSelectedOption()
+            loadTimerTimeFontStyleSelectedOption()
         }
     }
 
-    fun timerCountOvertime() {
+    fun timerToggleCountOvertime() {
         timerCountOvertime = !timerCountOvertime
     }
 
-    fun saveTimerCountOvertime() {
-        viewModelScope.launch {
-            timerPreferences.setTimerCountOvertime(timerCountOvertime)
-        }
-    }
 
     fun timerSetLabelStyleSelectedOption(name: String) {
         timerLabelStyleSelectedOption = name
+    }
+
+    fun timerSetEnableScrollsHapticFeedback() {
+        timerEnableScrollsHapticFeedback = !timerEnableScrollsHapticFeedback
+    }
+    fun timerSetNotification(float: Float) {
+        timerNotification = float
+    }
+
+    fun setTimerBackgroundEffectsSelectedOption(name: String) {
+        timerBackgroundEffectsSelectedOption = name
+    }
+
+    fun setTimerScrollsFontStyleSelectedOption(name: String){
+        timerScrollsFontStyleSelectedOption = name
+    }
+
+    fun setTimerTimeFontStyleSelectedOption(string: String){
+        timerTimeFontStyleSelectedOption = string
     }
 
     fun saveTimerLabelStyleSelectedOption() {
@@ -57,19 +76,18 @@ class SettingsViewModelTimer(
         }
     }
 
-    fun timerSetEnableScrollsHapticFeedback() {
-        timerEnableScrollsHapticFeedback = !timerEnableScrollsHapticFeedback
-    }
-
     fun saveTimerEnableScrollsHapticFeedback() {
         viewModelScope.launch {
             timerPreferences.setTimerEnableScrollsHapticFeedback(timerEnableScrollsHapticFeedback)
         }
     }
 
-    fun timerSetNotification(float: Float) {
-        timerNotification = float
+    fun saveTimerCountOvertime() {
+        viewModelScope.launch {
+            timerPreferences.setTimerCountOvertime(timerCountOvertime)
+        }
     }
+
 
     fun saveTimerNotification() {
         viewModelScope.launch {
@@ -77,6 +95,23 @@ class SettingsViewModelTimer(
         }
     }
 
+    fun saveTimerBackgroundEffectsSelectedOption() {
+        viewModelScope.launch {
+            timerPreferences.setTimerBackgroundEffects(timerBackgroundEffectsSelectedOption)
+        }
+    }
+
+    fun saveTimerScrollsFontStyleSelectedOption(){
+        viewModelScope.launch {
+            timerPreferences.setTimerScrollFontStyle(timerScrollsFontStyleSelectedOption)
+        }
+    }
+
+    fun saveTimerTimeFontStyleSelectedOption(){
+        viewModelScope.launch {
+            timerPreferences.setTimerTimeFontStyle(timerTimeFontStyleSelectedOption)
+        }
+    }
     suspend fun loadTimerCountOvertime() {
         timerCountOvertime = timerPreferences.getTimerCountOvertime.first()
     }
@@ -94,18 +129,18 @@ class SettingsViewModelTimer(
         timerNotification = timerPreferences.getTimerNotification.first()
     }
 
-    fun setTimerBackgroundEffectsSelectedOption(string: String) {
-        timerBackgroundEffectsSelectedOption = string
-    }
-
-    fun saveTimerBackgroundEffectsSelectedOption() {
-        viewModelScope.launch {
-            timerPreferences.setTimerBackgroundEffects(timerBackgroundEffectsSelectedOption)
-        }
-    }
-
     suspend fun loadTimerBackgroundEffectsSelectedOption(){
         timerBackgroundEffectsSelectedOption = timerPreferences.getTimerBackgroundEffects.first()
     }
+
+    suspend fun loadTimerScrollsFontStyleSelectedOption(){
+        timerScrollsFontStyleSelectedOption = timerPreferences.getTimerScrollsFontStyle.first()
+    }
+
+    suspend fun loadTimerTimeFontStyleSelectedOption(){
+        timerTimeFontStyleSelectedOption = timerPreferences.getTimerTimeFontStyle.first()
+    }
+
+
 
 }

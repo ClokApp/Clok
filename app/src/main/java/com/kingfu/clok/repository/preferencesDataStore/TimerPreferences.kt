@@ -7,11 +7,11 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class TimerPreferences(context: Context) {
+class TimerPreferences private constructor(context: Context) {
 
     companion object {
+        @Volatile
         private var INSTANCE: TimerPreferences? = null
-
         fun getInstance(context: Context): TimerPreferences {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE?.let {
@@ -19,7 +19,7 @@ class TimerPreferences(context: Context) {
                 }
                 val instance = TimerPreferences(context)
                 INSTANCE = instance
-                instance
+                return instance
             }
         }
     }
@@ -41,6 +41,8 @@ class TimerPreferences(context: Context) {
     private val timerOffsetTimeDefault = 0L
     private val timerRGBCCounterDefault = 255.0
     private val timerBackgroundEffectsDefault = "Snow"
+    private val timerScrollsFontStyleDefault = "Default"
+    private val timerTimeFontStyleDefault = "Default"
 
     private val _timerIsFinished = booleanPreferencesKey("timerIsFinished")
     private val _timerHourKey = intPreferencesKey("timerHour")
@@ -56,6 +58,8 @@ class TimerPreferences(context: Context) {
     private val _timerOffsetTime = longPreferencesKey("timerOffsetTime")
     private val _timerRGBCounter = doublePreferencesKey("timerRGBCounter")
     private val _timerBackgroundEffects = stringPreferencesKey("timerBackgroundEffects")
+    private val _timerScrollsFontStyle = stringPreferencesKey("timerScrollsFontStyle")
+    private val _timerTimeFontStyle = stringPreferencesKey("timerTimeFontStyle")
 
 
     /************************************************ Clear ************************************************/
@@ -141,7 +145,6 @@ class TimerPreferences(context: Context) {
         }
     }
 
-//    suspend fun setTimerRGBCounter(int: Int) {
     suspend fun setTimerRGBCounter(double: Double) {
         timerDataStore.edit { preferences ->
             preferences[_timerRGBCounter] = double
@@ -151,6 +154,18 @@ class TimerPreferences(context: Context) {
     suspend fun setTimerBackgroundEffects(string: String){
         timerDataStore.edit { preferences ->
             preferences[_timerBackgroundEffects] = string
+        }
+    }
+
+    suspend fun setTimerScrollFontStyle(string: String){
+        timerDataStore.edit { preferences ->
+            preferences[_timerScrollsFontStyle] = string
+        }
+    }
+
+    suspend fun setTimerTimeFontStyle(string: String){
+        timerDataStore.edit { preferences ->
+            preferences[_timerTimeFontStyle] = string
         }
     }
 
@@ -227,8 +242,16 @@ class TimerPreferences(context: Context) {
     val getTimerBackgroundEffects: Flow<String> = timerDataStore.data
         .map { preferences ->
             preferences[_timerBackgroundEffects] ?: timerBackgroundEffectsDefault
-
         }
 
+    val getTimerScrollsFontStyle: Flow<String> = timerDataStore.data
+        .map{ preferences ->
+            preferences[_timerScrollsFontStyle] ?: timerScrollsFontStyleDefault
+        }
+
+    val getTimerTimeFontStyle: Flow<String> = timerDataStore.data
+        .map { preferences ->
+            preferences[_timerTimeFontStyle] ?: timerTimeFontStyleDefault
+        }
 
 }

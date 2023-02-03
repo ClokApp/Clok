@@ -7,10 +7,10 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class StopwatchPreferences(context: Context) {
+class StopwatchPreferences private constructor(context: Context) {
 
     companion object {
-
+        @Volatile
         private var INSTANCE: StopwatchPreferences? = null
 
         fun getInstance(context: Context): StopwatchPreferences {
@@ -20,7 +20,7 @@ class StopwatchPreferences(context: Context) {
                 }
                 val instance = StopwatchPreferences(context)
                 INSTANCE = instance
-                instance
+                return instance
             }
         }
     }
@@ -29,33 +29,36 @@ class StopwatchPreferences(context: Context) {
     private val stopwatchDataStore: DataStore<Preferences> = context.stopwatchDataStore
 
     private val stopwatchTimeDefault = 0L
-    private val stopwatchLapNumberDefault = setOf<String>()
+//    private val stopwatchLapNumberDefault = setOf<String>()
     private val stopwatchLapCounterDefault = 0
-    private val stopwatchLapTimeDefault = setOf("00:00.00")
-    private val stopwatchLapTotalTimeDefault = setOf("00:00.00")
+//    private val stopwatchLapTimeDefault = setOf("00:00.00")
+//    private val stopwatchLapTotalTimeDefault = setOf("00:00.00")
     private val stopwatchRefreshRateDefault = 55f
     private val stopwatchShowLabelDefault = true
     private val stopwatchLapPreviousTimeDefault = 0L
     private val stopwatchLabelStyleSelectedOptionDefault = "RGB"
     private val stopwatchOffsetTimeDefault = 0L
     private val stopwatchBackgroundEffectsDefault = "Snow"
-
-    private val labelStyleRGBColorCounterDefault = 0.0
+    private val stopwatchLabelStyleRGBColorCounterDefault = 0.0
+    private val stopwatchLabelFontStyleDefault = "Default"
+    private val stopwatchTimeFontStyleDefault = "Default"
+    private val stopwatchLapTimeFontStyleDefault = "Default"
 
     private val _stopwatchTime = longPreferencesKey("stopwatchTime")
-    private val _stopwatchLapNumber = stringSetPreferencesKey("stopwatchLapNumber")
+//    private val _stopwatchLapNumber = stringSetPreferencesKey("stopwatchLapNumber")
     private val _stopwatchLapCounter = intPreferencesKey("stopwatchLapCounter")
-    private val _stopwatchLapTime = stringSetPreferencesKey("stopwatchLapTime")
-    private val _stopwatchLapTotalTime = stringSetPreferencesKey("stopwatchLapTotalTime")
+//    private val _stopwatchLapTime = stringSetPreferencesKey("stopwatchLapTime")
+//    private val _stopwatchLapTotalTime = stringSetPreferencesKey("stopwatchLapTotalTime")
     private val _stopwatchRefreshRate = floatPreferencesKey("stopwatchRefreshRate")
     private val _stopwatchShowLabel = booleanPreferencesKey("stopwatchShowLabel")
     private val _stopwatchLapPreviousTime = longPreferencesKey("stopwatchLapPreviousTime")
-    private val _stopwatchLabelStyleSelectedOption =
-        stringPreferencesKey("stopwatchLabelStyleSelectedOption")
+    private val _stopwatchLabelStyleSelectedOption = stringPreferencesKey("stopwatchLabelStyleSelectedOption")
     private val _stopwatchOffsetTime = longPreferencesKey("stopwatchOffsetTime")
     private val _stopwatchBackgroundEffects = stringPreferencesKey("stopwatchBackgroundEffects")
-
-    private val _labelStyleRGBColorCounter = doublePreferencesKey("labelStyleRGBColorCounter")
+    private val _stopwatchLabelStyleRGBColorCounter = doublePreferencesKey("StopwatchLabelStyleRGBColorCounter")
+    private val _stopwatchLabelFontStyle = stringPreferencesKey("stopwatchLabelFontStyle")
+    private val _stopwatchTimeFontStyle = stringPreferencesKey("stopwatchTimeFontStyle")
+    private val _stopwatchLapTimeFontStyle = stringPreferencesKey("stopwatchLapTimeFontStyle")
 
     /************************************************ Clear ************************************************/
 
@@ -65,11 +68,11 @@ class StopwatchPreferences(context: Context) {
         }
     }
 
-    suspend fun clearStopwatchLapNumber() {
-        stopwatchDataStore.edit { preferences ->
-            preferences.remove(_stopwatchLapNumber)
-        }
-    }
+//    suspend fun clearStopwatchLapNumber() {
+//        stopwatchDataStore.edit { preferences ->
+//            preferences.remove(_stopwatchLapNumber)
+//        }
+//    }
 
     suspend fun clearStopwatchLapCounter() {
         stopwatchDataStore.edit { preferences ->
@@ -77,17 +80,17 @@ class StopwatchPreferences(context: Context) {
         }
     }
 
-    suspend fun clearStopwatchLapTime() {
-        stopwatchDataStore.edit { preferences ->
-            preferences.remove(_stopwatchLapTime)
-        }
-    }
+//    suspend fun clearStopwatchLapTime() {
+//        stopwatchDataStore.edit { preferences ->
+//            preferences.remove(_stopwatchLapTime)
+//        }
+//    }
 
-    suspend fun clearStopwatchLapTotalTime() {
-        stopwatchDataStore.edit { preferences ->
-            preferences.remove(_stopwatchLapTotalTime)
-        }
-    }
+//    suspend fun clearStopwatchLapTotalTime() {
+//        stopwatchDataStore.edit { preferences ->
+//            preferences.remove(_stopwatchLapTotalTime)
+//        }
+//    }
 
     suspend fun clearStopwatchLapPreviousTime() {
         stopwatchDataStore.edit { preferences ->
@@ -95,11 +98,11 @@ class StopwatchPreferences(context: Context) {
         }
     }
 
-    suspend fun clearStopwatchOffsetTime() {
-        stopwatchDataStore.edit { preferences ->
-            preferences.remove(_stopwatchOffsetTime)
-        }
-    }
+//    suspend fun clearStopwatchOffsetTime() {
+//        stopwatchDataStore.edit { preferences ->
+//            preferences.remove(_stopwatchOffsetTime)
+//        }
+//    }
 
     /************************************************ set ************************************************/
 
@@ -109,11 +112,11 @@ class StopwatchPreferences(context: Context) {
         }
     }
 
-    suspend fun setStopwatchLapNumber(strings: Set<String>) {
-        stopwatchDataStore.edit { preferences ->
-            preferences[_stopwatchLapNumber] = strings
-        }
-    }
+//    suspend fun setStopwatchLapNumber(strings: Set<String>) {
+//        stopwatchDataStore.edit { preferences ->
+//            preferences[_stopwatchLapNumber] = strings
+//        }
+//    }
 
     suspend fun setStopwatchLapCounter(num: Int) {
         stopwatchDataStore.edit { preferences ->
@@ -121,17 +124,17 @@ class StopwatchPreferences(context: Context) {
         }
     }
 
-    suspend fun setStopwatchLapTime(strings: Set<String>) {
-        stopwatchDataStore.edit { preferences ->
-            preferences[_stopwatchLapTime] = strings
-        }
-    }
+//    suspend fun setStopwatchLapTime(strings: Set<String>) {
+//        stopwatchDataStore.edit { preferences ->
+//            preferences[_stopwatchLapTime] = strings
+//        }
+//    }
 
-    suspend fun setStopwatchLapTotalTime(strings: Set<String>) {
-        stopwatchDataStore.edit { preferences ->
-            preferences[_stopwatchLapTotalTime] = strings
-        }
-    }
+//    suspend fun setStopwatchLapTotalTime(strings: Set<String>) {
+//        stopwatchDataStore.edit { preferences ->
+//            preferences[_stopwatchLapTotalTime] = strings
+//        }
+//    }
 
 
     suspend fun setStopwatchRefreshRate(float: Float) {
@@ -172,35 +175,52 @@ class StopwatchPreferences(context: Context) {
 
     suspend fun setLabelStyleRGBColorCounter(double: Double){
         stopwatchDataStore.edit { preferences ->
-            preferences[_labelStyleRGBColorCounter] = double
+            preferences[_stopwatchLabelStyleRGBColorCounter] = double
         }
     }
 
+    suspend fun setStopwatchLabelFontStyle(string: String){
+        stopwatchDataStore.edit { preferences ->
+            preferences[_stopwatchLabelFontStyle] = string
+        }
+    }
+
+    suspend fun setStopwatchTimeFontStyle(string: String){
+        stopwatchDataStore.edit { preferences ->
+            preferences[_stopwatchTimeFontStyle] = string
+        }
+    }
+
+    suspend fun setStopwatchLapTimeFontStyle(string: String){
+        stopwatchDataStore.edit { preferences ->
+            preferences[_stopwatchLapTimeFontStyle] = string
+        }
+    }
     /************************************************ get ************************************************/
     val getStopwatchTime: Flow<Long> = stopwatchDataStore.data
         .map { preferences ->
             preferences[_stopwatchTime] ?: stopwatchTimeDefault
         }
 
-    val getStopwatchLabNumber: Flow<Set<String>> = stopwatchDataStore.data
-        .map { preferences ->
-            preferences[_stopwatchLapNumber] ?: stopwatchLapNumberDefault
-        }
+//    val getStopwatchLabNumber: Flow<Set<String>> = stopwatchDataStore.data
+//        .map { preferences ->
+//            preferences[_stopwatchLapNumber] ?: stopwatchLapNumberDefault
+//        }
 
     val getStopwatchLapCounter: Flow<Int> = stopwatchDataStore.data
         .map { preferences ->
             preferences[_stopwatchLapCounter] ?: stopwatchLapCounterDefault
         }
 
-    val getStopwatchLapTime: Flow<Set<String>> = stopwatchDataStore.data
-        .map { preferences ->
-            preferences[_stopwatchLapTime] ?: stopwatchLapTimeDefault
-        }
+//    val getStopwatchLapTime: Flow<Set<String>> = stopwatchDataStore.data
+//        .map { preferences ->
+//            preferences[_stopwatchLapTime] ?: stopwatchLapTimeDefault
+//        }
 
-    val getStopwatchLapTotalTime: Flow<Set<String>> = stopwatchDataStore.data
-        .map { preferences ->
-            preferences[_stopwatchLapTotalTime] ?: stopwatchLapTotalTimeDefault
-        }
+//    val getStopwatchLapTotalTime: Flow<Set<String>> = stopwatchDataStore.data
+//        .map { preferences ->
+//            preferences[_stopwatchLapTotalTime] ?: stopwatchLapTotalTimeDefault
+//        }
 
     val getStopwatchRefreshRate: Flow<Float> = stopwatchDataStore.data
         .map { preferences ->
@@ -233,9 +253,24 @@ class StopwatchPreferences(context: Context) {
             preferences[_stopwatchBackgroundEffects] ?: stopwatchBackgroundEffectsDefault
         }
 
-    val getLabelStyleRGBColorCounter: Flow<Double> = stopwatchDataStore.data
+    val getStopwatchLabelStyleRGBColorCounter: Flow<Double> = stopwatchDataStore.data
         .map { preferences ->
-            preferences[_labelStyleRGBColorCounter] ?: labelStyleRGBColorCounterDefault
+            preferences[_stopwatchLabelStyleRGBColorCounter] ?: stopwatchLabelStyleRGBColorCounterDefault
+        }
+
+    val getStopwatchLabelFontStyle: Flow<String> = stopwatchDataStore.data
+        .map{ preferences ->
+            preferences[_stopwatchLabelFontStyle] ?: stopwatchLabelFontStyleDefault
+        }
+
+    val getStopwatchTimeFontStyle: Flow<String> = stopwatchDataStore.data
+        .map { preferences ->
+            preferences[_stopwatchTimeFontStyle] ?: stopwatchTimeFontStyleDefault
+        }
+
+    val getStopwatchLapTimeFontStyle: Flow<String> = stopwatchDataStore.data
+        .map { preferences ->
+            preferences[_stopwatchLapTimeFontStyle] ?: stopwatchLapTimeFontStyleDefault
         }
 
 }

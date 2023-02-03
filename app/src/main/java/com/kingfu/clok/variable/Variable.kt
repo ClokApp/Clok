@@ -12,5 +12,7 @@ object Variable {
     var startDestination by mutableStateOf<String?>(null)
     var navigateToStartScreen by mutableStateOf(true)
     var showMenu by mutableStateOf(false)
-    var showSnackbar by mutableStateOf(false)
+    var showSnackBar by mutableStateOf(false)
+    var settingsTimerSelectedFontStyleTopBarName by mutableStateOf("Scrolls font style")
+    var settingsStopwatchSelectedFontStyleTopBarName by mutableStateOf("Scrolls font style")
 }

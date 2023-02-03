@@ -14,7 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -26,8 +28,9 @@ import com.kingfu.clok.settings.settingsView.settingsTimerView.SettingsTimerView
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
 import com.kingfu.clok.ui.theme.Black00
-import com.kingfu.clok.util.customFontSize
+import com.kingfu.clok.ui.theme.Green50
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
 fun SettingsView(
     navController: NavHostController,
@@ -37,77 +40,74 @@ fun SettingsView(
 ) {
     val haptic = LocalHapticFeedback.current
     val settingsScrollState = rememberScrollState()
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
 
     Card(
         modifier = Modifier.fillMaxSize(),
-        shape = RoundedCornerShape(30.dp)
+        shape = RoundedCornerShape(size = 30.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Black00)
-                .verticalScroll(settingsScrollState)
+                .background(color = Black00)
+                .verticalScroll(state = settingsScrollState)
         ) {
             SettingsStopwatchView(
-                navController,
-                settingsViewModelStopwatch,
-                haptic,
+                navController = navController,
+                vm = settingsViewModelStopwatch,
+                haptic = haptic,
             )
 
             SettingsTimerView(
                 navController = navController,
-                settingsViewModelTimer,
-                haptic
+                vm = settingsViewModelTimer,
+                haptic = haptic
             )
-
 
             Text(
                 text = "About App",
-                modifier = Modifier.padding(start = 32.dp, end = 32.dp, top = 10.dp, bottom = 2.dp),
-                fontSize = customFontSize(textUnit = 16.sp),
+                modifier = Modifier.padding(start = 32.dp, end = 32.dp, top = 10.dp, bottom = 4.dp),
+                fontSize = 16.sp,
                 fontFamily = FontFamily.Default,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.Gray
+                color = Green50.copy(alpha = 0.5f),
+
             )
 
             Card(
-                shape = RoundedCornerShape(30.dp)
+                shape = RoundedCornerShape(size = 30.dp)
             ) {
                 Row(
                     modifier = Modifier
-                        .background(Color.Black.copy(0.4f))
+                        .background(color = Color.Black.copy(alpha = 0.4f))
                         .fillMaxWidth()
                         .clickable {
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-
+                            haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
                         }
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(8.dp),
-                    ) {
+                    Column(modifier = Modifier.padding(all = 8.dp)) {
                         Text(
                             text = "Current Version ${BuildConfig.VERSION_NAME}",
-                            fontSize = customFontSize(textUnit = 18.sp),
+                            fontSize = 18.sp,
                             fontFamily = FontFamily.Default,
                             fontWeight = FontWeight.Normal,
                         )
 
                         Text(
                             text = "Made using Kotlin and Jetpack Compose",
-                            fontSize = customFontSize(textUnit = 14.sp),
+                            fontSize = 14.sp,
                             fontFamily = FontFamily.Default,
                             fontWeight = FontWeight.Normal,
-                            color = Color.Gray
+                            color = Color.Gray,
                         )
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(height = screenHeight*0.15f))
 
         }
     }

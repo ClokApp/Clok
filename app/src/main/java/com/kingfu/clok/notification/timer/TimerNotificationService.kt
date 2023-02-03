@@ -10,6 +10,8 @@ import androidx.core.app.NotificationCompat
 import com.kingfu.clok.R
 import com.kingfu.clok.mainActivity.MainActivity
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel.TimerViewModelVariable.timerTotalTime
+import com.kingfu.clok.variable.Variable.showSnackBar
+import com.kingfu.clok.variable.Variable.timerShowNotification
 
 const val TIMER_NAME = "Timer Notification"
 
@@ -57,11 +59,11 @@ class TimerNotificationService(
         )
 
         val notification = NotificationCompat.Builder(context, TIMER_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_outline_hourglass_24)
+            .setSmallIcon(R.drawable.ic_round_hourglass_empty_24)
             .setContentTitle("Timer for ${formatTimerTimeForNotification(timerTotalTime.toLong())}")
             .setContentText("Timer is finished!")
             .setContentIntent(activityPendingIntent)
-            .addAction(R.drawable.ic_filled_close, "Close", closeIntent)
+            .addAction(R.drawable.ic_round_hourglass_empty_24, "Close", closeIntent)
             .setColor(Color.argb(255, 0, 255, 255))
             .build()
 
@@ -102,6 +104,12 @@ class TimerNotificationService(
             }
 
         return time
+    }
+
+    fun cancelNotification(){
+        notificationManager.cancel(NOTIFICATION_ID)
+        timerShowNotification = false
+        showSnackBar = false
     }
 
 }

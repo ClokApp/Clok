@@ -1,6 +1,5 @@
 package com.kingfu.clok.mainActivity
 
-import android.app.ActivityManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,8 +14,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-
-        ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
 
         setContent {
             ClokTheme {

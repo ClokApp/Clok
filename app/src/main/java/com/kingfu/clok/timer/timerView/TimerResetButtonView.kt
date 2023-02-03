@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kingfu.clok.notification.timer.TimerNotificationService
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import com.kingfu.clok.util.customFontSize
 import kotlinx.coroutines.CoroutineScope
@@ -47,17 +48,16 @@ fun TimerResetButtonView(
 
     val padding by animateDpAsState(
         targetValue = if (vm.timerHour != 0 || vm.timerMinute != 0 || vm.timerSecond != 0) 25.dp else 0.dp,
-        animationSpec = tween(100)
+        animationSpec = tween(durationMillis = 100)
     )
 
     AnimatedVisibility(
-        visible = vm.timerHour != 0 || vm.timerMinute != 0 || vm.timerSecond != 0,
+        visible = (vm.timerHour != 0 || vm.timerMinute != 0 || vm.timerSecond != 0),
         enter = slideInHorizontally(
             initialOffsetX = { 250 },
             animationSpec = tween(
                 durationMillis = 50,
                 easing = LinearEasing
-
             )
         ),
         exit = slideOutHorizontally(
@@ -71,21 +71,21 @@ fun TimerResetButtonView(
         content = {
             OutlinedButton(
                 modifier = Modifier.padding(end = padding),
-                shape = RoundedCornerShape(50),
-                border = BorderStroke(0.5.dp, stopwatchResetButtonColor.copy(0.5f)),
+                shape = RoundedCornerShape(percent = 50),
+                border = BorderStroke(width = 0.5.dp, color = stopwatchResetButtonColor.copy(alpha = 0.5f)),
                 onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
                     if (vm.timerIsEditState) {
                         vm.resetTimer()
                         coroutineScopeTimer.launch {
-                            lazyListStateHr.scrollToItem(Int.MAX_VALUE / 2 - 24)
-                            lazyListStateMin.scrollToItem(Int.MAX_VALUE / 2 - 4)
-                            lazyListStateSec.scrollToItem(Int.MAX_VALUE / 2 - 4)
+                            lazyListStateHr.scrollToItem(index = Int.MAX_VALUE / 2 - 24)
+                            lazyListStateMin.scrollToItem(index = Int.MAX_VALUE / 2 - 4)
+                            lazyListStateSec.scrollToItem(index = Int.MAX_VALUE / 2 - 4)
                         }
                     } else {
                         vm.cancelTimer()
                     }
-                    vm.timerCancelNotification(context)
+                    TimerNotificationService(context = context).cancelNotification()
                 }
             ) {
                 Text(

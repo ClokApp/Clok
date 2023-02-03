@@ -57,7 +57,7 @@ fun TimerSnowEffect(size: IntSize) {
 
         val snowXInitial by remember { mutableStateOf((0..size.width).random().toFloat()) }
 
-        val snowXTarget by remember { mutableStateOf(snowXInitial) }
+        val snowXTarget by remember { mutableStateOf(value = snowXInitial) }
 
         val snowXOffset by transition.animateFloat(
             initialValue = snowXInitial,
@@ -91,18 +91,10 @@ fun TimerSnowEffect(size: IntSize) {
             modifier = Modifier
                 .background(
                     Brush.verticalGradient(
-                        listOf(
-                            Black00,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent,
-                        )
+                        0.1f to Black00,
+                        1f to Color.Transparent,
+                        startY = 0.0f,
+                        endY = 100.0f
                     )
                 )
                 .matchParentSize()

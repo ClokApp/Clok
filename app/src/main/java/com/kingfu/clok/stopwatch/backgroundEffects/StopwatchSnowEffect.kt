@@ -27,7 +27,7 @@ fun StopwatchSnowEffect(size: IntSize) {
     val snowXOffsetList = mutableListOf<Float>()
     val snowYOffsetList = mutableListOf<Float>()
     val snowSizeList = mutableListOf<Float>()
-    val numberOfSnows by remember { mutableStateOf(50) }
+    val numberOfSnows by remember { mutableStateOf(value = 50) }
 
     for (i in 0 until numberOfSnows) {
         val duration by rememberSaveable { mutableStateOf((2000..5000).random()) }
@@ -35,8 +35,8 @@ fun StopwatchSnowEffect(size: IntSize) {
         val snowSizeInitial by rememberSaveable { mutableStateOf((20..25).random().toFloat()) }
         val snowSizeTarget by rememberSaveable { mutableStateOf((0..1).random().toFloat()) }
 
-        val snowSize by transition.animateFloat(
 
+        val snowSize by transition.animateFloat(
             initialValue = snowSizeInitial,
             targetValue = snowSizeTarget,
             animationSpec = infiniteRepeatable(
@@ -106,18 +106,10 @@ fun StopwatchSnowEffect(size: IntSize) {
             modifier = Modifier
                 .background(
                     Brush.verticalGradient(
-                        listOf(
-                            Black00,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent,
-                        )
+                        0.1f to Black00,
+                        1f to Color.Transparent,
+                        startY = 0f,
+                        endY = 25f
                     )
                 )
                 .matchParentSize()

@@ -17,11 +17,13 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,6 +31,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerEnableScrollsHapticFeedback
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerScrollsFontStyleSelectedOption
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.ui.theme.Cyan50
@@ -49,8 +52,7 @@ fun TimerEditView(
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-
-    val layoutInfoHr = remember(lazyListStateHr) { SnapLayoutInfoProvider(lazyListStateHr)}
+    val layoutInfoHr = remember(lazyListStateHr) { SnapLayoutInfoProvider(lazyListStateHr) }
     val layoutInfoMin = remember(lazyListStateMin) { SnapLayoutInfoProvider(lazyListStateMin) }
     val layoutInfoSec = remember(lazyListStateSec) { SnapLayoutInfoProvider(lazyListStateSec) }
 
@@ -58,13 +60,13 @@ fun TimerEditView(
     val selectedMin = rememberSnapFlingBehavior(snapLayoutInfoProvider = layoutInfoMin)
     val selectedSec = rememberSnapFlingBehavior(snapLayoutInfoProvider = layoutInfoSec)
 
-    val selectedItemHr by remember { derivedStateOf { lazyListStateHr.firstVisibleItemIndex +1 } }
-    val selectedItemMin by remember { derivedStateOf { lazyListStateMin.firstVisibleItemIndex + 1 } }
-    val selectedItemSec by remember { derivedStateOf { lazyListStateSec.firstVisibleItemIndex + 1 } }
-
+    val selectedItemHr by remember(lazyListStateHr) { derivedStateOf { lazyListStateHr.firstVisibleItemIndex + 1 } }
+    val selectedItemMin by remember(lazyListStateMin) { derivedStateOf { lazyListStateMin.firstVisibleItemIndex + 1 } }
+    val selectedItemSec by remember(lazyListStateSec) { derivedStateOf { lazyListStateSec.firstVisibleItemIndex + 1 } }
 
     var loadInitialTime by rememberSaveable { mutableStateOf(true) }
 
+    val labels = remember { mutableStateListOf("Hours", "Minutes", "Seconds") }
 
     LaunchedEffect(Unit) {
         if (loadInitialTime && vm.timerIsEditState) {
@@ -74,40 +76,6 @@ fun TimerEditView(
             loadInitialTime = false
         }
     }
-
-    LaunchedEffect(selectedItemHr) {
-        vm.updateTimerHour(selectedItemHr % TIMER_HR)
-        vm.saveTimerHour()
-    }
-
-    LaunchedEffect(selectedItemMin) {
-        vm.updateTimerMinute(selectedItemMin % TIMER_MIN)
-        vm.saveTimerMinute()
-    }
-
-    LaunchedEffect(selectedItemSec) {
-        vm.updateTimerSecond(selectedItemSec % TIMER_SEC)
-        vm.saveTimerSecond()
-    }
-
-    LaunchedEffect(lazyListStateHr.isScrollInProgress) {
-        if (!lazyListStateHr.isScrollInProgress) {
-            lazyListStateHr.scrollToItem(Int.MAX_VALUE / 2 - 24 + vm.timerHour)
-        }
-    }
-
-    LaunchedEffect(lazyListStateMin.isScrollInProgress) {
-        if (!lazyListStateMin.isScrollInProgress) {
-            lazyListStateMin.scrollToItem(Int.MAX_VALUE / 2 - 4 + vm.timerMinute)
-        }
-    }
-
-    LaunchedEffect(lazyListStateSec.isScrollInProgress) {
-        if (!lazyListStateSec.isScrollInProgress) {
-            lazyListStateSec.scrollToItem(Int.MAX_VALUE / 2 - 4 + vm.timerSecond)
-        }
-    }
-
 
     Row(
         modifier = Modifier
@@ -127,7 +95,6 @@ fun TimerEditView(
                 customFontSize(textUnit = (screenHeight.value * 0.070).sp)
             } else {
                 customFontSize(textUnit = (screenHeight.value * 0.12).sp)
-
             }
 
         val timerBoxGradient =
@@ -144,11 +111,10 @@ fun TimerEditView(
                 customFontSize(textUnit = 18.sp)
             } else {
                 customFontSize(textUnit = 14.sp)
-
             }
 
         DisplayTimerScroll(
-            label = "Hours",
+            label = labels[0],
             lazyListState = lazyListStateHr,
             labelTextSize = labelTextSize,
             flingBehavior = selectedHr,
@@ -157,10 +123,13 @@ fun TimerEditView(
             haptic = haptic,
             timerBoxGradient = timerBoxGradient,
             timeUnit = TIMER_HR,
+            vm = vm,
+            labels = labels,
+            loadInitialTime = loadInitialTime
         )
 
         DisplayTimerScroll(
-            label = "Minutes",
+            label = labels[1],
             lazyListState = lazyListStateMin,
             labelTextSize = labelTextSize,
             flingBehavior = selectedMin,
@@ -169,10 +138,13 @@ fun TimerEditView(
             haptic = haptic,
             timerBoxGradient = timerBoxGradient,
             timeUnit = TIMER_MIN,
+            vm = vm,
+            labels = labels,
+            loadInitialTime = loadInitialTime
         )
 
         DisplayTimerScroll(
-            label = "Seconds",
+            label = labels[2],
             lazyListState = lazyListStateSec,
             labelTextSize = labelTextSize,
             flingBehavior = selectedSec,
@@ -181,12 +153,15 @@ fun TimerEditView(
             haptic = haptic,
             timerBoxGradient = timerBoxGradient,
             timeUnit = TIMER_SEC,
+            vm = vm,
+            labels = labels,
+            loadInitialTime = loadInitialTime,
         )
     }
 
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalTextApi::class)
 @Composable
 fun DisplayTimerScroll(
     label: String,
@@ -198,7 +173,12 @@ fun DisplayTimerScroll(
     haptic: HapticFeedback,
     timerBoxGradient: List<Color>,
     timeUnit: Int,
+    vm: TimerViewModel,
+    labels: List<String>,
+    loadInitialTime: Boolean
 ) {
+
+    var currentIndex by rememberSaveable { mutableStateOf(0) }
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -221,8 +201,7 @@ fun DisplayTimerScroll(
             color = color,
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Thin,
-
-            )
+        )
 
         Box {
             LazyColumn(
@@ -230,11 +209,10 @@ fun DisplayTimerScroll(
                 modifier = Modifier.padding(horizontal = 10.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                flingBehavior = flingBehavior,
-
-
-                ) {
+                flingBehavior = flingBehavior
+            ) {
                 items(Int.MAX_VALUE) { index ->
+                    currentIndex = index
                     Text(
                         text = if (index % timeUnit < 10) "0${index % timeUnit}" else "${index % timeUnit}",
                         textAlign = TextAlign.Center,
@@ -242,6 +220,14 @@ fun DisplayTimerScroll(
                         fontFamily = FontFamily.Default,
                         fontWeight = if (selectedItem == index) FontWeight.Light else FontWeight.ExtraLight,
                         color = if (selectedItem == index) Cyan50 else Color.DarkGray,
+                        style = TextStyle(
+                            drawStyle = if(timerScrollsFontStyleSelectedOption == "Inner stroke") Stroke(
+                                miter = 10f,
+                                width = 5f,
+                                join = StrokeJoin.Round,
+                                cap = StrokeCap.Round
+                            ) else null
+                        )
                     )
                 }
             }
@@ -250,11 +236,41 @@ fun DisplayTimerScroll(
                 if (lazyListState.isScrollInProgress && timerEnableScrollsHapticFeedback) {
                     haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
                 }
+                when (label) {
+                    labels[0] -> {
+                        vm.updateTimerHour(selectedItem % timeUnit)
+                        vm.saveTimerHour()
+                    }
+                    labels[1] -> {
+                        vm.updateTimerMinute(selectedItem % timeUnit)
+                        vm.saveTimerMinute()
+                    }
+                    labels[2] -> {
+                        vm.updateTimerSecond(selectedItem % timeUnit)
+                        vm.saveTimerSecond()
+                    }
+                }
+            }
+
+            LaunchedEffect(lazyListState.isScrollInProgress) {
+                if (!lazyListState.isScrollInProgress && !loadInitialTime) {
+                    when (label) {
+                        labels[0] -> {
+                            lazyListState.scrollToItem(Int.MAX_VALUE / 2 - 24 + vm.timerHour)
+                        }
+                        labels[1] -> {
+                            lazyListState.scrollToItem(Int.MAX_VALUE / 2 - 4 + vm.timerMinute)
+                        }
+                        labels[2] -> {
+                            lazyListState.scrollToItem(Int.MAX_VALUE / 2 - 4 + vm.timerSecond)
+                        }
+                    }
+                }
             }
 
             Box(
                 modifier = Modifier
-                    .background(Brush.verticalGradient(colors = timerBoxGradient))
+                    .background(brush = Brush.verticalGradient(colors = timerBoxGradient))
                     .matchParentSize()
             )
         }

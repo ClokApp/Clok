@@ -2,22 +2,23 @@ package com.kingfu.clok.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.kingfu.clok.bottomBar.showSnackbar
 import com.kingfu.clok.bugReport.BugReport
 import com.kingfu.clok.repository.preferencesDataStore.NavigationPreferences
 import com.kingfu.clok.settings.settingsView.SettingsView
 import com.kingfu.clok.settings.settingsView.settingsStopwatchView.SettingsStopwatchBackgroundEffects
 import com.kingfu.clok.settings.settingsView.settingsStopwatchView.SettingsStopwatchLabelStyle
+import com.kingfu.clok.settings.settingsView.settingsStopwatchView.fontStyle.SettingsStopwatchFontStylesView
+import com.kingfu.clok.settings.settingsView.settingsStopwatchView.fontStyle.SettingsStopwatchSelectedFontStyleView
 import com.kingfu.clok.settings.settingsView.settingsTimerView.SettingsTimerBackgroundEffects
 import com.kingfu.clok.settings.settingsView.settingsTimerView.SettingsTimerProgressBarStyle
+import com.kingfu.clok.settings.settingsView.settingsTimerView.fontStyle.SettingsTimerFontStyles
+import com.kingfu.clok.settings.settingsView.settingsTimerView.fontStyle.SettingsTimerSelectedFontStyleView
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
 import com.kingfu.clok.stopwatch.stopwatchView.StopwatchView
@@ -39,8 +40,6 @@ fun Navigation(
     settingsViewModelTimer: SettingsViewModelTimer,
     navigationPreferences: NavigationPreferences,
 ) {
-    val context = LocalContext.current
-
     if (navigateToStartScreen) {
         LaunchedEffect(Unit) {
             startDestination = navigationPreferences.getStartDestination.first()
@@ -48,56 +47,44 @@ fun Navigation(
         navigateToStartScreen = false
     }
 
-
-    LaunchedEffect(timerViewModel.timerIsFinished) {
-        timerViewModel.timerNotification(context = context)
-    }
-
-    LaunchedEffect(timerViewModel.timerIsFinished) {
-        showSnackbar(
-            message = "Timer is finished!",
-            actionLabel = "cancel",
-            duration = SnackbarDuration.Short,
-            scaffoldState = scaffoldState,
-            action = {
-                timerViewModel.timerCancelNotification(context = context)
-                timerViewModel.cancelTimer()
-            },
-            dismiss = {}
-        )
-    }
-
-
     if (startDestination != null) {
         NavHost(
-            navController,
+            navController = navController,
             startDestination = startDestination!!,
             modifier = Modifier.background(Black00)
         ) {
 
             composable(Screens.Stopwatch.route) {
-                StopwatchView(navController = navController, scaffoldState, stopwatchViewModel)
+                StopwatchView(
+                    navController = navController,
+                    scaffoldState = scaffoldState,
+                    vm = stopwatchViewModel
+                )
             }
 
             composable(Screens.Timer.route) {
-                TimerView(navController = navController, scaffoldState, timerViewModel)
+                TimerView(
+                    navController = navController,
+                    scaffoldState = scaffoldState,
+                    vm = timerViewModel
+                )
             }
 
             composable(Screens.Settings.route) {
                 SettingsView(
                     navController = navController,
-                    scaffoldState,
-                    settingsViewModelStopwatch,
-                    settingsViewModelTimer
+                    scaffoldState = scaffoldState,
+                    settingsViewModelStopwatch = settingsViewModelStopwatch,
+                    settingsViewModelTimer = settingsViewModelTimer
                 )
             }
 
-            composable(Screens.SettingsStopwatchLabelStyle.route) {
-                SettingsStopwatchLabelStyle(settingsViewModelStopwatch)
+            composable(Screens.SettingsStopwatchLabelStyles.route) {
+                SettingsStopwatchLabelStyle(vm = settingsViewModelStopwatch)
             }
 
-            composable(Screens.SettingsTimerProgressBarStyle.route) {
-                SettingsTimerProgressBarStyle(settingsViewModelTimer)
+            composable(Screens.SettingsTimerProgressBarStyles.route) {
+                SettingsTimerProgressBarStyle(vm = settingsViewModelTimer)
             }
 
             composable(Screens.BugReport.route) {
@@ -105,12 +92,35 @@ fun Navigation(
             }
 
             composable(Screens.SettingsStopwatchBackgroundEffects.route) {
-                SettingsStopwatchBackgroundEffects(settingsViewModelStopwatch)
+                SettingsStopwatchBackgroundEffects(vm = settingsViewModelStopwatch)
             }
 
             composable(Screens.SettingsTimerBackgroundEffects.route) {
-                SettingsTimerBackgroundEffects(settingsViewModelTimer)
+                SettingsTimerBackgroundEffects(vm = settingsViewModelTimer)
             }
+
+            composable(Screens.SettingsTimerFontStyles.route) {
+                SettingsTimerFontStyles(vm = settingsViewModelTimer, navController = navController)
+            }
+
+            composable(Screens.SettingsTimerSelectedFontStyle.route) {
+                SettingsTimerSelectedFontStyleView(vm = settingsViewModelTimer)
+            }
+
+            composable(Screens.SettingsStopwatchFontStyles.route) {
+                SettingsStopwatchFontStylesView(
+                    vm = settingsViewModelStopwatch,
+                    navController = navController
+                )
+            }
+
+            composable(Screens.SettingsStopwatchSelectedFontStyle.route) {
+                SettingsStopwatchSelectedFontStyleView(vm = settingsViewModelStopwatch)
+            }
+
+
+
+
         }
     }
 }

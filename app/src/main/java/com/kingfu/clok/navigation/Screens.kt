@@ -1,91 +1,108 @@
 package com.kingfu.clok.navigation
 
-import com.kingfu.clok.R
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.outlined.Timer
+import androidx.compose.material.icons.rounded.HourglassEmpty
+import androidx.compose.material.icons.rounded.HourglassFull
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.kingfu.clok.variable.Variable.settingsStopwatchSelectedFontStyleTopBarName
+import com.kingfu.clok.variable.Variable.settingsTimerSelectedFontStyleTopBarName
 
 
 sealed class Screens(
     val route: String,
     val name: String,
-    val filledIconId: Int?,
-    val outlinedIconId: Int?
+    val filledIconId: ImageVector?,
+    val outlinedIconId: ImageVector?
 ) {
-    object Stopwatch : Screens(
-        "stopwatch",
-        "Stopwatch",
-        filledIconId = R.drawable.ic_fill_timer_24,
-        outlinedIconId = R.drawable.ic_outline_timer_24
-    )
-
-    object Timer : Screens(
-        "timer",
-        "Timer",
-        filledIconId = R.drawable.ic_fill_hourglass_24,
-        outlinedIconId = R.drawable.ic_outline_hourglass_24
+    object BugReport : Screens(
+        route = "bugReport",
+        name = "Bug report",
+        filledIconId = null,
+        outlinedIconId = null
     )
 
     object Settings : Screens(
-        "settings",
-        "Settings",
-//        filledIconId = R.drawable.ic_sharp_fill_settings_24,
-//        outlinedIconId = R.drawable.ic_outline_settings_24
+        route = "settings",
+        name = "Settings",
         filledIconId = null,
         outlinedIconId = null
     )
 
-    object SettingsStopwatchLabelStyle : Screens(
-        "settingsStopwatchLabelStyle",
-        "Label styles",
-//        R.drawable.ic_sharp_fill_settings_24,
-//        R.drawable.ic_outline_settings_24
+    object Stopwatch : Screens(
+        route = "stopwatch",
+        name = "Stopwatch",
+        filledIconId = Icons.Filled.Timer,
+        outlinedIconId = Icons.Outlined.Timer
+    )
+
+    object SettingsStopwatchLabelStyles : Screens(
+        route = "settingsStopwatchLabelStyles",
+        name = "Label styles",
         filledIconId = null,
         outlinedIconId = null
     )
 
-    object SettingsTimerProgressBarStyle : Screens(
-        "settingsTimerProgressBarStyle",
-        "Progress bar styles",
-//        R.drawable.ic_sharp_fill_settings_24,
-//        R.drawable.ic_outline_settings_24
-        filledIconId = null,
-        outlinedIconId = null
-    )
-
-    object BugReport : Screens(
-        "bugReport",
-        "Bug report",
-//        filledIconId = R.drawable.ic_sharp_fill_settings_24,
-//        R.drawable.ic_outline_settings_24
-        filledIconId = null,
-        outlinedIconId = null
-    )
 
     object SettingsStopwatchBackgroundEffects : Screens(
-        "settingsStopwatchBackgroundEffects",
-        "Label background effects",
-//        R.drawable.ic_sharp_fill_settings_24,
-//        R.drawable.ic_outline_settings_24
+        route = "settingsStopwatchBackgroundEffects",
+        name = "Label background effects",
         filledIconId = null,
         outlinedIconId = null
+    )
+
+    object Timer : Screens(
+        route = "timer",
+        name = "Timer",
+        filledIconId = Icons.Rounded.HourglassFull,
+        outlinedIconId = Icons.Rounded.HourglassEmpty
     )
 
     object SettingsTimerBackgroundEffects : Screens(
-        "settingsTimerBackgroundEffects",
-        "Progress bar background effects",
-//        R.drawable.ic_sharp_fill_settings_24,
-//        R.drawable.ic_outline_settings_24
+        route = "settingsTimerBackgroundEffects",
+        name = "Progress bar background effects",
         filledIconId = null,
         outlinedIconId = null
     )
+
+    object SettingsTimerProgressBarStyles : Screens(
+        route = "settingsTimerProgressBarStyles",
+        name = "Progress bar styles",
+        filledIconId = null,
+        outlinedIconId = null
+    )
+
+    object SettingsTimerFontStyles : Screens(
+        route = "settingsTimerFontStyles",
+        name = "Font styles",
+        filledIconId = null,
+        outlinedIconId = null
+    )
+
+    object SettingsTimerSelectedFontStyle: Screens(
+        route = "settingsTimerSelectedFontStyle",
+        name = settingsTimerSelectedFontStyleTopBarName,
+        filledIconId = null,
+        outlinedIconId = null
+    )
+
+    object SettingsStopwatchFontStyles : Screens(
+        route = "settingsStopwatchFontStyles",
+        name = "Font styles",
+        filledIconId = null,
+        outlinedIconId = null
+    )
+
+    object SettingsStopwatchSelectedFontStyle: Screens(
+        route = "settingsStopwatchSelectedFontStyle",
+        name = settingsStopwatchSelectedFontStyleTopBarName,
+        filledIconId = null,
+        outlinedIconId = null
+    )
+
+
+
 }
 
-val items = listOf(
-    Screens.Stopwatch,
-    Screens.Timer,
-    Screens.Settings,
-    Screens.SettingsStopwatchLabelStyle,
-    Screens.SettingsTimerProgressBarStyle,
-    Screens.BugReport,
-    Screens.SettingsStopwatchBackgroundEffects,
-    Screens.SettingsTimerBackgroundEffects
-)
 

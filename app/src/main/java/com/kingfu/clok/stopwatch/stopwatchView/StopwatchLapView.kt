@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
@@ -29,14 +30,13 @@ fun StopwatchLapView(
     lazyColumnState: LazyListState,
     configurationOrientation: Int
 ) {
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
-            .alpha(if (vm.lapCounter > 0 || configurationOrientation == Configuration.ORIENTATION_LANDSCAPE) 1f else 0f)
+            .alpha(if (vm.lapList.isNotEmpty() || configurationOrientation == Configuration.ORIENTATION_LANDSCAPE) 1f else 0f)
             .fillMaxHeight(if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 0.65f else 1f)
-            .fillMaxWidth(if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 0.8f else 0.5f)
+            .fillMaxWidth(if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 0.8f else 1f)
             .padding(
                 vertical = 0.dp,
                 horizontal = if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 0.dp else 40.dp
@@ -44,7 +44,7 @@ fun StopwatchLapView(
 
         ) {
 
-        Row(Modifier.padding(10.dp)) {
+        Row(Modifier.padding(all = 10.dp)) {
             LapLabel(name = "Lap", weight = 0.20f)
             LapLabel(name = "Lap times", weight = 0.40f)
             LapLabel(name = "Total times", weight = 0.40f)
@@ -62,15 +62,15 @@ fun StopwatchLapView(
                 modifier = Modifier.fillMaxSize(),
                 state = lazyColumnState,
             ) {
-                items(vm.lapNumber.size) { index ->
+                items(vm.lapList.size) { index ->
                     Row(
                         modifier = Modifier
-                            .padding(10.dp)
+                            .padding(all = 10.dp)
                             .fillMaxWidth(),
                     ) {
                         LapContent(name = vm.getLapNumber(index), weight = 0.20f, alpha = 0.50f)
-                        LapContent(name = vm.getLapTimes(index), weight = 0.40f, alpha = 0.70f)
-                        LapContent(name = vm.getLapTotalTimes(index), weight = 0.40f, alpha = 0.90f)
+                        LapContent(name = vm.getLapTime(index), weight = 0.40f, alpha = 0.70f)
+                        LapContent(name = vm.getLapTotalTime(index), weight = 0.40f, alpha = 0.90f)
                     }
                 }
             }
@@ -79,18 +79,8 @@ fun StopwatchLapView(
                 modifier = Modifier
                     .background(
                         Brush.verticalGradient(
-                            listOf(
-                                Color.Transparent,
-                                Color.Transparent,
-                                Color.Transparent,
-                                Color.Transparent,
-                                Color.Transparent,
-                                Color.Transparent,
-                                Color.Transparent,
-                                Color.Transparent,
-                                Color.Transparent,
-                                Black00
-                            )
+                            0.9f to Color.Transparent,
+                            1f to Black00
                         )
                     )
                     .matchParentSize()
@@ -104,12 +94,14 @@ fun StopwatchLapView(
 fun RowScope.LapLabel(name: String, weight: Float) {
     Text(
         text = name,
-        modifier = Modifier.weight(weight),
+        modifier = Modifier.weight(weight = weight),
         fontSize = customFontSize(textUnit = 16.sp),
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        color = Color.White.copy(0.70f),
-        textAlign = TextAlign.Center
+        color = Color.White.copy(alpha = 0.70f),
+        textAlign = TextAlign.Center,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
     )
 }
 
@@ -122,7 +114,9 @@ fun RowScope.LapContent(name: String, weight: Float, alpha: Float ){
         fontWeight = FontWeight.Normal,
         color = Color.White.copy(alpha = alpha),
         modifier = Modifier.weight(weight = weight),
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
     )
 
 }

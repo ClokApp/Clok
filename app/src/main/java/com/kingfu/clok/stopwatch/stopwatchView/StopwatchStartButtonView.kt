@@ -11,8 +11,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
@@ -32,8 +34,8 @@ fun StopwatchStartButtonView(
     val startStopWatchColor by animateColorAsState(if (stopwatchIsActive) Red50 else Green50)
 
     OutlinedButton(
-        shape = RoundedCornerShape(50),
-        border = BorderStroke(0.5.dp, startStopWatchColor.copy(0.5f)),
+        shape = RoundedCornerShape(percent = 50),
+        border = BorderStroke(width = 0.5.dp, color = startStopWatchColor.copy(alpha = 0.5f)),
         onClick = {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             if (stopwatchIsActive) {
@@ -42,7 +44,6 @@ fun StopwatchStartButtonView(
                     vm.saveStopwatchLapPreviousTime()
                     vm.saveStopwatchOffsetTime()
                 }
-                vm.saveLapTimes()
             } else {
                 vm.startStopWatch()
             }
@@ -52,10 +53,12 @@ fun StopwatchStartButtonView(
         Text(
             text = if (stopwatchIsActive) "Pause" else "Start",
             modifier = Modifier.padding(horizontal = if(stopwatchIsActive) 7.dp else 14.dp),
-            fontSize = customFontSize(20.sp),
+            fontSize = customFontSize(textUnit = 20.sp),
             color = startStopWatchColor,
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 

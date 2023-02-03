@@ -12,10 +12,9 @@ import kotlin.math.sin
 class TimerRGBStyle {
 
     object TimerRGBStyleVariable {
-        var timerRGBCounter by mutableStateOf(0.0)
+        var timerRGBCounter by mutableStateOf(value = 0.0)
         var timerLabelColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
     }
-
 
     fun timerUpdateStartAndEndRGB(initialize: Boolean) {
 
@@ -25,7 +24,7 @@ class TimerRGBStyle {
         val center = 127
 
         if(!initialize) {
-            timerRGBCounter = (timerRGBCounter + 0.1) % Int.MAX_VALUE
+            timerRGBCounter = (timerRGBCounter + 0.4) % Int.MAX_VALUE
         }
 
         for (i in 0 until timerLabelColorList.size) {

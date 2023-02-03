@@ -24,7 +24,6 @@ class StopwatchRGBStyle {
         var RGBMsColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
     }
 
-
     fun rgbStyleUpdateColors(refreshRate: Float) {
         val frequency = 0.9
         val phase = 1.5
