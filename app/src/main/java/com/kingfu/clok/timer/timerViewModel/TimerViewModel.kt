@@ -3,68 +3,70 @@ package com.kingfu.clok.timer.timerViewModel
 import android.content.Context
 import android.os.SystemClock
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
-import androidx.lifecycle.viewmodel.compose.saveable
 import com.kingfu.clok.notification.timer.TimerNotificationService
 import com.kingfu.clok.repository.preferencesDataStore.TimerPreferences
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerCountOvertime
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerLabelStyleSelectedOption
 import com.kingfu.clok.timer.styles.TimerRGBStyle
 import com.kingfu.clok.timer.styles.TimerRGBStyle.TimerRGBStyleVariable.timerRGBCounter
-import com.kingfu.clok.timer.timerViewModel.TimerViewModel.TimerViewModelVariable.timerTime
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel.TimerViewModelVariable.timerTotalTime
-import com.kingfu.clok.variable.Variable.showSnackBar
-import com.kingfu.clok.variable.Variable.timerShowNotification
+import com.kingfu.clok.variable.Variable.DYNAMIC_COLOR
+import com.kingfu.clok.variable.Variable.RGB
+import com.kingfu.clok.variable.Variable.isShowSnackbar
+import com.kingfu.clok.variable.Variable.isShowTimerNotification
+import com.kingfu.clok.variable.Variable.snackbarAction
+import com.kingfu.clok.variable.Variable.snackbarIsWithDismissAction
+import com.kingfu.clok.variable.Variable.snackbarLabelAction
+import com.kingfu.clok.variable.Variable.snackbarMessage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-@OptIn(SavedStateHandleSaveableApi::class)
 class TimerViewModel(
-    private val timerPreferences: TimerPreferences,
-    savedStateHandle: SavedStateHandle
+    private val timerPreferences: TimerPreferences
 ) : ViewModel() {
 
-    /******************************** Timer ********************************/
-
     object TimerViewModelVariable {
-        var timerTime by mutableStateOf(value = 0L)
-        var timerTotalTime by mutableStateOf(value = 0.0)
+        var timerTotalTime by mutableDoubleStateOf(value = 0.0)
     }
 
-    var timerIsFinished by savedStateHandle.saveable{mutableStateOf(value = false)}
+    var timerTime by mutableLongStateOf(value = 0L)
         private set
 
-    var timerIsActive by savedStateHandle.saveable{mutableStateOf(value = false)}
+    var timerIsFinished by mutableStateOf(value = false)
         private set
 
-    var timerHour by savedStateHandle.saveable{mutableStateOf(value = 0)}
+    var timerIsActive by mutableStateOf(value = false)
         private set
 
-    var timerMinute by savedStateHandle.saveable{mutableStateOf(value = 0)}
+    var timerHour by mutableIntStateOf(value = 0)
         private set
 
-    var timerSecond by savedStateHandle.saveable{mutableStateOf(value = 0)}
+    var timerMinute by mutableIntStateOf(value = 0)
         private set
 
-    var timerCurrentTimePercentage by savedStateHandle.saveable{mutableStateOf(value = 0.0f)}
+    var timerSecond by mutableIntStateOf(value = 0)
         private set
 
-    var timerIsEditState by savedStateHandle.saveable{mutableStateOf(value = true)}
+    var timerCurrentTimePercentage by mutableFloatStateOf(value = 0.0f)
         private set
 
-    var timerInitialTime by savedStateHandle.saveable{mutableStateOf(value = 0L)}
+    var timerIsEditState by mutableStateOf(value = true)
         private set
 
-    var timerOffsetTime by savedStateHandle.saveable{mutableStateOf(value = 0L)}
+    var timerInitialTime by mutableLongStateOf(value = 0L)
         private set
 
-    var delay by savedStateHandle.saveable{mutableStateOf(value = 15L)}
+    var timerOffsetTime by mutableLongStateOf(value = 0L)
+        private set
+
+    var delay by mutableLongStateOf(value = 55L)
         private set
 
 
@@ -84,13 +86,7 @@ class TimerViewModel(
             if (timerIsEditState) {
                 timerCurrentTimePercentage = 0f
             }
-
-            when (timerLabelStyleSelectedOption) {
-                "RGB" -> {
-                    loadTimerRGBCounter()
-                    TimerRGBStyle().timerUpdateStartAndEndRGB(initialize = true)
-                }
-            }
+            loadTimerRGBCounter()
             initializeTimer()
         }
     }
@@ -104,15 +100,10 @@ class TimerViewModel(
         timerIsActive = true
 
         viewModelScope.launch {
-            if (!timerCountOvertime && timerIsFinished) {
-                pauseTimer()
-            }
             timerIsEditState = false
-
             timerInitialTime = SystemClock.elapsedRealtime()
+            delay(if (timerTime * 0.005 > 100) 100L else (timerTime * 0.005).toLong())
             while (timerIsActive) {
-
-                delay(delay)
 
                 if (timerTime >= 0L && !timerIsFinished) {
                     timerCurrentTimePercentage = (timerTime.toDouble() / timerTotalTime).toFloat()
@@ -121,20 +112,26 @@ class TimerViewModel(
                 } else {
                     if (!timerIsFinished) {
                         timerIsFinished = true
-                        timerShowNotification = true
+                        isShowTimerNotification = true
                         timerCurrentTimePercentage = 0f
                         timerOffsetTime = 0L
                         timerInitialTime = SystemClock.elapsedRealtime()
-                        showSnackBar = true
+                        isShowSnackbar = true
+                        snackbarMessage = "Timer is finished!"
+                        snackbarIsWithDismissAction = false
+                        snackbarLabelAction = "Cancel"
+                        snackbarAction = { cancelTimer() }
                     }
 
-                    if (timerCountOvertime) {
+                    if (timerPreferences.getTimerCountOvertime.first()) {
                         timerTime =
                             timerOffsetTime + (SystemClock.elapsedRealtime() - timerInitialTime)
                     } else {
                         pauseTimer()
                     }
                 }
+                delay(delay)
+
 
             }
         }
@@ -143,7 +140,6 @@ class TimerViewModel(
     fun pauseTimer() {
         timerIsActive = false
         viewModelScope.launch {
-            delay(delay)
             timerOffsetTime = timerTime
             saveTimerOffsetTime()
             saveTimerCurrentPercentage()
@@ -155,9 +151,7 @@ class TimerViewModel(
 
     fun cancelTimer() {
         timerIsActive = false
-
         viewModelScope.launch {
-            delay(delay)
             timerCurrentTimePercentage = 0f
             timerTotalTime = 0.0
             timerIsFinished = false
@@ -167,6 +161,7 @@ class TimerViewModel(
             saveTimerIsFinished()
             saveTimerOffsetTime()
             saveTimerIsEditState()
+            saveTimerTotalTime()
         }
     }
 
@@ -175,21 +170,21 @@ class TimerViewModel(
         timerIsActive = false
 
         viewModelScope.launch {
-            delay(delay)
-            timerIsFinished = false
             timerHour = 0
             timerMinute = 0
             timerSecond = 0
+
             saveTimerHour()
             saveTimerMinute()
             saveTimerSecond()
+
         }
     }
 
     private suspend fun timerLabelStyles() {
-        when (timerLabelStyleSelectedOption) {
-            "Cyan" -> {}
-            "RGB" -> {
+        when (timerPreferences.getTimerLabelStyle.first()) {
+            DYNAMIC_COLOR -> {}
+            RGB -> {
                 TimerRGBStyle().timerUpdateStartAndEndRGB(initialize = false)
                 saveTimerRGBCounter()
             }
@@ -197,21 +192,18 @@ class TimerViewModel(
     }
 
     suspend fun timerNotification(context: Context) {
-        if (timerIsFinished) {
-            for (i in 0 until timerPreferences.getTimerNotification.first().toInt()) {
-                if (timerShowNotification) {
-                    TimerNotificationService(context).showNotification()
-                    delay(2000)
-                } else {
-                    break
-                }
+        for (i in 0 until timerPreferences.getTimerNotification.first().toInt()) {
+            if (isShowTimerNotification && timerIsFinished && timerIsActive) {
+                TimerNotificationService(context = context).showNotification()
+                delay(timeMillis = 2000)
+            } else {
+                break
             }
-            timerShowNotification = false
-
         }
     }
 
     fun formatTimerTime(timeMillis: Long): String {
+
 
         val hours = timerTime / 1000 / 60 / 60 % 100
         val minutes = timerTime / 1000 / 60 % 60
@@ -225,33 +217,41 @@ class TimerViewModel(
                         seconds
                     )
                 }"
+
                 timeMillis in 3_600_000L until 36_000_000 -> "${"%01d".format(hours)}:${
                     "%02d".format(
                         minutes
                     )
                 }:${"%02d".format(seconds)}"
+
                 timeMillis in 600_000L until 3_600_000L -> "${"%02d".format(minutes)}:${
                     "%02d".format(
                         seconds
                     )
                 }"
+
                 timeMillis in 60_000 until 600_000L -> "${"%01d".format(minutes)}:${
                     "%02d".format(
                         seconds
                     )
                 }"
+
                 timeMillis in 10_000L until 60_000L -> "%02d".format(seconds)
                 timeMillis in 0L until 10_000L -> "${"%01d".format(seconds)}.${
                     "%02d".format(
                         milliseconds
                     )
                 }"
+
                 else -> "0"
             }
 
-        if (timerIsFinished && timerCountOvertime) {
-            time = "-$time"
+        viewModelScope.launch {
+            if (timerIsFinished && timerPreferences.getTimerCountOvertime.first()) {
+                time = "-$time "
+            }
         }
+
 
         return time
     }

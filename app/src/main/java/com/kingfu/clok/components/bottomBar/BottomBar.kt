@@ -5,21 +5,20 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.kingfu.clok.navigation.Screens
@@ -30,14 +29,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+
 @Composable
-fun BottomBarNavigation(
+fun BottomBar(
     currentDestination: NavDestination?,
     navController: NavHostController,
     navigationPreferences: NavigationPreferences,
 ) {
     val currentRoute = currentDestination?.route
-    val items = listOf( Screens.Stopwatch, Screens.Timer)
+    val items = listOf(Screens.Stopwatch, Screens.Timer)
 
     AnimatedVisibility(
         visible = currentRoute == Screens.Stopwatch.route || currentRoute == Screens.Timer.route,
@@ -55,16 +55,23 @@ fun BottomBarNavigation(
                 easing = LinearEasing
             )
         ),
-        modifier = Modifier.background(Black00),
         content = {
-            BottomNavigation(backgroundColor = Black00) {
+            NavigationBar(
+                containerColor = Black00,
+                contentColor = Color.White
+            ) {
                 for (screen in items.indices) {
-                    val selected =
-                        currentDestination?.hierarchy?.any { it.route == items[screen].route } == true
+                    val selected = currentRoute == items[screen].route
                     CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
-                        BottomNavigationItem(
-                            selectedContentColor = Color.White,
-                            unselectedContentColor = Color.DarkGray,
+                        NavigationBarItem(
+                            alwaysShowLabel = true,
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                unselectedIconColor = MaterialTheme.colorScheme.secondary,
+                                selectedTextColor = MaterialTheme.colorScheme.primary,
+                                unselectedTextColor = MaterialTheme.colorScheme.secondary,
+                                indicatorColor = Color.Transparent
+                            ),
                             icon = {
                                 Icon(
                                     imageVector = if (selected) items[screen].filledIconId!! else items[screen].outlinedIconId!!,
@@ -73,7 +80,7 @@ fun BottomBarNavigation(
                             },
                             label = {
                                 Text(
-                                    items[screen].name,
+                                    text = items[screen].name,
                                     fontSize = 10.sp,
                                     fontFamily = FontFamily.Default,
                                     fontWeight = FontWeight.Normal
@@ -81,16 +88,16 @@ fun BottomBarNavigation(
                             },
                             selected = selected,
                             onClick = {
-                                navController.navigate(items[screen].route)
+                                navController.navigate(route = items[screen].route)
                                 {
-                                    CoroutineScope(Dispatchers.Main).launch(Dispatchers.Default) {
+                                    CoroutineScope(context = Dispatchers.IO).launch {
                                         // saving current destination when navigating
-                                        navigationPreferences.setStartDestination(items[screen].route)
+                                        navigationPreferences.setStartDestination(string = items[screen].route)
                                     }
                                     // Pop up to the start destination of the graph to
                                     // avoid building up a large stack of destinations
                                     // on the back stack as users select items
-                                    popUpTo(navController.graph.findStartDestination().id) {
+                                    popUpTo(id = navController.graph.findStartDestination().id) {
                                         saveState = true
                                     }
 

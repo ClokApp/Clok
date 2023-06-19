@@ -1,10 +1,10 @@
 package com.kingfu.clok.components.topBar
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
@@ -12,57 +12,55 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.kingfu.clok.navigation.Screens
 import com.kingfu.clok.variable.Variable.showMenu
 
 @Composable
-fun ShowMenu(navController: NavController) {
+fun Menu(navController: NavController) {
     MaterialTheme(
-        colors = MaterialTheme.colors.copy(surface = Color.Black.copy(0.85f)),
-        shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(16.dp))
+        colorScheme = MaterialTheme.colorScheme.copy(
+            surface = MaterialTheme.colorScheme.inverseOnSurface.copy(0.40f)
+        ),
+        shapes = MaterialTheme.shapes.copy(extraSmall = RoundedCornerShape(size = 10.dp))
     ) {
         DropdownMenu(
             expanded = showMenu,
             onDismissRequest = { showMenu = false }
         ) {
             DropdownMenuItem(
+                text = {
+                    Text(
+                        text = Screens.Settings.name,
+                        fontSize = 16.sp,
+                        color = Color.White
+                    )
+                },
                 onClick = {
-                    navController.navigate(Screens.Settings.route)
+                    navController.navigate(route = Screens.Settings.route)
                     {
                         launchSingleTop = true
                         restoreState = true
                     }
                     showMenu = false
-                },
-            ) {
-                Text(
-                    text = "Settings",
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily.Default,
-                    fontWeight = FontWeight.Normal
-                )
-            }
+                }
+            )
 
             DropdownMenuItem(
+                text = {
+                    Text(
+                        text = Screens.BugReport.name,
+                        fontSize = 16.sp,
+                        color = Color.White
+                    )
+                },
                 onClick = {
-                    navController.navigate(Screens.BugReport.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
+                    navController.navigate(route = Screens.BugReport.route) {
                         launchSingleTop = true
                         restoreState = true
                     }
                     showMenu = false
-                },
-            ) {
-                Text(
-                    text = "Bug report",
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily.Default,
-                    fontWeight = FontWeight.Normal
-                )
-            }
+                }
+            )
         }
     }
 }

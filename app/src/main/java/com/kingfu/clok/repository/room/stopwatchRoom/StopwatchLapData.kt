@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "stopwatch_lap_list")
+
 data class StopwatchLapData(
     @PrimaryKey
     @ColumnInfo(name = "lap_number")

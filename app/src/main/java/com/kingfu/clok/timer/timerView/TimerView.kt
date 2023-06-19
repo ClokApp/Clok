@@ -2,9 +2,15 @@ package com.kingfu.clok.timer.timerView
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ScaffoldState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -14,14 +20,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import com.kingfu.clok.ui.theme.Black00
 
 @Composable
 fun TimerView(
     navController: NavController,
-    scaffoldState: ScaffoldState,
     vm: TimerViewModel,
+    settingsViewModelTimer: SettingsViewModelTimer,
 ) {
     val configurationOrientation = LocalConfiguration.current.orientation
 
@@ -33,12 +40,15 @@ fun TimerView(
     val lazyListStateHr = rememberLazyListState(initialFirstVisibleItemScrollOffset = 2)
     val lazyListStateMin = rememberLazyListState()
     val lazyListStateSec = rememberLazyListState()
+    val scrollState = rememberScrollState()
+
 
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Black00),
+            .background(color = Black00)
+            .verticalScroll(state = scrollState, enabled = !lazyListStateHr.isScrollInProgress && !lazyListStateMin.isScrollInProgress && !lazyListStateSec.isScrollInProgress),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -46,9 +56,8 @@ fun TimerView(
         if (!vm.timerIsEditState) {
             TimerTimeView(
                 vm = vm,
-                context = context,
-                haptic = haptic,
                 configurationOrientation = configurationOrientation,
+                settingsViewModelTimer = settingsViewModelTimer
             )
         } else {
             TimerEditView(
@@ -57,7 +66,8 @@ fun TimerView(
                 lazyListStateMin = lazyListStateMin,
                 lazyListStateSec = lazyListStateSec,
                 haptic = haptic,
-                configurationOrientation = configurationOrientation
+                configurationOrientation = configurationOrientation,
+                settingsViewModelTimer = settingsViewModelTimer
             )
         }
 
@@ -74,8 +84,8 @@ fun TimerView(
                 lazyListStateSec = lazyListStateSec,
                 coroutineScopeTimer = coroutineScopeTimer,
                 haptic = haptic,
-                context = context,
-                configurationOrientation = configurationOrientation
+                configurationOrientation = configurationOrientation,
+                context = context
             )
 
             TimerStartButtonView(

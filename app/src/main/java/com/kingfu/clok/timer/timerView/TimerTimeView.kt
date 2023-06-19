@@ -1,78 +1,77 @@
 package com.kingfu.clok.timer.timerView
 
-import android.content.Context
 import android.content.res.Configuration
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Text
 import androidx.compose.material.ripple.LocalRippleTheme
-import androidx.compose.runtime.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.hapticfeedback.HapticFeedback
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.kingfu.clok.notification.timer.TimerNotificationService
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerBackgroundEffectsSelectedOption
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerLabelStyleSelectedOption
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerTimeFontStyleSelectedOption
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
 import com.kingfu.clok.timer.backgroundEffects.TimerSnowEffect
-import com.kingfu.clok.timer.styles.TimerCyanStyle
 import com.kingfu.clok.timer.styles.TimerRGBStyle
+import com.kingfu.clok.timer.timerFontStyle.timerFontStyle
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
-import com.kingfu.clok.timer.timerViewModel.TimerViewModel.TimerViewModelVariable.timerTime
 import com.kingfu.clok.util.NoRippleTheme
 import com.kingfu.clok.util.customFontSize
+import com.kingfu.clok.variable.Variable.RGB
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun TimerTimeView(
     vm: TimerViewModel,
-    context: Context,
-    haptic: HapticFeedback,
     configurationOrientation: Int,
+    settingsViewModelTimer: SettingsViewModelTimer,
 ) {
 
-    Box(
-        Modifier
-            .zIndex(zIndex = 1f)
-            .clip(if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) CircleShape else RectangleShape)
-    ) {
+    LaunchedEffect(key1 = settingsViewModelTimer.timerLabelStyle) {
+        if (settingsViewModelTimer.timerLabelStyle == RGB) {
+            TimerRGBStyle().timerUpdateStartAndEndRGB(initialize = true)
+        }
+    }
+
+    Box(modifier = Modifier.clip(if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) CircleShape else RectangleShape)) {
         val animatedProgress by animateFloatAsState(
             targetValue = if (!vm.timerCurrentTimePercentage.isNaN()) vm.timerCurrentTimePercentage else 0f,
             animationSpec = tween(
-                durationMillis = if (timerTime * 0.005 > 250) 250 else (timerTime * 0.005).toInt(),
+                durationMillis = if (vm.timerTime * 0.005 > 250) 250 else (vm.timerTime * 0.005).toInt(),
                 easing = LinearEasing
             )
         )
 
-        val animatedCircularProgressBarColor by animateColorAsState(
-            targetValue = TimerCyanStyle().cyanStyleListOfCyan(),
-            animationSpec = tween(
-                durationMillis = 500,
-                easing = LinearEasing
+        val circularProgressBarColor =
+            listOf(
+                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.primary
             )
-        )
 
         if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT && !animatedProgress.isNaN()) {
             Canvas(
@@ -85,31 +84,25 @@ fun TimerTimeView(
                     startAngle = -90f,
                     sweepAngle = 360f,
                     useCenter = false,
-                    style = Stroke(width = 10f),
+                    style = Stroke(width = 5f),
                 )
                 drawArc(
                     brush = Brush.linearGradient(
                         colors =
-                        when (timerLabelStyleSelectedOption) {
-                            "RGB" -> TimerRGBStyle().rgbStyleListRGB()
-                            "Cyan" -> {
-                                listOf(
-                                    animatedCircularProgressBarColor,
-                                    animatedCircularProgressBarColor,
-                                )
-                            }
-                            else -> listOf(Color.Yellow, Color.Yellow)
+                        when (settingsViewModelTimer.timerLabelStyle) {
+                            RGB -> { TimerRGBStyle().rgbStyleListRGB() }
+                            else -> { circularProgressBarColor }
                         }
                     ),
                     startAngle = -90f,
                     sweepAngle = 360f * animatedProgress,
                     useCenter = false,
-                    style = Stroke(20f, cap = StrokeCap.Round),
+                    style = Stroke(width = 20f, cap = StrokeCap.Round),
                 )
             }
         }
 
-        var backgroundEffectsBoxSize by remember { mutableStateOf(IntSize.Zero) }
+        var backgroundEffectsBoxSize by remember { mutableStateOf(value = IntSize.Zero) }
 
         Box(
             modifier = Modifier
@@ -122,12 +115,9 @@ fun TimerTimeView(
             if (vm.timerIsActive && backgroundEffectsBoxSize.width.dp != 0.dp
                 && configurationOrientation == Configuration.ORIENTATION_PORTRAIT
             ) {
-                when (timerBackgroundEffectsSelectedOption) {
-                    "Snow" -> {
-                        TimerSnowEffect(size = backgroundEffectsBoxSize)
-                    }
+                when (settingsViewModelTimer.timerBackgroundEffects) {
+                    "Snow" -> { TimerSnowEffect(size = backgroundEffectsBoxSize) }
                 }
-
             }
         }
 
@@ -137,32 +127,19 @@ fun TimerTimeView(
             Row {
                 CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
                     Text(
-                        text = vm.formatTimerTime(timeMillis = timerTime),
-                        color = Color.White,
+                        text = vm.formatTimerTime(timeMillis = vm.timerTime),
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = customFontSize(textUnit = 65.sp),
-                        fontFamily = FontFamily.Default,
                         fontWeight = FontWeight.Light,
-                        modifier = Modifier.clickable {
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            if (vm.timerIsActive) {
-                                vm.pauseTimer()
-                            } else {
-                                if (vm.timerIsEditState) {
-                                    vm.convertHrMinSecToMillis()
-                                    vm.timerSetTotalTime()
-                                }
-                                vm.startTimer()
-                            }
-                            TimerNotificationService(context).cancelNotification()
-                        },
                         style = TextStyle(
-                            drawStyle = if (timerTimeFontStyleSelectedOption == "Inner stroke")
-                                Stroke(
-                                    miter = 10f,
-                                    width = 5f,
-                                    join = StrokeJoin.Round,
-                                    cap = StrokeCap.Round
-                                ) else null
+                            drawStyle = timerFontStyle(
+                                string1 = settingsViewModelTimer.timerTimeFontStyle,
+                                string2 = settingsViewModelTimer.timerFontStyleRadioOptions.elementAt(index = 1),
+                                minter = 10f,
+                                width = 5f,
+                                join = StrokeJoin.Round,
+                                cap = StrokeCap.Round
+                            )
                         )
                     )
                 }

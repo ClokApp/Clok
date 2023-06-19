@@ -1,109 +1,73 @@
 package com.kingfu.clok.components.topBar
 
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import com.kingfu.clok.navigation.Screens
 import com.kingfu.clok.ui.theme.Black00
-import com.kingfu.clok.variable.Variable.settingsStopwatchSelectedFontStyleTopBarName
-import com.kingfu.clok.variable.Variable.settingsTimerSelectedFontStyleTopBarName
-import com.kingfu.clok.variable.Variable.showMenu
+import com.kingfu.clok.variable.Variable
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
     navController: NavController,
-    currentDestination: NavDestination?,
 ) {
-    val currentRoute = currentDestination?.route
+    val currentRoute by rememberSaveable{ mutableStateOf(navController.currentDestination?.route) }
 
     TopAppBar(
-        title = {
-            Text(
-                text =
-                when (currentRoute) {
-                    Screens.Settings.route -> {
-                        Screens.Settings.name
-                    }
-                    Screens.SettingsStopwatchLabelStyles.route -> {
-                        Screens.SettingsStopwatchLabelStyles.name
-                    }
-                    Screens.SettingsTimerProgressBarStyles.route -> {
-                        Screens.SettingsTimerProgressBarStyles.name
-                    }
-                    Screens.SettingsStopwatchBackgroundEffects.route -> {
-                        Screens.SettingsStopwatchBackgroundEffects.name
-                    }
-                    Screens.SettingsTimerBackgroundEffects.route -> {
-                        Screens.SettingsTimerBackgroundEffects.name
-                    }
-                    Screens.BugReport.route -> {
-                        Screens.BugReport.name
-                    }
-                    Screens.SettingsTimerFontStyles.route->{
-                        "${Screens.Timer.name} ${Screens.SettingsTimerFontStyles.name}"
-                    }
-                    Screens.SettingsTimerSelectedFontStyle.route->{
-                        settingsTimerSelectedFontStyleTopBarName
-                    }
-                    Screens.SettingsStopwatchFontStyles.route->{
-                        "${Screens.Stopwatch.name} ${Screens.SettingsStopwatchFontStyles.name}"
-                    }
-                    Screens.SettingsStopwatchSelectedFontStyle.route->{
-                        settingsStopwatchSelectedFontStyleTopBarName
-                    }
-                    else -> {
-                        ""
-                    }
-                },
-                fontSize = 20.sp,
-                fontFamily = FontFamily.Default,
-                fontWeight = FontWeight.Normal
-            )
-        },
-        backgroundColor = Black00,
-        contentColor = Color.White,
-        elevation = 0.dp,
+        title = {},
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Black00),
         navigationIcon =
         {
-            if (navController.previousBackStackEntry != null && currentRoute != Screens.Stopwatch.route
-                && currentRoute != Screens.Timer.route
-            ) {
-                run {
-                    IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(
-                            imageVector = Icons.Rounded.ArrowBackIosNew,
-                            contentDescription = null
-                        )
-                    }
-                }
+            IconButton(
+                enabled = navController.previousBackStackEntry != null && currentRoute != Screens.Stopwatch.route && currentRoute != Screens.Timer.route,
+                onClick = { navController.navigateUp() },
+                modifier = Modifier
+                    .alpha(
+                        if (
+                            navController.previousBackStackEntry != null &&
+                            currentRoute != Screens.Stopwatch.route &&
+                            currentRoute != Screens.Timer.route
+                        ) 1f else 0f
+                    )
+                    .wrapContentHeight(align = Alignment.Bottom),
+
+                ) {
+                Icon(
+                    imageVector = Icons.Rounded.ArrowBackIosNew,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
             }
         },
         actions = {
-            if (currentRoute == Screens.Timer.route || currentRoute == Screens.Stopwatch.route) {
-                IconButton(onClick = { showMenu = !showMenu }) {
-                    Icon(
-                        imageVector = Icons.Rounded.MoreVert,
-                        contentDescription = null,
-                        tint = Color.White
-                    )
-                }
-                ShowMenu(navController)
+            IconButton(
+                enabled = currentRoute == Screens.Timer.route || currentRoute == Screens.Stopwatch.route,
+                onClick = { Variable.showMenu = !Variable.showMenu },
+                modifier = Modifier.alpha(alpha = if (currentRoute == Screens.Timer.route || currentRoute == Screens.Stopwatch.route) 1f else 0f)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.MoreVert,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
             }
+            Menu(navController = navController)
         }
     )
-
 }
-

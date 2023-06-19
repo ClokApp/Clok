@@ -13,15 +13,14 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,11 +38,11 @@ fun TimerResetButtonView(
     lazyListStateSec: LazyListState,
     coroutineScopeTimer: CoroutineScope,
     haptic: HapticFeedback,
-    context: Context,
-    configurationOrientation: Int
+    configurationOrientation: Int,
+    context: Context
 ) {
     val stopwatchResetButtonColor by animateColorAsState(
-        targetValue = if (vm.timerIsEditState) Color.Yellow else Color.Magenta
+        targetValue = MaterialTheme.colorScheme.secondary
     )
 
     val padding by animateDpAsState(
@@ -82,10 +81,10 @@ fun TimerResetButtonView(
                             lazyListStateMin.scrollToItem(index = Int.MAX_VALUE / 2 - 4)
                             lazyListStateSec.scrollToItem(index = Int.MAX_VALUE / 2 - 4)
                         }
+                        TimerNotificationService(context = context).cancelNotification()
                     } else {
                         vm.cancelTimer()
                     }
-                    TimerNotificationService(context = context).cancelNotification()
                 }
             ) {
                 Text(
@@ -97,7 +96,6 @@ fun TimerResetButtonView(
                         customFontSize(textUnit = 20.sp)
                     },
                     color = stopwatchResetButtonColor,
-                    fontFamily = FontFamily.Default,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(horizontal = if (vm.timerIsEditState) 10.dp else 8.dp),
                 )

@@ -2,8 +2,16 @@ package com.kingfu.clok.repository.preferencesDataStore
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.doublePreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.kingfu.clok.variable.Variable.DYNAMIC_COLOR
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -14,11 +22,11 @@ class TimerPreferences private constructor(context: Context) {
         private var INSTANCE: TimerPreferences? = null
         fun getInstance(context: Context): TimerPreferences {
             return INSTANCE ?: synchronized(this) {
-                INSTANCE?.let {
-                    return it
+                var instance = INSTANCE
+                if(instance == null) {
+                    instance = TimerPreferences(context)
+                    INSTANCE = instance
                 }
-                val instance = TimerPreferences(context)
-                INSTANCE = instance
                 return instance
             }
         }
@@ -35,7 +43,8 @@ class TimerPreferences private constructor(context: Context) {
     private val timerIsEditStateDefault = true
     private val timerCurrentPercentageDefault = 0.0f
     private val timerCountOvertimeDefault = true
-    private val timerLabelStyleSelectedOptionDefault = "RGB"
+//    private val timerLabelStyleSelectedOptionDefault = "RGB"
+    private val timerLabelStyleDefault = DYNAMIC_COLOR
     private val timerEnableScrollsHapticFeedbackDefault = true
     private val timerNotificationDefault = 5f
     private val timerOffsetTimeDefault = 0L
@@ -52,7 +61,7 @@ class TimerPreferences private constructor(context: Context) {
     private val _timerIsEditState = booleanPreferencesKey("timerIsEditState")
     private val _timerCurrentPercentage = floatPreferencesKey("timerCurrentPercentage")
     private val _timerCounterOvertime = booleanPreferencesKey("timerCounterOvertime")
-    private val _timerLabelStyleSelectedOption = stringPreferencesKey("timerLabelStyleSelectedOption")
+    private val _timerLabelStyle = stringPreferencesKey("timerLabelStyle")
     private val _timerEnableScrollsHapticFeedback = booleanPreferencesKey("timerEnableScrollsHapticFeedback")
     private val _timerNotification = floatPreferencesKey("timerNotification")
     private val _timerOffsetTime = longPreferencesKey("timerOffsetTime")
@@ -123,7 +132,7 @@ class TimerPreferences private constructor(context: Context) {
 
     suspend fun setTimerLabelStyleSelectedOption(string: String) {
         timerDataStore.edit { preferences ->
-            preferences[_timerLabelStyleSelectedOption] = string
+            preferences[_timerLabelStyle] = string
         }
     }
 
@@ -214,9 +223,9 @@ class TimerPreferences private constructor(context: Context) {
             preferences[_timerCounterOvertime] ?: timerCountOvertimeDefault
         }
 
-    val getTimerLabelStyleSelectedOption: Flow<String> = timerDataStore.data
+    val getTimerLabelStyle: Flow<String> = timerDataStore.data
         .map { preferences ->
-            preferences[_timerLabelStyleSelectedOption] ?: timerLabelStyleSelectedOptionDefault
+            preferences[_timerLabelStyle] ?: timerLabelStyleDefault
         }
 
     val getTimerEnableScrollsHapticFeedback: Flow<Boolean> = timerDataStore.data

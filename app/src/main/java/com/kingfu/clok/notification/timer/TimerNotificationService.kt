@@ -10,8 +10,8 @@ import androidx.core.app.NotificationCompat
 import com.kingfu.clok.R
 import com.kingfu.clok.mainActivity.MainActivity
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel.TimerViewModelVariable.timerTotalTime
-import com.kingfu.clok.variable.Variable.showSnackBar
-import com.kingfu.clok.variable.Variable.timerShowNotification
+import com.kingfu.clok.variable.Variable.isShowSnackbar
+import com.kingfu.clok.variable.Variable.isShowTimerNotification
 
 const val TIMER_NAME = "Timer Notification"
 
@@ -20,7 +20,7 @@ const val CODE_CLOSE = 2
 const val NOTIFICATION_ID = 3
 
 class TimerNotificationService(
-    private val context: Context,
+    private val context: Context
 ) {
     val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -57,6 +57,7 @@ class TimerNotificationService(
             Intent(context, TimerNotificationReceiver::class.java),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
+
 
         val notification = NotificationCompat.Builder(context, TIMER_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_round_hourglass_empty_24)
@@ -108,8 +109,8 @@ class TimerNotificationService(
 
     fun cancelNotification(){
         notificationManager.cancel(NOTIFICATION_ID)
-        timerShowNotification = false
-        showSnackBar = false
+        isShowTimerNotification = false
+        isShowSnackbar = false
     }
 
 }

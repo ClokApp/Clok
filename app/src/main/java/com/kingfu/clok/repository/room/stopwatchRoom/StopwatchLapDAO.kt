@@ -1,15 +1,13 @@
 package com.kingfu.clok.repository.room.stopwatchRoom
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 // Database Access Object
 @Dao
 interface StopwatchLapDAO {
     @Query("SELECT * FROM stopwatch_lap_list ORDER BY lap_number DESC")
-    suspend fun getAll(): List<StopwatchLapData>
-
-//    @Query("SELECT * from item_list where itemId = :id")
-//    fun getById(id:Int): ItemData?
+    fun getAll(): Flow<List<StopwatchLapData>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(lap: StopwatchLapData)

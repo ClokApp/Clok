@@ -7,21 +7,19 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kingfu.clok.notification.timer.TimerNotificationService
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
-import com.kingfu.clok.ui.theme.Green50
 import com.kingfu.clok.ui.theme.Red50
 import com.kingfu.clok.util.customFontSize
 
@@ -45,14 +43,14 @@ fun TimerStartButtonView(
             vm.timerMinute == 0 &&
             vm.timerSecond == 0
         )
-            Color.Gray
+            MaterialTheme.colorScheme.inversePrimary
         else if (vm.timerIsActive && !vm.timerIsEditState)
             Red50
         else
-            Green50,
+            MaterialTheme.colorScheme.primary,
     )
 
-    val enableStartBtn = startTimerColor != Color.Gray
+    val enableStartBtn = startTimerColor != MaterialTheme.colorScheme.inversePrimary
 
     OutlinedButton(
         enabled = enableStartBtn,
@@ -67,10 +65,10 @@ fun TimerStartButtonView(
                 if (vm.timerIsEditState) {
                     vm.convertHrMinSecToMillis()
                     vm.timerSetTotalTime()
+                    TimerNotificationService(context = context).cancelNotification()
                 }
                 vm.startTimer()
             }
-            TimerNotificationService(context).cancelNotification()
         }
     ) {
         Text(
@@ -78,7 +76,7 @@ fun TimerStartButtonView(
             modifier = Modifier.padding(
                 horizontal =
                 if (vm.timerIsActive) {
-                    7.dp
+                    if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 8.dp else 7.dp
                 } else {
                     if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 14.dp else 12.dp
                 }
@@ -90,7 +88,6 @@ fun TimerStartButtonView(
                 customFontSize(textUnit = 20.sp)
             },
             color = startTimerColor,
-            fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Bold,
         )
     }

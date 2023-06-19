@@ -3,12 +3,14 @@ package com.kingfu.clok.mainActivity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.kingfu.clok.navigation.AppNavHost
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import com.kingfu.clok.navigation.AppScaffold
 import com.kingfu.clok.ui.theme.ClokTheme
 import com.kingfu.clok.util.NotificationPermissionForAndroid13
 
-
-const val TAG = "MainActivityLog"
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,35 +21,18 @@ class MainActivity : ComponentActivity() {
             ClokTheme {
                 NotificationPermissionForAndroid13()
 
-                AppNavHost()
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    AppScaffold()
+                }
             }
         }
     }
-
-    override fun onStart() {
-        super.onStart()
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
 }
+
 
 
 

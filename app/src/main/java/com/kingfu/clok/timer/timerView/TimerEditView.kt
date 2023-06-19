@@ -12,29 +12,26 @@ import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerEnableScrollsHapticFeedback
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer.SettingsViewModelTimerVariables.timerScrollsFontStyleSelectedOption
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
+import com.kingfu.clok.timer.timerFontStyle.timerFontStyle
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import com.kingfu.clok.ui.theme.Black00
-import com.kingfu.clok.ui.theme.Cyan50
 import com.kingfu.clok.util.customFontSize
 import com.kingfu.clok.variable.Variable.TIMER_HR
 import com.kingfu.clok.variable.Variable.TIMER_MIN
@@ -48,7 +45,8 @@ fun TimerEditView(
     lazyListStateMin: LazyListState,
     lazyListStateSec: LazyListState,
     haptic: HapticFeedback,
-    configurationOrientation: Int
+    configurationOrientation: Int,
+    settingsViewModelTimer: SettingsViewModelTimer
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
@@ -70,9 +68,9 @@ fun TimerEditView(
 
     LaunchedEffect(Unit) {
         if (loadInitialTime && vm.timerIsEditState) {
-            lazyListStateHr.scrollToItem(Int.MAX_VALUE / 2 - 24 + vm.timerHour)
-            lazyListStateMin.scrollToItem(Int.MAX_VALUE / 2 - 4 + vm.timerMinute)
-            lazyListStateSec.scrollToItem(Int.MAX_VALUE / 2 - 4 + vm.timerSecond)
+            lazyListStateHr.scrollToItem(index = Int.MAX_VALUE / 2 - 24 + vm.timerHour)
+            lazyListStateMin.scrollToItem(index = Int.MAX_VALUE / 2 - 4 + vm.timerMinute)
+            lazyListStateSec.scrollToItem(index = Int.MAX_VALUE / 2 - 4 + vm.timerSecond)
             loadInitialTime = false
         }
     }
@@ -125,7 +123,8 @@ fun TimerEditView(
             timeUnit = TIMER_HR,
             vm = vm,
             labels = labels,
-            loadInitialTime = loadInitialTime
+            loadInitialTime = loadInitialTime,
+            settingsViewModelTimer = settingsViewModelTimer
         )
 
         DisplayTimerScroll(
@@ -140,7 +139,8 @@ fun TimerEditView(
             timeUnit = TIMER_MIN,
             vm = vm,
             labels = labels,
-            loadInitialTime = loadInitialTime
+            loadInitialTime = loadInitialTime,
+            settingsViewModelTimer = settingsViewModelTimer
         )
 
         DisplayTimerScroll(
@@ -156,12 +156,13 @@ fun TimerEditView(
             vm = vm,
             labels = labels,
             loadInitialTime = loadInitialTime,
+            settingsViewModelTimer = settingsViewModelTimer,
         )
     }
 
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalTextApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DisplayTimerScroll(
     label: String,
@@ -175,18 +176,18 @@ fun DisplayTimerScroll(
     timeUnit: Int,
     vm: TimerViewModel,
     labels: List<String>,
-    loadInitialTime: Boolean
+    loadInitialTime: Boolean,
+    settingsViewModelTimer: SettingsViewModelTimer
 ) {
 
-    var currentIndex by rememberSaveable { mutableStateOf(0) }
+    var currentIndex by rememberSaveable { mutableIntStateOf(value = 0) }
+
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-
     ) {
         val color by animateColorAsState(
-            if (lazyListState.isScrollInProgress) Color.White else Color.Gray,
+            if (lazyListState.isScrollInProgress) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.inversePrimary,
             animationSpec = tween(
                 durationMillis = 500,
                 delayMillis = 0,
@@ -199,7 +200,6 @@ fun DisplayTimerScroll(
             textAlign = TextAlign.Center,
             fontSize = labelTextSize,
             color = color,
-            fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Thin,
         )
 
@@ -217,23 +217,24 @@ fun DisplayTimerScroll(
                         text = if (index % timeUnit < 10) "0${index % timeUnit}" else "${index % timeUnit}",
                         textAlign = TextAlign.Center,
                         fontSize = timerScrollerFontSize,
-                        fontFamily = FontFamily.Default,
                         fontWeight = if (selectedItem == index) FontWeight.Light else FontWeight.ExtraLight,
-                        color = if (selectedItem == index) Cyan50 else Color.DarkGray,
+                        color = if (selectedItem == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
                         style = TextStyle(
-                            drawStyle = if(timerScrollsFontStyleSelectedOption == "Inner stroke") Stroke(
-                                miter = 10f,
+                            drawStyle = timerFontStyle(
+                                string1 = settingsViewModelTimer.timerScrollsFontStyle,
+                                string2 = settingsViewModelTimer.timerFontStyleRadioOptions.elementAt(index = 1),
+                                minter = 10f,
                                 width = 5f,
                                 join = StrokeJoin.Round,
                                 cap = StrokeCap.Round
-                            ) else null
+                            )
                         )
                     )
                 }
             }
 
             LaunchedEffect(selectedItem) {
-                if (lazyListState.isScrollInProgress && timerEnableScrollsHapticFeedback) {
+                if (lazyListState.isScrollInProgress && settingsViewModelTimer.timerEnableScrollsHapticFeedback) {
                     haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
                 }
                 when (label) {

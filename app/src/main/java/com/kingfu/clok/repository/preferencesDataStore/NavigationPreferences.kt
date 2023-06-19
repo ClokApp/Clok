@@ -17,11 +17,11 @@ class NavigationPreferences private constructor(context: Context) {
 
         fun getInstance(context: Context): NavigationPreferences {
             return INSTANCE ?: synchronized(this) {
-                INSTANCE?.let {
-                    return it
+                var instance = INSTANCE
+                if(instance == null) {
+                    instance = NavigationPreferences(context)
+                    INSTANCE = instance
                 }
-                val instance = NavigationPreferences(context)
-                INSTANCE = instance
                 return instance
             }
         }

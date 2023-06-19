@@ -1,13 +1,18 @@
 package com.kingfu.clok.timer.backgroundEffects
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -25,48 +30,64 @@ fun TimerSnowEffect(size: IntSize) {
     val snowXOffsetList = mutableListOf<Float>()
     val snowYOffsetList = mutableListOf<Float>()
     val snowSizeList = mutableListOf<Float>()
-    val numberOfSnows by remember { mutableStateOf(50) }
+    val numberOfSnows by remember { mutableIntStateOf(value = 50) }
 
     for (i in 0 until numberOfSnows) {
-        val duration by remember { mutableStateOf((4000..6000).random()) }
+        val duration by remember { mutableIntStateOf(value = (4000..6000).random()) }
 
-        val snowSizeInitial by remember { mutableStateOf((20..25).random().toFloat()) }
-        val snowSizeTarget by remember { mutableStateOf((0..1).random().toFloat()) }
+        val snowSizeInitial by remember { mutableFloatStateOf(value = (20..25).random().toFloat()) }
+        val snowSizeTarget by remember { mutableFloatStateOf(value = (0..1).random().toFloat()) }
 
         val snowSize by transition.animateFloat(
             initialValue = snowSizeInitial,
             targetValue = snowSizeTarget,
             animationSpec = infiniteRepeatable(
-                animation = tween(duration, duration/8, easing = LinearEasing),
+                animation = tween(
+                    durationMillis = duration,
+                    delayMillis = duration / 8,
+                    easing = LinearEasing
+                ),
             )
         )
-        snowSizeList.add(snowSize)
+        snowSizeList.add(element = snowSize)
 
-        val snowYInitial by remember { mutableStateOf((-2000..-100).random().toFloat() )}
+        val snowYInitial by remember { mutableFloatStateOf(value = (-2000..-100).random().toFloat()) }
 
-        val snowYTarget by remember{ mutableStateOf(((size.height*0.90).toInt()..size.height).random().toFloat()) }
+        val snowYTarget by remember {
+            mutableFloatStateOf( value =
+                ((size.height * 0.90).toInt()..size.height).random().toFloat()
+            )
+        }
 
         val snowYOffset by transition.animateFloat(
             initialValue = snowYInitial,
             targetValue = snowYTarget,
             animationSpec = infiniteRepeatable(
-                animation = tween(duration, duration/8,  easing = LinearEasing),
+                animation = tween(
+                    durationMillis = duration,
+                    delayMillis = duration / 8,
+                    easing = LinearEasing
+                ),
             )
         )
-        snowYOffsetList.add(snowYOffset)
+        snowYOffsetList.add(element = snowYOffset)
 
-        val snowXInitial by remember { mutableStateOf((0..size.width).random().toFloat()) }
+        val snowXInitial by remember { mutableFloatStateOf(value = (0..size.width).random().toFloat()) }
 
-        val snowXTarget by remember { mutableStateOf(value = snowXInitial) }
+        val snowXTarget by remember { mutableFloatStateOf(value = snowXInitial) }
 
         val snowXOffset by transition.animateFloat(
             initialValue = snowXInitial,
             targetValue = snowXTarget,
             animationSpec = infiniteRepeatable(
-                animation = tween(duration, duration/8, easing = LinearEasing),
+                animation = tween(
+                    durationMillis = duration,
+                    delayMillis = duration / 8,
+                    easing = LinearEasing
+                ),
             ),
         )
-        snowXOffsetList.add(0, snowXOffset)
+        snowXOffsetList.add(index = 0, element = snowXOffset)
     }
 
     Box {
@@ -79,7 +100,7 @@ fun TimerSnowEffect(size: IntSize) {
                         color = Color.White,
                         radius = if (radius > 25f) 25f else radius,
                         center = Offset(
-                            x = snowXOffsetList[i]+15*sin(snowSizeList[i]),
+                            x = snowXOffsetList[i] + 15 * sin(snowSizeList[i]),
                             y = snowYOffsetList[i],
                         )
                     )

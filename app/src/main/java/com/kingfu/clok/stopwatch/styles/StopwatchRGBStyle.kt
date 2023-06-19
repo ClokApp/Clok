@@ -2,8 +2,8 @@ package com.kingfu.clok.stopwatch.styles
 
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import com.kingfu.clok.stopwatch.styles.StopwatchRGBStyle.RGBVariable.RGBColorCounter
@@ -17,7 +17,7 @@ class StopwatchRGBStyle {
 
 
     object RGBVariable {
-        var RGBColorCounter by mutableStateOf(0.0)
+        var RGBColorCounter by mutableDoubleStateOf(value = 0.0)
         var RGBHrColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
         var RGBMinColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
         var RGBSecColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)

@@ -17,9 +17,9 @@ abstract class StopwatchLapDatabase: RoomDatabase() {
                 var instance = INSTANCE
                 if(instance == null){
                     instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        StopwatchLapDatabase::class.java,
-                        "item_lap_database"
+                        context = context.applicationContext,
+                        klass = StopwatchLapDatabase::class.java,
+                        name = "item_lap_database"
                     ).fallbackToDestructiveMigration().build()
                     INSTANCE = instance
                 }

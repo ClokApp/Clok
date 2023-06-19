@@ -6,8 +6,8 @@ import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.rounded.HourglassEmpty
 import androidx.compose.material.icons.rounded.HourglassFull
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.kingfu.clok.variable.Variable.settingsStopwatchSelectedFontStyleTopBarName
-import com.kingfu.clok.variable.Variable.settingsTimerSelectedFontStyleTopBarName
+import com.kingfu.clok.variable.Variable.settingsStopwatchSelectedFontStyle
+import com.kingfu.clok.variable.Variable.settingsTimerSelectedFontStyle
 
 
 sealed class Screens(
@@ -82,7 +82,7 @@ sealed class Screens(
 
     object SettingsTimerSelectedFontStyle: Screens(
         route = "settingsTimerSelectedFontStyle",
-        name = settingsTimerSelectedFontStyleTopBarName,
+        name = settingsTimerSelectedFontStyle,
         filledIconId = null,
         outlinedIconId = null
     )
@@ -96,7 +96,7 @@ sealed class Screens(
 
     object SettingsStopwatchSelectedFontStyle: Screens(
         route = "settingsStopwatchSelectedFontStyle",
-        name = settingsStopwatchSelectedFontStyleTopBarName,
+        name = settingsStopwatchSelectedFontStyle,
         filledIconId = null,
         outlinedIconId = null
     )
