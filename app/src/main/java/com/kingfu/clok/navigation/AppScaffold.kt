@@ -88,11 +88,13 @@ fun AppScaffold() {
             }
         },
         bottomBar = {
-            BottomBar(
-                currentDestination = currentDestination,
-                navController = navController,
-                navigationPreferences = navigationPreferences
-            )
+            if (currentDestination?.route == Screens.Stopwatch.route || currentDestination?.route == Screens.Timer.route) {
+                BottomBar(
+                    currentDestination = currentDestination,
+                    navController = navController,
+                    navigationPreferences = navigationPreferences
+                )
+            }
         },
         content = { paddingValues ->
             AppHavHost(

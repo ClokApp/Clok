@@ -45,7 +45,7 @@ class TimerPreferences private constructor(context: Context) {
     private val timerCountOvertimeDefault = true
 //    private val timerLabelStyleSelectedOptionDefault = "RGB"
     private val timerLabelStyleDefault = DYNAMIC_COLOR
-    private val timerEnableScrollsHapticFeedbackDefault = true
+    private val timerEnableScrollsHapticFeedbackDefault = false
     private val timerNotificationDefault = 5f
     private val timerOffsetTimeDefault = 0L
     private val timerRGBCCounterDefault = 255.0

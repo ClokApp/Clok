@@ -23,7 +23,7 @@ class SettingsViewModelTimer(
         private set
     var timerNotification by mutableFloatStateOf(value = 5f)
         private set
-    var timerEnableScrollsHapticFeedback by mutableStateOf(value = true)
+    var timerEnableScrollsHapticFeedback by mutableStateOf(value = false)
         private set
     var timerBackgroundEffects by mutableStateOf(value = "Snow")
         private set

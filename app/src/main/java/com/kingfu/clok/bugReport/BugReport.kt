@@ -21,7 +21,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,8 +34,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -78,19 +75,15 @@ fun BugReport() {
                         discordIntent.data = Uri.parse(discordInviteLink)
                         context.startActivity(discordIntent)
                     }
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column(
-                    modifier = Modifier
-                        .weight(weight = 1f)
-                        .padding(all = 8.dp),
-                ) {
+                Column(modifier = Modifier.fillMaxWidth(fraction = 0.85f)) {
                     Text(
                         text = "Discord",
                         fontSize = 18.sp,
-                        color = Color(red = 88, green = 101, blue = 242, alpha = 255)
+                        color = Color.White
                     )
 
                     Text(
@@ -101,19 +94,11 @@ fun BugReport() {
                     )
                 }
 
-                IconButton(
-                    onClick = {
-                        haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
-                        discordIntent.data = Uri.parse(discordInviteLink)
-                        context.startActivity(discordIntent)
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.ArrowForward,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Rounded.ArrowForward,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
 
             }
             Divider(
@@ -134,19 +119,15 @@ fun BugReport() {
                             )
                         )
                     }
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column(
-                    modifier = Modifier
-                        .weight(weight = 1f)
-                        .padding(all = 8.dp),
-                    ) {
+                Column(modifier = Modifier.fillMaxWidth(fraction = 0.85f)) {
                     Text(
                         text = "Email",
                         fontSize = 18.sp,
-                        color = Color(red = 234, green = 67, blue = 53, alpha = 255)
+                        color = Color.White
                     )
 
                     Text(
@@ -168,20 +149,11 @@ fun BugReport() {
                     )
                 }
 
-                IconButton(
-                    onClick = {
-                        haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
-                        context.startActivity(
-                            Intent.createChooser(bugReportEmailIntent, "Send email...")
-                        )
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.ArrowForward,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Rounded.ArrowForward,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
             }
         }
 
@@ -200,7 +172,7 @@ fun BugReport() {
                     haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
                 }
                 .background(color = MaterialTheme.colorScheme.inverseOnSurface.copy(0.40f))
-                .padding(all = 16.dp),
+                .padding(horizontal = 24.dp, vertical = 16.dp),
         ) {
             Text(
                 text = "Clear App Data",

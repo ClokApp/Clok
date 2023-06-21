@@ -1,10 +1,5 @@
 package com.kingfu.clok.components.bottomBar
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,79 +34,60 @@ fun BottomBar(
     val currentRoute = currentDestination?.route
     val items = listOf(Screens.Stopwatch, Screens.Timer)
 
-    AnimatedVisibility(
-        visible = currentRoute == Screens.Stopwatch.route || currentRoute == Screens.Timer.route,
-        enter = slideInVertically(
-            initialOffsetY = { 100 },
-            animationSpec = tween(
-                durationMillis = 100,
-                easing = LinearEasing
-            )
-        ),
-        exit = slideOutVertically(
-            targetOffsetY = { 100 },
-            animationSpec = tween(
-                durationMillis = 100,
-                easing = LinearEasing
-            )
-        ),
-        content = {
-            NavigationBar(
-                containerColor = Black00,
-                contentColor = Color.White
-            ) {
-                for (screen in items.indices) {
-                    val selected = currentRoute == items[screen].route
-                    CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
-                        NavigationBarItem(
-                            alwaysShowLabel = true,
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.primary,
-                                unselectedIconColor = MaterialTheme.colorScheme.secondary,
-                                selectedTextColor = MaterialTheme.colorScheme.primary,
-                                unselectedTextColor = MaterialTheme.colorScheme.secondary,
-                                indicatorColor = Color.Transparent
-                            ),
-                            icon = {
-                                Icon(
-                                    imageVector = if (selected) items[screen].filledIconId!! else items[screen].outlinedIconId!!,
-                                    contentDescription = null
-                                )
-                            },
-                            label = {
-                                Text(
-                                    text = items[screen].name,
-                                    fontSize = 10.sp,
-                                    fontFamily = FontFamily.Default,
-                                    fontWeight = FontWeight.Normal
-                                )
-                            },
-                            selected = selected,
-                            onClick = {
-                                navController.navigate(route = items[screen].route)
-                                {
-                                    CoroutineScope(context = Dispatchers.IO).launch {
-                                        // saving current destination when navigating
-                                        navigationPreferences.setStartDestination(string = items[screen].route)
-                                    }
-                                    // Pop up to the start destination of the graph to
-                                    // avoid building up a large stack of destinations
-                                    // on the back stack as users select items
-                                    popUpTo(id = navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-
-                                    // Avoid multiple copies of the same destination when
-                                    // reselecting the same item
-                                    launchSingleTop = true
-                                    // Restore state when reselecting a previously selected item
-                                    restoreState = true
-                                }
-                            }
+    NavigationBar(
+        containerColor = Black00,
+        contentColor = Color.White
+    ) {
+        for (screen in items.indices) {
+            val selected = currentRoute == items[screen].route
+            CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
+                NavigationBarItem(
+                    alwaysShowLabel = true,
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = MaterialTheme.colorScheme.secondary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        unselectedTextColor = MaterialTheme.colorScheme.secondary,
+                        indicatorColor = Color.Transparent
+                    ),
+                    icon = {
+                        Icon(
+                            imageVector = if (selected) items[screen].filledIconId!! else items[screen].outlinedIconId!!,
+                            contentDescription = null
                         )
+                    },
+                    label = {
+                        Text(
+                            text = items[screen].name,
+                            fontSize = 10.sp,
+                            fontFamily = FontFamily.Default,
+                            fontWeight = FontWeight.Normal
+                        )
+                    },
+                    selected = selected,
+                    onClick = {
+                        navController.navigate(route = items[screen].route)
+                        {
+                            CoroutineScope(context = Dispatchers.IO).launch {
+                                // saving current destination when navigating
+                                navigationPreferences.setStartDestination(string = items[screen].route)
+                            }
+                            // Pop up to the start destination of the graph to
+                            // avoid building up a large stack of destinations
+                            // on the back stack as users select items
+                            popUpTo(id = navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+
+                            // Avoid multiple copies of the same destination when
+                            // reselecting the same item
+                            launchSingleTop = true
+                            // Restore state when reselecting a previously selected item
+                            restoreState = true
+                        }
                     }
-                }
+                )
             }
         }
-    )
+    }
 }
