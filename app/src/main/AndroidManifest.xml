@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_clok_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Clok"
-        tools:targetApi="33">
+        tools:targetApi="34">
         <activity
             android:name="com.kingfu.clok.mainActivity.MainActivity"
             android:exported="true"

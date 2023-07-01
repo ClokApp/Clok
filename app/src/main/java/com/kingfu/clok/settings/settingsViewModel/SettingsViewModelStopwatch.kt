@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import com.kingfu.clok.repository.preferencesDataStore.StopwatchPreferences
 import com.kingfu.clok.variable.Variable.DYNAMIC_COLOR
 import com.kingfu.clok.variable.Variable.settingsStopwatchSelectedFontStyle

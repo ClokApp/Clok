@@ -16,7 +16,7 @@ class NavigationPreferences private constructor(context: Context) {
         private var INSTANCE: NavigationPreferences? = null
 
         fun getInstance(context: Context): NavigationPreferences {
-            return INSTANCE ?: synchronized(this) {
+            return INSTANCE ?: synchronized(lock = this) {
                 var instance = INSTANCE
                 if(instance == null) {
                     instance = NavigationPreferences(context)
@@ -32,7 +32,7 @@ class NavigationPreferences private constructor(context: Context) {
 
     private val startDestinationDefault = "stopwatch"
 
-    private val _startDestination = stringPreferencesKey("startDestination")
+    private val _startDestination = stringPreferencesKey(name = "startDestination")
 
     /************************************************ Clear ************************************************/
 

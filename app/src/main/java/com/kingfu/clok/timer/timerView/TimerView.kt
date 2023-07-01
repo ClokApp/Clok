@@ -74,7 +74,7 @@ fun TimerView(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 20.dp else 0.dp),
+                .padding(top = if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) 10.dp else 0.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             TimerResetButtonView(

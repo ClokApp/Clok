@@ -87,6 +87,13 @@ sealed class Screens(
         outlinedIconId = null
     )
 
+    object SettingsTimerScrollsHapticFeedback: Screens(
+        route = "settingsTimerScrollsHapticFeedback",
+        name = "Settings Timer Scrolls Haptic Feedback",
+        filledIconId = null,
+        outlinedIconId = null
+    )
+
     object SettingsStopwatchFontStyles : Screens(
         route = "settingsStopwatchFontStyles",
         name = "Font styles",
@@ -100,6 +107,8 @@ sealed class Screens(
         filledIconId = null,
         outlinedIconId = null
     )
+
+
 
 
 

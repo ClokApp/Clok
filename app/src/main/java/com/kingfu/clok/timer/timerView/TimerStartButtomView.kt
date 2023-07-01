@@ -15,13 +15,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.kingfu.clok.notification.timer.TimerNotificationService
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
-import com.kingfu.clok.ui.theme.Red50
-import com.kingfu.clok.util.customFontSize
+import com.kingfu.clok.util.nonScaledSp
 
 @Composable
 fun TimerStartButtonView(
@@ -45,7 +44,7 @@ fun TimerStartButtonView(
         )
             MaterialTheme.colorScheme.inversePrimary
         else if (vm.timerIsActive && !vm.timerIsEditState)
-            Red50
+            MaterialTheme.colorScheme.tertiary
         else
             MaterialTheme.colorScheme.primary,
     )
@@ -83,12 +82,13 @@ fun TimerStartButtonView(
             ),
             fontSize =
             if (configurationOrientation == Configuration.ORIENTATION_LANDSCAPE && vm.timerIsEditState) {
-                customFontSize(textUnit = 14.sp)
+                14.nonScaledSp
             } else {
-                customFontSize(textUnit = 20.sp)
+                20.nonScaledSp
             },
             color = startTimerColor,
             fontWeight = FontWeight.Bold,
+            style = TextStyle()
         )
     }
 }

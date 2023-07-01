@@ -37,7 +37,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
@@ -73,7 +72,7 @@ fun SettingsTimerView(
     Card(
         shape = RoundedCornerShape(size = 20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.inverseOnSurface.copy(0.40f)
+            containerColor = MaterialTheme.colorScheme.inverseOnSurface.copy(alpha = 0.40f)
         )
     ) {
         Row(
@@ -160,7 +159,7 @@ fun SettingsTimerView(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable {
+                .clickable(enabled = vm.timerIsEdit()) {
                     haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
                     vm.timerToggleCountOvertime()
                     vm.saveTimerCountOvertime()
@@ -169,11 +168,11 @@ fun SettingsTimerView(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = Modifier.fillMaxWidth(0.75f)) {
+            Column(modifier = Modifier.fillMaxWidth(fraction = 0.75f)) {
                 Text(
                     text = "Count overtime",
                     fontSize = 18.sp,
-                    color = Color.White
+                    color = if (vm.timerIsEdit()) Color.White else Color.Gray
                 )
                 Text(
                     text = "Continue counting after the timer is finished.",
@@ -185,6 +184,7 @@ fun SettingsTimerView(
             }
             CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
                 Switch(
+                    enabled = vm.timerIsEdit(),
                     modifier = Modifier.scale(scale = 0.85f),
                     checked = vm.timerCountOvertime,
                     onCheckedChange = {
@@ -213,37 +213,41 @@ fun SettingsTimerView(
                 .fillMaxWidth()
                 .clickable {
                     haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
-                    vm.updateTimerEnableScrollsHapticFeedback()
-                    vm.saveTimerEnableScrollsHapticFeedback()
+//                    vm.updateTimerEnableScrollsHapticFeedback()
+//                    vm.saveTimerEnableScrollsHapticFeedback()
+                    navController.navigate(route = Screens.SettingsTimerScrollsHapticFeedback.route)
                 }
-                .padding(horizontal = 24.dp, vertical = 8.dp),
+                .padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = Modifier.fillMaxWidth(fraction = 0.75f)) {
-                Text(
-                    text = "Enable scrolls Haptic feedback",
-                    fontSize = 18.sp,
-                    color = Color.White
-                )
-            }
-            CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
-                Switch(
-                    modifier = Modifier.scale(scale = 0.85f),
-                    checked = vm.timerEnableScrollsHapticFeedback,
-                    onCheckedChange = {
-                        haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
-                        vm.updateTimerEnableScrollsHapticFeedback()
-                        vm.saveTimerEnableScrollsHapticFeedback()
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.White,
-                        uncheckedThumbColor = Color.White,
-                        checkedTrackColor = MaterialTheme.colorScheme.primary,
-                        uncheckedTrackColor = Color.Gray,
-                    )
-                )
-            }
+//            Column(modifier = Modifier.fillMaxWidth(fraction = 0.75f)) {
+            Text(
+//                    text = "Enable scrolls Haptic feedback",
+                text = "Scrolls haptic feedback",
+                fontSize = 18.sp,
+                color = Color.White
+            )
+//            }
+
+
+//            CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
+//                Switch(
+//                    modifier = Modifier.scale(scale = 0.85f),
+//                    checked = vm.timerEnableScrollsHapticFeedback,
+//                    onCheckedChange = {
+//                        haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
+//                        vm.updateTimerEnableScrollsHapticFeedback()
+//                        vm.saveTimerEnableScrollsHapticFeedback()
+//                    },
+//                    colors = SwitchDefaults.colors(
+//                        checkedThumbColor = Color.White,
+//                        uncheckedThumbColor = Color.White,
+//                        checkedTrackColor = MaterialTheme.colorScheme.primary,
+//                        uncheckedTrackColor = Color.Gray,
+//                    )
+//                )
+//            }
         }
 
         Divider(

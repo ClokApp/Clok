@@ -76,7 +76,7 @@ class TimerViewModel(
             loadTimerMinute()
             loadTimerSecond()
             loadTimerIsFinished()
-            loadTImerIsEditState()
+            loadTimerIsEditState()
             loadTimerTotalTime()
             loadTimerCurrentTimePercentage()
             loadTimerOffsetTime()
@@ -101,6 +101,8 @@ class TimerViewModel(
 
         viewModelScope.launch {
             timerIsEditState = false
+            saveTimerIsEditState()
+
             timerInitialTime = SystemClock.elapsedRealtime()
             delay(if (timerTime * 0.005 > 100) 100L else (timerTime * 0.005).toLong())
             while (timerIsActive) {
@@ -127,6 +129,7 @@ class TimerViewModel(
                         timerTime =
                             timerOffsetTime + (SystemClock.elapsedRealtime() - timerInitialTime)
                     } else {
+                        timerTime = 0
                         pauseTimer()
                     }
                 }
@@ -193,7 +196,7 @@ class TimerViewModel(
 
     suspend fun timerNotification(context: Context) {
         for (i in 0 until timerPreferences.getTimerNotification.first().toInt()) {
-            if (isShowTimerNotification && timerIsFinished && timerIsActive) {
+            if (isShowTimerNotification && timerIsFinished) {
                 TimerNotificationService(context = context).showNotification()
                 delay(timeMillis = 2000)
             } else {
@@ -201,59 +204,48 @@ class TimerViewModel(
             }
         }
     }
-
-    fun formatTimerTime(timeMillis: Long): String {
-
-
-        val hours = timerTime / 1000 / 60 / 60 % 100
-        val minutes = timerTime / 1000 / 60 % 60
-        val seconds = timerTime / 1000 % 60
-        val milliseconds = timerTime % 1000 / 10
-
-        var time =
-            when {
-                timeMillis >= 36_000_000L -> "${"%02d".format(hours)}:${"%02d".format(minutes)}:${
-                    "%02d".format(
-                        seconds
-                    )
-                }"
-
-                timeMillis in 3_600_000L until 36_000_000 -> "${"%01d".format(hours)}:${
-                    "%02d".format(
-                        minutes
-                    )
-                }:${"%02d".format(seconds)}"
-
-                timeMillis in 600_000L until 3_600_000L -> "${"%02d".format(minutes)}:${
-                    "%02d".format(
-                        seconds
-                    )
-                }"
-
-                timeMillis in 60_000 until 600_000L -> "${"%01d".format(minutes)}:${
-                    "%02d".format(
-                        seconds
-                    )
-                }"
-
-                timeMillis in 10_000L until 60_000L -> "%02d".format(seconds)
-                timeMillis in 0L until 10_000L -> "${"%01d".format(seconds)}.${
-                    "%02d".format(
-                        milliseconds
-                    )
-                }"
-
-                else -> "0"
-            }
-
+    fun isOverTime(): Boolean{
+        var result = false
         viewModelScope.launch {
             if (timerIsFinished && timerPreferences.getTimerCountOvertime.first()) {
-                time = "-$time "
+                result = true
             }
         }
+        return result
+    }
 
+    fun formatTimerTimeHr(timeMillis: Long): String {
+        val hours = timerTime / 1000 / 60 / 60 % 100
+        return when {
+            timeMillis >= 36_000_000L -> "%02d".format(hours)
+            timeMillis in 3_600_000L until 36_000_000 -> "%01d".format(hours)
+            else -> ""
+        }
+    }
 
-        return time
+    fun formatTimerTimeMin(timeMillis: Long): String {
+        val minutes = timerTime / 1000 / 60 % 60
+        return when{
+            timeMillis >= 600_000L -> "%02d".format(minutes)
+            timeMillis in 60_000 until 600_000L  -> "%01d".format(minutes)
+            else -> ""
+        }
+    }
+
+    fun formatTimerTimeSec(timeMillis: Long): String {
+        val seconds = timerTime / 1000 % 60
+
+        return when{
+            timeMillis >= 10_000L -> "%02d".format(seconds)
+            timeMillis < 10_000L -> "%01d".format(seconds)
+            else -> ""
+        }
+    }
+
+    fun formatTimerTimeMs(timeMillis: Long): String {
+        val milliseconds = timerTime % 1000 / 10
+
+        return if (timeMillis < 10_000) "%02d".format(milliseconds) else ""
     }
 
     fun convertHrMinSecToMillis() {
@@ -345,7 +337,7 @@ class TimerViewModel(
         timerIsFinished = timerPreferences.getTimerIsFinished.first()
     }
 
-    private suspend fun loadTImerIsEditState() {
+    private suspend fun loadTimerIsEditState() {
         timerIsEditState = timerPreferences.getTimerIsEditState.first()
     }
 

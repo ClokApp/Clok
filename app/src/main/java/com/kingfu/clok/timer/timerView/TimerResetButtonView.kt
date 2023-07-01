@@ -21,12 +21,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.kingfu.clok.notification.timer.TimerNotificationService
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
-import com.kingfu.clok.util.customFontSize
+import com.kingfu.clok.util.nonScaledSp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -91,13 +91,14 @@ fun TimerResetButtonView(
                     text = if (vm.timerIsEditState) "Reset" else "Cancel",
                     fontSize =
                     if (configurationOrientation == Configuration.ORIENTATION_LANDSCAPE && vm.timerIsEditState) {
-                        customFontSize(textUnit = 12.sp)
+                        12.nonScaledSp
                     } else {
-                        customFontSize(textUnit = 20.sp)
+                        20.nonScaledSp
                     },
                     color = stopwatchResetButtonColor,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(horizontal = if (vm.timerIsEditState) 10.dp else 8.dp),
+                    style = TextStyle()
                 )
             }
         }

@@ -25,6 +25,7 @@ import com.kingfu.clok.settings.settingsView.settingsStopwatchView.fontStyle.Set
 import com.kingfu.clok.settings.settingsView.settingsStopwatchView.fontStyle.SettingsStopwatchSelectedFontStyleView
 import com.kingfu.clok.settings.settingsView.settingsTimerView.SettingsTimerBackgroundEffects
 import com.kingfu.clok.settings.settingsView.settingsTimerView.SettingsTimerProgressBarStyle
+import com.kingfu.clok.settings.settingsView.settingsTimerView.SettingsTimerScrollsHapticFeedback
 import com.kingfu.clok.settings.settingsView.settingsTimerView.fontStyle.SettingsTimerFontStyles
 import com.kingfu.clok.settings.settingsView.settingsTimerView.fontStyle.SettingsTimerSelectedFontStyleView
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
@@ -289,6 +290,26 @@ fun AppHavHost(
                     content = { paddingValue ->
                         Box(modifier = Modifier.padding(paddingValues = paddingValue)) {
                             SettingsStopwatchSelectedFontStyleView(vm = settingsViewModelStopwatch)
+                        }
+                    }
+                )
+            }
+
+            composable(route = Screens.SettingsTimerScrollsHapticFeedback.route) {
+                val topBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+                Scaffold(
+                    modifier = Modifier.nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
+                    containerColor = Color.Transparent,
+                    topBar = {
+                        LargeTopBar(
+                            navController = navController,
+                            topBarScrollBehavior = topBarScrollBehavior,
+                        )
+                    },
+                    content = { paddingValue ->
+                        Box(modifier = Modifier.padding(paddingValues = paddingValue)) {
+                            SettingsTimerScrollsHapticFeedback(vm = settingsViewModelTimer)
                         }
                     }
                 )

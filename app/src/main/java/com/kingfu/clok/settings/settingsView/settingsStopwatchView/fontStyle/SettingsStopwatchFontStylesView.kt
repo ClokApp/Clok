@@ -23,7 +23,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,7 +41,6 @@ fun SettingsStopwatchFontStylesView(
     val scrollState = rememberScrollState()
     val coroutine = rememberCoroutineScope()
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -60,7 +58,7 @@ fun SettingsStopwatchFontStylesView(
         Card(
             shape = RoundedCornerShape(size = 20.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.inverseOnSurface.copy(0.40f)
+                containerColor = MaterialTheme.colorScheme.inverseOnSurface.copy(alpha = 0.40f)
             )
         ) {
             for (i in vm.fontStyleOptions.indices) {

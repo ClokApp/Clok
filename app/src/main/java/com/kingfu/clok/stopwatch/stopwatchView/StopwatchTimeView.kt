@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,13 +22,12 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.kingfu.clok.repository.room.stopwatchRoom.StopwatchLapData
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
@@ -39,7 +39,7 @@ import com.kingfu.clok.stopwatch.styles.StopwatchRGBStyle.RGBVariable.RGBHrColor
 import com.kingfu.clok.stopwatch.styles.StopwatchRGBStyle.RGBVariable.RGBMinColorList
 import com.kingfu.clok.stopwatch.styles.StopwatchRGBStyle.RGBVariable.RGBMsColorList
 import com.kingfu.clok.stopwatch.styles.StopwatchRGBStyle.RGBVariable.RGBSecColorList
-import com.kingfu.clok.util.customFontSize
+import com.kingfu.clok.util.nonScaledSp
 import com.kingfu.clok.variable.Variable.RGB
 
 
@@ -55,29 +55,32 @@ fun StopwatchTimeView(
             if (vm.stopwatchTime >= 3_600_000) {
                 DisplayStopwatchTimer(
                     RGBColorList = RGBHrColorList,
-                    name = "hr",
+                    text = "hr",
                     formatTimeStopWatch = vm.formatTimeStopWatchHr(timeMillis = vm.stopwatchTime),
                     settingsViewModelStopwatch = settingsViewModelStopwatch,
                     vm = vm
                 )
             }
+
             DisplayStopwatchTimer(
                 RGBColorList = RGBMinColorList,
-                name = "min",
+                text = "min",
                 formatTimeStopWatch = vm.formatTimeStopWatchMin(timeMillis = vm.stopwatchTime),
                 settingsViewModelStopwatch = settingsViewModelStopwatch,
                 vm = vm
             )
+
             DisplayStopwatchTimer(
                 RGBColorList = RGBSecColorList,
-                name = "sec",
+                text = "sec",
                 formatTimeStopWatch = vm.formatTimeStopWatchSec(timeMillis = vm.stopwatchTime),
                 settingsViewModelStopwatch = settingsViewModelStopwatch,
                 vm = vm
             )
+
             DisplayStopwatchTimer(
                 RGBColorList = RGBMsColorList,
-                name = "ms",
+                text = "ms",
                 formatTimeStopWatch = vm.formatTimeStopWatchMs(timeMillis = vm.stopwatchTime),
                 settingsViewModelStopwatch = settingsViewModelStopwatch,
                 vm = vm
@@ -100,57 +103,105 @@ fun StopwatchTimeView(
         }
     }
 
-    Text(
-        text = vm.formatTimeStopWatch(timeMillis = vm.stopwatchTime - vm.lapPreviousTime),
-        style = TextStyle(
-            drawStyle = stopwatchFontStyle(
-                string1 = settingsViewModelStopwatch.stopwatchLapTimeFontStyle,
-                string2 = settingsViewModelStopwatch.stopwatchStyleRadioOptions.elementAt(
-                    index = 1
-                ),
-                minter = 10f,
-                width = 2.5f,
-                join = StrokeJoin.Round,
-                cap = StrokeCap.Round
-            )
-        ),
-        fontSize = customFontSize(textUnit = 35.sp),
-        color = MaterialTheme.colorScheme.secondary,
-        fontWeight = FontWeight.Light,
-        modifier = Modifier.alpha(alpha = if (lapList.isNotEmpty()) 1f else 0f)
-    )
+    Row(modifier = Modifier.alpha(alpha = if (lapList.isNotEmpty()) 1f else 0f)) {
+
+        DisplayStopwatchLapTimer(
+            text = if (vm.isAtLestOneHour()) vm.formatTimeStopWatchHr(timeMillis = vm.stopwatchTime - vm.lapPreviousTime) else "",
+            settingsViewModelStopwatch = settingsViewModelStopwatch,
+            color = MaterialTheme.colorScheme.secondary,
+            padding = 0.dp,
+        )
+
+        DisplayStopwatchLapTimer(
+            text = if (vm.isAtLestOneHour()) ":" else "",
+            settingsViewModelStopwatch = settingsViewModelStopwatch,
+            color = MaterialTheme.colorScheme.primary,
+            padding = 5.dp,
+        )
+
+        DisplayStopwatchLapTimer(
+            text = vm.formatTimeStopWatchMin(timeMillis = vm.stopwatchTime - vm.lapPreviousTime),
+            settingsViewModelStopwatch = settingsViewModelStopwatch,
+            color = MaterialTheme.colorScheme.secondary,
+            padding = 0.dp,
+        )
+
+        DisplayStopwatchLapTimer(
+            text = ":",
+            settingsViewModelStopwatch = settingsViewModelStopwatch,
+            color = MaterialTheme.colorScheme.primary,
+            padding = 5.dp,
+        )
+
+
+        DisplayStopwatchLapTimer(
+            text = vm.formatTimeStopWatchSec(timeMillis = vm.stopwatchTime - vm.lapPreviousTime),
+            settingsViewModelStopwatch = settingsViewModelStopwatch,
+            color = MaterialTheme.colorScheme.secondary,
+            padding = 0.dp,
+        )
+
+
+        DisplayStopwatchLapTimer(
+            text = ".",
+            settingsViewModelStopwatch = settingsViewModelStopwatch,
+            color = MaterialTheme.colorScheme.primary,
+            padding = 5.dp,
+        )
+
+        DisplayStopwatchLapTimer(
+            text = vm.formatTimeStopWatchMs(timeMillis = vm.stopwatchTime - vm.lapPreviousTime),
+            settingsViewModelStopwatch = settingsViewModelStopwatch,
+            color = MaterialTheme.colorScheme.secondary,
+            padding = 0.dp,
+        )
+    }
 }
+
 
 @Composable
 fun DisplayStopwatchTimer(
     RGBColorList: List<Int>,
-    name: String,
+    text: String,
     formatTimeStopWatch: String,
     settingsViewModelStopwatch: SettingsViewModelStopwatch,
     vm: StopwatchViewModel
 ) {
-    val stopwatchLabelFontSize = customFontSize(textUnit = 35.sp)
-    val stopwatchTimeFontSize = customFontSize(textUnit = 60.sp)
-    val stopwatchGrayStyleColorStyle =
-        listOf(MaterialTheme.colorScheme.secondary, MaterialTheme.colorScheme.secondary)
+    val stopwatchLabelFontSize = 30.nonScaledSp
+    val stopwatchTimeFontSize = 55.nonScaledSp
+    val stopwatchDynamicColorStyle =
+        if (vm.stopwatchIsActive) {
+            listOf(MaterialTheme.colorScheme.tertiary, MaterialTheme.colorScheme.tertiary)
+        } else {
+            listOf(
+                MaterialTheme.colorScheme.tertiaryContainer,
+                MaterialTheme.colorScheme.tertiaryContainer
+            )
+        }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Bottom,
     ) {
         if (settingsViewModelStopwatch.stopwatchShowLabel) {
-            Text(text = "", fontSize = stopwatchLabelFontSize)
+            Text(
+                text = "",
+                fontSize = stopwatchLabelFontSize,
+                style = TextStyle(),
+            )
         }
 
         Text(
-            text = when (name) {
+            text = when (text) {
                 "ms" -> "."
                 "sec" -> ":"
                 "min" -> if (vm.stopwatchTime > 3_600_000) ":" else ""
                 else -> ""
             },
             fontSize = stopwatchTimeFontSize,
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.tertiary,
+            fontWeight = FontWeight.Light,
+            modifier = Modifier.padding(horizontal = 5.dp),
             style = TextStyle(
                 drawStyle = stopwatchFontStyle(
                     string1 = settingsViewModelStopwatch.stopwatchTimeFontStyle,
@@ -173,17 +224,18 @@ fun DisplayStopwatchTimer(
         val stopwatchListOfColorStart =
             when (settingsViewModelStopwatch.stopwatchLabelStyle) {
                 RGB -> StopwatchRGBStyle().rgbStyleListRGB(RGBColorList = RGBColorList)
-                else -> stopwatchGrayStyleColorStyle
+                else -> stopwatchDynamicColorStyle
             }
+
         if (settingsViewModelStopwatch.stopwatchShowLabel) {
             Text(
-                text = name,
+                text = text,
                 fontSize = stopwatchLabelFontSize,
                 fontWeight = FontWeight.ExtraLight,
                 fontStyle = FontStyle.Italic,
                 style = TextStyle(
                     brush = Brush.linearGradient(
-                        colors = if (vm.stopwatchIsActive) stopwatchListOfColorStart else stopwatchGrayStyleColorStyle
+                        colors = if (vm.stopwatchIsActive) stopwatchListOfColorStart else stopwatchDynamicColorStyle
                     ),
                     drawStyle = stopwatchFontStyle(
                         string1 = settingsViewModelStopwatch.stopwatchLabelFontStyle,
@@ -220,4 +272,32 @@ fun DisplayStopwatchTimer(
             )
         )
     }
+}
+
+@Composable
+fun DisplayStopwatchLapTimer(
+    text: String,
+    settingsViewModelStopwatch: SettingsViewModelStopwatch,
+    color: Color,
+    padding: Dp
+) {
+    Text(
+        text = text,
+        style = TextStyle(
+            drawStyle = stopwatchFontStyle(
+                string1 = settingsViewModelStopwatch.stopwatchLapTimeFontStyle,
+                string2 = settingsViewModelStopwatch.stopwatchStyleRadioOptions.elementAt(
+                    index = 1
+                ),
+                minter = 10f,
+                width = 2.5f,
+                join = StrokeJoin.Round,
+                cap = StrokeCap.Round
+            )
+        ),
+        fontSize = 30.nonScaledSp,
+        color = color,
+        fontWeight = FontWeight.ExtraLight,
+        modifier = Modifier.padding(horizontal = padding)
+    )
 }

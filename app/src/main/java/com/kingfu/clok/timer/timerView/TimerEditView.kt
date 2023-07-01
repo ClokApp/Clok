@@ -27,12 +27,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
 import com.kingfu.clok.timer.timerFontStyle.timerFontStyle
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import com.kingfu.clok.ui.theme.Black00
-import com.kingfu.clok.util.customFontSize
+import com.kingfu.clok.util.nonScaledSp
 import com.kingfu.clok.variable.Variable.TIMER_HR
 import com.kingfu.clok.variable.Variable.TIMER_MIN
 import com.kingfu.clok.variable.Variable.TIMER_SEC
@@ -62,7 +61,7 @@ fun TimerEditView(
     val selectedItemMin by remember(lazyListStateMin) { derivedStateOf { lazyListStateMin.firstVisibleItemIndex + 1 } }
     val selectedItemSec by remember(lazyListStateSec) { derivedStateOf { lazyListStateSec.firstVisibleItemIndex + 1 } }
 
-    var loadInitialTime by rememberSaveable { mutableStateOf(true) }
+    var loadInitialTime by rememberSaveable { mutableStateOf(value = true) }
 
     val labels = remember { mutableStateListOf("Hours", "Minutes", "Seconds") }
 
@@ -75,14 +74,15 @@ fun TimerEditView(
         }
     }
 
+
     Row(
         modifier = Modifier
             .wrapContentWidth()
             .height(
                 if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                    screenHeight / 3.3f
+                    screenHeight / 4f
                 } else {
-                    screenHeight / 1.9f
+                    screenHeight / 2.37f
                 }
             ),
         verticalAlignment = Alignment.CenterVertically
@@ -90,9 +90,9 @@ fun TimerEditView(
 
         val timerScrollerFontSize =
             if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                customFontSize(textUnit = (screenHeight.value * 0.070).sp)
+                (screenHeight.value * 0.065).toInt().nonScaledSp
             } else {
-                customFontSize(textUnit = (screenHeight.value * 0.12).sp)
+                (screenHeight.value * 0.11).toInt().nonScaledSp
             }
 
         val timerBoxGradient =
@@ -106,9 +106,9 @@ fun TimerEditView(
 
         val labelTextSize =
             if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                customFontSize(textUnit = 18.sp)
+                18.nonScaledSp
             } else {
-                customFontSize(textUnit = 14.sp)
+                14.nonScaledSp
             }
 
         DisplayTimerScroll(
@@ -124,7 +124,7 @@ fun TimerEditView(
             vm = vm,
             labels = labels,
             loadInitialTime = loadInitialTime,
-            settingsViewModelTimer = settingsViewModelTimer
+            settingsViewModelTimer = settingsViewModelTimer,
         )
 
         DisplayTimerScroll(
@@ -140,7 +140,7 @@ fun TimerEditView(
             vm = vm,
             labels = labels,
             loadInitialTime = loadInitialTime,
-            settingsViewModelTimer = settingsViewModelTimer
+            settingsViewModelTimer = settingsViewModelTimer,
         )
 
         DisplayTimerScroll(
@@ -177,7 +177,7 @@ fun DisplayTimerScroll(
     vm: TimerViewModel,
     labels: List<String>,
     loadInitialTime: Boolean,
-    settingsViewModelTimer: SettingsViewModelTimer
+    settingsViewModelTimer: SettingsViewModelTimer,
 ) {
 
     var currentIndex by rememberSaveable { mutableIntStateOf(value = 0) }
@@ -187,7 +187,7 @@ fun DisplayTimerScroll(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val color by animateColorAsState(
-            if (lazyListState.isScrollInProgress) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.inversePrimary,
+            if (lazyListState.isScrollInProgress) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.tertiaryContainer,
             animationSpec = tween(
                 durationMillis = 500,
                 delayMillis = 0,
@@ -201,28 +201,29 @@ fun DisplayTimerScroll(
             fontSize = labelTextSize,
             color = color,
             fontWeight = FontWeight.Thin,
+            style = TextStyle()
         )
 
         Box {
+
             LazyColumn(
                 state = lazyListState,
                 modifier = Modifier.padding(horizontal = 10.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                flingBehavior = flingBehavior
+                flingBehavior = flingBehavior,
             ) {
-                items(Int.MAX_VALUE) { index ->
+                items(count = Int.MAX_VALUE) { index ->
                     currentIndex = index
                     Text(
                         text = if (index % timeUnit < 10) "0${index % timeUnit}" else "${index % timeUnit}",
-                        textAlign = TextAlign.Center,
                         fontSize = timerScrollerFontSize,
                         fontWeight = if (selectedItem == index) FontWeight.Light else FontWeight.ExtraLight,
                         color = if (selectedItem == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
                         style = TextStyle(
                             drawStyle = timerFontStyle(
                                 string1 = settingsViewModelTimer.timerScrollsFontStyle,
-                                string2 = settingsViewModelTimer.timerFontStyleRadioOptions.elementAt(index = 1),
+                                string2 = settingsViewModelTimer.timerFontStyleRadioOptions.elementAt(
+                                    index = 1
+                                ),
                                 minter = 10f,
                                 width = 5f,
                                 join = StrokeJoin.Round,
@@ -230,22 +231,28 @@ fun DisplayTimerScroll(
                             )
                         )
                     )
+
                 }
             }
 
             LaunchedEffect(selectedItem) {
                 if (lazyListState.isScrollInProgress && settingsViewModelTimer.timerEnableScrollsHapticFeedback) {
-                    haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
+                    when (settingsViewModelTimer.timerScrollsHapticFeedback) {
+                        "Strong" -> haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
+                        "Weak" -> haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.TextHandleMove)
+                    }
                 }
                 when (label) {
                     labels[0] -> {
                         vm.updateTimerHour(selectedItem % timeUnit)
                         vm.saveTimerHour()
                     }
+
                     labels[1] -> {
                         vm.updateTimerMinute(selectedItem % timeUnit)
                         vm.saveTimerMinute()
                     }
+
                     labels[2] -> {
                         vm.updateTimerSecond(selectedItem % timeUnit)
                         vm.saveTimerSecond()
@@ -257,13 +264,15 @@ fun DisplayTimerScroll(
                 if (!lazyListState.isScrollInProgress && !loadInitialTime) {
                     when (label) {
                         labels[0] -> {
-                            lazyListState.scrollToItem(Int.MAX_VALUE / 2 - 24 + vm.timerHour)
+                            lazyListState.scrollToItem(index = Int.MAX_VALUE / 2 - 24 + vm.timerHour)
                         }
+
                         labels[1] -> {
-                            lazyListState.scrollToItem(Int.MAX_VALUE / 2 - 4 + vm.timerMinute)
+                            lazyListState.scrollToItem(index = Int.MAX_VALUE / 2 - 4 + vm.timerMinute)
                         }
+
                         labels[2] -> {
-                            lazyListState.scrollToItem(Int.MAX_VALUE / 2 - 4 + vm.timerSecond)
+                            lazyListState.scrollToItem(index = Int.MAX_VALUE / 2 - 4 + vm.timerSecond)
                         }
                     }
                 }

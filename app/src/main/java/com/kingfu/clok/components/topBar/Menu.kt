@@ -7,8 +7,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -19,7 +18,7 @@ import com.kingfu.clok.variable.Variable.showMenu
 fun Menu(navController: NavController) {
     MaterialTheme(
         colorScheme = MaterialTheme.colorScheme.copy(
-            surface = MaterialTheme.colorScheme.inverseOnSurface.copy(0.40f)
+            surface = MaterialTheme.colorScheme.inverseOnSurface.copy(alpha = 0.40f)
         ),
         shapes = MaterialTheme.shapes.copy(extraSmall = RoundedCornerShape(size = 10.dp))
     ) {
@@ -32,7 +31,8 @@ fun Menu(navController: NavController) {
                     Text(
                         text = Screens.Settings.name,
                         fontSize = 16.sp,
-                        color = Color.White
+                        color = Color.White,
+                        style = TextStyle()
                     )
                 },
                 onClick = {
@@ -50,7 +50,8 @@ fun Menu(navController: NavController) {
                     Text(
                         text = Screens.BugReport.name,
                         fontSize = 16.sp,
-                        color = Color.White
+                        color = Color.White,
+                        style = TextStyle()
                     )
                 },
                 onClick = {

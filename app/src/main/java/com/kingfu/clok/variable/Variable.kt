@@ -11,7 +11,7 @@ object Variable {
     const val SYSTEM = "System"
     const val RGB = "RGB"
     const val DYNAMIC_COLOR = "Dynamic color"
-    var appTheme: String by mutableStateOf("Dark")
+    var appTheme: String by mutableStateOf(value = "Dark")
 
     const val TIMER_HR = 100
     const val TIMER_MIN = 60

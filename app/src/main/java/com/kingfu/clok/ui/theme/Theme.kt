@@ -22,9 +22,13 @@ import com.kingfu.clok.variable.Variable.appTheme
 
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = primary,
+    secondary = secondary,
+    secondaryContainer = secondaryContainer,
+    tertiary = tertiary,
+    tertiaryContainer = tertiaryContainer,
+    onTertiaryContainer = onTertiaryContainer,
+    inversePrimary = inversePrimary,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -45,11 +49,14 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun ClokTheme(
+//    darkTheme: Boolean = isSystemInDarkTheme(),
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
+//    dynamicColor: Boolean = DynamicColors.isDynamicColorAvailable(),
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+
 
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {

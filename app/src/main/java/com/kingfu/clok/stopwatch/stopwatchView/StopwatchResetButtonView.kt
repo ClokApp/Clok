@@ -12,12 +12,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
-import com.kingfu.clok.util.customFontSize
+import com.kingfu.clok.util.nonScaledSp
 
 
 @Composable
@@ -27,9 +27,9 @@ fun StopwatchResetButton(
 ) {
 
     val stopwatchResetButtonColor by animateColorAsState(
-        targetValue = if(vm.stopwatchTime > 0) {
+        targetValue = if (vm.stopwatchTime > 0) {
             MaterialTheme.colorScheme.secondary
-        }else{
+        } else {
             MaterialTheme.colorScheme.inversePrimary
         }
     )
@@ -46,17 +46,19 @@ fun StopwatchResetButton(
             } else {
                 vm.resetStopWatch()
                 vm.clearLapTimes()
+
             }
         },
     ) {
         Text(
             text = if (vm.stopwatchIsActive) "Lap" else "Reset",
             modifier = Modifier.padding(horizontal = if (vm.stopwatchIsActive) 18.dp else 10.dp),
-            fontSize = customFontSize(textUnit = 20.sp),
+            fontSize = 20.nonScaledSp,
             color = stopwatchResetButtonColor,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            style = TextStyle()
         )
     }
 

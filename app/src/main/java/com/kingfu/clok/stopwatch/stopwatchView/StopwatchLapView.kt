@@ -1,6 +1,7 @@
 package com.kingfu.clok.stopwatch.stopwatchView
 
 import android.content.res.Configuration
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,19 +18,20 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.kingfu.clok.repository.room.stopwatchRoom.StopwatchLapData
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
 import com.kingfu.clok.ui.theme.Black00
-import com.kingfu.clok.util.customFontSize
+import com.kingfu.clok.util.nonScaledSp
 
 
 @Composable
@@ -79,17 +81,27 @@ fun StopwatchLapView(
                         LapContent(
                             name = vm.getLapNumber(index = index),
                             weight = 0.25f,
-                            alpha = 0.50f
+                            alpha = 0.50f,
+                            vm = vm,
+                            index = index,
+                            lapList = lapList
                         )
                         LapContent(
                             name = vm.getLapTime(index = index),
                             weight = 0.37f,
-                            alpha = 0.70f
+                            alpha = 0.70f,
+                            vm = vm,
+                            index = index,
+                            lapList = lapList,
                         )
+
                         LapContent(
                             name = vm.getLapTotalTime(index = index),
                             weight = 0.37f,
-                            alpha = 0.90f
+                            alpha = 0.90f,
+                            vm = vm,
+                            index = index,
+                            lapList = lapList,
                         )
                     }
                 }
@@ -112,27 +124,52 @@ fun StopwatchLapView(
 
 @Composable
 fun RowScope.LapLabel(name: String, weight: Float) {
+
     Text(
         text = name,
         modifier = Modifier.weight(weight = weight),
-        fontSize = customFontSize(textUnit = 16.sp),
-        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.70f),
+        fontSize = 16.nonScaledSp,
+//        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.70f),
+        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.70f),
         textAlign = TextAlign.Center,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
+        style = TextStyle()
     )
 }
 
 @Composable
-fun RowScope.LapContent(name: String, weight: Float, alpha: Float) {
+fun RowScope.LapContent(
+    name: String,
+    weight: Float,
+    alpha: Float,
+    vm: StopwatchViewModel,
+    index: Int,
+    lapList: List<StopwatchLapData>,
+) {
+
+    val color by animateColorAsState(
+        targetValue =
+        if (vm.shortestLapIndex == index && lapList.size >= 3) {
+            MaterialTheme.colorScheme.tertiary
+        } else if (vm.longestLapIndex == index && lapList.size >= 3) {
+            MaterialTheme.colorScheme.tertiaryContainer
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha)
+        }
+    )
+
     Text(
         text = name,
-        fontSize = customFontSize(textUnit = 16.sp),
-        color = MaterialTheme.colorScheme.secondary.copy(alpha = alpha),
-        modifier = Modifier.weight(weight = weight),
+        fontSize = 16.nonScaledSp,
+        color = color,
+        modifier = Modifier
+            .weight(weight = weight)
+            .padding(vertical = 8.dp),
         textAlign = TextAlign.Center,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
+        style = TextStyle()
     )
 
 }

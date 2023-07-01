@@ -1,4 +1,4 @@
-package com.kingfu.clok.settings.settingsView.settingsTimerView.fontStyle
+package com.kingfu.clok.settings.settingsView.settingsTimerView
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +14,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,19 +28,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.kingfu.clok.navigation.Screens
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
-import com.kingfu.clok.variable.Variable.settingsTimerSelectedFontStyle
+
 
 @Composable
-fun SettingsTimerFontStyles(
-    vm: SettingsViewModelTimer = viewModel(),
-    navController: NavHostController
-) {
+fun SettingsTimerScrollsHapticFeedback(
+    vm: SettingsViewModelTimer = viewModel()
 
+) {
     val haptic = LocalHapticFeedback.current
+    val radioOptions = setOf("Strong", "Weak", "Off")
     val scrollState = rememberScrollState()
+
 
     Column(
         modifier = Modifier
@@ -46,6 +48,7 @@ fun SettingsTimerFontStyles(
             .clip(shape = RoundedCornerShape(size = 20.dp))
             .verticalScroll(state = scrollState)
     ) {
+
         Text(
             text = Screens.Timer.name,
             modifier = Modifier.padding(start = 26.dp, end = 32.dp, top = 12.dp, bottom = 6.dp),
@@ -60,27 +63,32 @@ fun SettingsTimerFontStyles(
                 containerColor = MaterialTheme.colorScheme.inverseOnSurface.copy(0.40f)
             )
         ) {
-            for (i in vm.fontStyleOptions.indices) {
+            for (i in radioOptions.indices) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
                             haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
-                            navController.navigate(route = Screens.SettingsTimerSelectedFontStyle.route)
-                            settingsTimerSelectedFontStyle = vm.fontStyleOptions.elementAt(index = i)
+                            vm.updateScrollHapticFeedback(string = radioOptions.elementAt(index = i))
+                            vm.saveScrollsHapticFeedback()
                         }
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
+                        .padding(horizontal = 16.dp, vertical = 20.dp),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    RadioButton(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        selected = (radioOptions.elementAt(index = i) == vm.timerScrollsHapticFeedback),
+                        onClick = null,
+                        colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
+                    )
                     Text(
-                        text = vm.fontStyleOptions.elementAt(index = i),
+                        text = radioOptions.elementAt(index = i),
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.Normal,
                         color = Color.White
                     )
                 }
-                if (i != vm.fontStyleOptions.size - 1) {
+                if (i != radioOptions.size - 1) {
                     Divider(
                         modifier = Modifier.padding(horizontal = 24.dp),
                         color = Color.DarkGray.copy(alpha = 0.75f),

@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -21,7 +22,7 @@ class StopwatchPreferences private constructor(context: Context) {
         private var INSTANCE: StopwatchPreferences? = null
 
         fun getInstance(context: Context): StopwatchPreferences {
-            return INSTANCE ?: synchronized(this) {
+            return INSTANCE ?: synchronized(lock = this) {
                 var instance = INSTANCE
                 if(instance == null){
                     instance = StopwatchPreferences(context)
@@ -46,18 +47,22 @@ class StopwatchPreferences private constructor(context: Context) {
     private val stopwatchLabelFontStyleDefault = "Default"
     private val stopwatchTimeFontStyleDefault = "Default"
     private val stopwatchLapTimeFontStyDefault = "Default"
+    private val stopwatchShortestLapIndexDefault = 0
+    private val stopwatchLongestLapIndexDefault = 0
 
-    private val _stopwatchTime = longPreferencesKey("stopwatchTime")
-    private val _stopwatchRefreshRate = floatPreferencesKey("stopwatchRefreshRate")
-    private val _stopwatchShowLabel = booleanPreferencesKey("stopwatchShowLabel")
-    private val _stopwatchLapPreviousTime = longPreferencesKey("stopwatchLapPreviousTime")
-    private val _stopwatchLabelStyle = stringPreferencesKey("stopwatchLabelStyle")
-    private val _stopwatchOffsetTime = longPreferencesKey("stopwatchOffsetTime")
-    private val _stopwatchBackgroundEffects = stringPreferencesKey("stopwatchBackgroundEffects")
-    private val _stopwatchLabelStyleRGBColorCounter = doublePreferencesKey("StopwatchLabelStyleRGBColorCounter")
-    private val _stopwatchLabelFontStyle = stringPreferencesKey("stopwatchLabelFontStyle")
-    private val _stopwatchTimeFontStyle = stringPreferencesKey("stopwatchTimeFontStyle")
-    private val _stopwatchLapTimeFontStyle = stringPreferencesKey("stopwatchLapTimeFontStyle")
+    private val _stopwatchTime = longPreferencesKey(name = "stopwatchTime")
+    private val _stopwatchRefreshRate = floatPreferencesKey(name = "stopwatchRefreshRate")
+    private val _stopwatchShowLabel = booleanPreferencesKey(name = "stopwatchShowLabel")
+    private val _stopwatchLapPreviousTime = longPreferencesKey(name = "stopwatchLapPreviousTime")
+    private val _stopwatchLabelStyle = stringPreferencesKey(name = "stopwatchLabelStyle")
+    private val _stopwatchOffsetTime = longPreferencesKey(name = "stopwatchOffsetTime")
+    private val _stopwatchBackgroundEffects = stringPreferencesKey(name = "stopwatchBackgroundEffects")
+    private val _stopwatchLabelStyleRGBColorCounter = doublePreferencesKey(name = "StopwatchLabelStyleRGBColorCounter")
+    private val _stopwatchLabelFontStyle = stringPreferencesKey(name = "stopwatchLabelFontStyle")
+    private val _stopwatchTimeFontStyle = stringPreferencesKey(name = "stopwatchTimeFontStyle")
+    private val _stopwatchLapTimeFontStyle = stringPreferencesKey(name = "stopwatchLapTimeFontStyle")
+    private val _stopwatchShortestLapIndex = intPreferencesKey(name = "stopwatchShortestLapIndex")
+    private val _stopwatchLongestLapIndex = intPreferencesKey(name = "stopwatchLongestLapIndex")
 
     /************************************************ Clear ************************************************/
 
@@ -141,6 +146,18 @@ class StopwatchPreferences private constructor(context: Context) {
         }
     }
 
+    suspend fun setStopwatchShortestLapIndex(int: Int){
+        stopwatchDataStore.edit { preferences ->
+            preferences[_stopwatchShortestLapIndex] = int
+        }
+    }
+
+    suspend fun setStopwatchLongestLapIndex(int: Int){
+        stopwatchDataStore.edit { preferences ->
+            preferences[_stopwatchLongestLapIndex] = int
+        }
+    }
+
     /************************************************ get ************************************************/
 
     val getStopwatchTime: Flow<Long> = stopwatchDataStore.data
@@ -199,4 +216,13 @@ class StopwatchPreferences private constructor(context: Context) {
             preferences[_stopwatchLapTimeFontStyle] ?: stopwatchLapTimeFontStyDefault
         }
 
+    val getStopwatchShortestLapIndex: Flow<Int> = stopwatchDataStore.data
+        .map { preferences ->
+            preferences[_stopwatchShortestLapIndex] ?: stopwatchShortestLapIndexDefault
+        }
+
+    val getStopwatchLongestLapIndex: Flow<Int> = stopwatchDataStore.data
+        .map { preferences ->
+            preferences[_stopwatchLongestLapIndex] ?: stopwatchLongestLapIndexDefault
+        }
 }

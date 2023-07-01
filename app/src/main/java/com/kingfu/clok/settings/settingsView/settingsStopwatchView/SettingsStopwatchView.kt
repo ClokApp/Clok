@@ -91,7 +91,7 @@ fun SettingsStopwatchView(
             Text(
                 text = "Show label",
                 fontSize = 18.sp,
-                modifier = Modifier.fillMaxWidth(0.75f),
+                modifier = Modifier.fillMaxWidth(fraction = 0.75f),
                 color = Color.White
 
             )

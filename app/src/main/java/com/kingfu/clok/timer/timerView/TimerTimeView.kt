@@ -10,11 +10,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,15 +32,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
 import com.kingfu.clok.timer.backgroundEffects.TimerSnowEffect
 import com.kingfu.clok.timer.styles.TimerRGBStyle
 import com.kingfu.clok.timer.timerFontStyle.timerFontStyle
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
-import com.kingfu.clok.util.NoRippleTheme
-import com.kingfu.clok.util.customFontSize
+import com.kingfu.clok.util.nonScaledSp
 import com.kingfu.clok.variable.Variable.RGB
 
 @Composable
@@ -68,15 +64,22 @@ fun TimerTimeView(
         )
 
         val circularProgressBarColor =
-            listOf(
-                MaterialTheme.colorScheme.primary,
-                MaterialTheme.colorScheme.primary
-            )
+            if(vm.timerIsActive) {
+                listOf(
+                    MaterialTheme.colorScheme.tertiary,
+                    MaterialTheme.colorScheme.tertiary
+                )
+            }else{
+                listOf(
+                    MaterialTheme.colorScheme.tertiaryContainer,
+                    MaterialTheme.colorScheme.tertiaryContainer,
+                )
+            }
 
         if (configurationOrientation == Configuration.ORIENTATION_PORTRAIT && !animatedProgress.isNaN()) {
             Canvas(
                 modifier = Modifier
-                    .size(width = 320.dp, height = 320.dp)
+                    .size(width = 325.dp, height = 325.dp)
                     .padding(all = 5.dp)
             ) {
                 drawArc(
@@ -90,8 +93,13 @@ fun TimerTimeView(
                     brush = Brush.linearGradient(
                         colors =
                         when (settingsViewModelTimer.timerLabelStyle) {
-                            RGB -> { TimerRGBStyle().rgbStyleListRGB() }
-                            else -> { circularProgressBarColor }
+                            RGB -> {
+                                TimerRGBStyle().rgbStyleListRGB()
+                            }
+
+                            else -> {
+                                circularProgressBarColor
+                            }
                         }
                     ),
                     startAngle = -90f,
@@ -116,36 +124,89 @@ fun TimerTimeView(
                 && configurationOrientation == Configuration.ORIENTATION_PORTRAIT
             ) {
                 when (settingsViewModelTimer.timerBackgroundEffects) {
-                    "Snow" -> { TimerSnowEffect(size = backgroundEffectsBoxSize) }
+                    "Snow" -> {
+                        TimerSnowEffect(size = backgroundEffectsBoxSize)
+                    }
                 }
             }
         }
 
-        Box(
-            modifier = Modifier.align(alignment = Alignment.Center)
-        ) {
+        Box(modifier = Modifier.align(alignment = Alignment.Center)) {
             Row {
-                CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
-                    Text(
-                        text = vm.formatTimerTime(timeMillis = vm.timerTime),
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = customFontSize(textUnit = 65.sp),
-                        fontWeight = FontWeight.Light,
-                        style = TextStyle(
-                            drawStyle = timerFontStyle(
-                                string1 = settingsViewModelTimer.timerTimeFontStyle,
-                                string2 = settingsViewModelTimer.timerFontStyleRadioOptions.elementAt(index = 1),
-                                minter = 10f,
-                                width = 5f,
-                                join = StrokeJoin.Round,
-                                cap = StrokeCap.Round
-                            )
-                        )
-                    )
-                }
+                TimerTime(
+                    text = if (vm.isOverTime()) "-" else "",
+                    color = MaterialTheme.colorScheme.primary,
+                    settingsViewModelTimer = settingsViewModelTimer
+                )
+
+                TimerTime(
+                    text = vm.formatTimerTimeHr(timeMillis = vm.timerTime),
+                    color = MaterialTheme.colorScheme.primary,
+                    settingsViewModelTimer = settingsViewModelTimer
+                )
+
+                TimerTime(
+                    text = if (vm.formatTimerTimeHr(timeMillis = vm.timerTime) != "") ":" else "",
+                    color = MaterialTheme.colorScheme.tertiary,
+                    settingsViewModelTimer = settingsViewModelTimer
+                )
+
+                TimerTime(
+                    text = vm.formatTimerTimeMin(timeMillis = vm.timerTime),
+                    color = MaterialTheme.colorScheme.primary,
+                    settingsViewModelTimer = settingsViewModelTimer
+                )
+
+                TimerTime(
+                    text = if (vm.formatTimerTimeMin(timeMillis = vm.timerTime) != "") ":" else "",
+                    color = MaterialTheme.colorScheme.tertiary,
+                    settingsViewModelTimer = settingsViewModelTimer
+                )
+
+                TimerTime(
+                    text = vm.formatTimerTimeSec(timeMillis = vm.timerTime),
+                    color = MaterialTheme.colorScheme.primary,
+                    settingsViewModelTimer = settingsViewModelTimer
+                )
+
+                TimerTime(
+                    text = if (vm.formatTimerTimeMs(timeMillis = vm.timerTime) != "") "." else "",
+                    color = MaterialTheme.colorScheme.tertiary,
+                    settingsViewModelTimer = settingsViewModelTimer
+                )
+
+                TimerTime(
+                    text = vm.formatTimerTimeMs(timeMillis = vm.timerTime),
+                    color = MaterialTheme.colorScheme.primary,
+                    settingsViewModelTimer = settingsViewModelTimer
+                )
             }
         }
-
-
     }
+}
+
+@Composable
+fun TimerTime(
+    text: String,
+    color: Color,
+    settingsViewModelTimer: SettingsViewModelTimer
+){
+    Text(
+        text = text,
+        color = color,
+        fontSize = 60.nonScaledSp,
+        fontWeight = FontWeight.Light,
+        style = TextStyle(
+            drawStyle = timerFontStyle(
+                string1 = settingsViewModelTimer.timerTimeFontStyle,
+                string2 = settingsViewModelTimer.timerFontStyleRadioOptions.elementAt(
+                    index = 1
+                ),
+                minter = 10f,
+                width = 5f,
+                join = StrokeJoin.Round,
+                cap = StrokeCap.Round
+            )
+        )
+    )
 }

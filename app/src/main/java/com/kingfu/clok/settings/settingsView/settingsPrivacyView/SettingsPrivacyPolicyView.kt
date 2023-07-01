@@ -41,19 +41,16 @@ fun SettingsPrivacyPolicyView(
         color = MaterialTheme.colorScheme.onTertiaryContainer
     )
 
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(size = 20.dp))
-
             .clickable {
                 haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
                 privacyPolicyIntent.data = Uri.parse(privacyPolicyLink)
                 context.startActivity(privacyPolicyIntent)
             }
             .background(color = MaterialTheme.colorScheme.inverseOnSurface.copy(0.40f))
-
             .padding(horizontal = 24.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically

@@ -19,6 +19,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
@@ -84,7 +85,10 @@ fun LargeTopBar(
 
                     Screens.SettingsStopwatchSelectedFontStyle.route -> {
                         settingsStopwatchSelectedFontStyle
+                    }
 
+                    Screens.SettingsTimerScrollsHapticFeedback.route ->{
+                        "Haptic Feedback"
                     }
 
                     else -> {
@@ -96,7 +100,8 @@ fun LargeTopBar(
                 maxLines = 1,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = if (topBarScrollBehavior.state.collapsedFraction <= 0.545) TextAlign.Center else TextAlign.Start
+                textAlign = if (topBarScrollBehavior.state.collapsedFraction <= 0.545) TextAlign.Center else TextAlign.Start,
+                style = TextStyle()
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Black00),

@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
@@ -83,14 +84,16 @@ fun BugReport() {
                     Text(
                         text = "Discord",
                         fontSize = 18.sp,
-                        color = Color.White
+                        color = Color.White,
+                        style = TextStyle()
                     )
 
                     Text(
                         text = "Report bug via Clok's Discord server.",
                         fontSize = 14.sp,
                         color = Color.Gray,
-                        lineHeight = 18.sp
+                        lineHeight = 18.sp,
+                        style = TextStyle()
                     )
                 }
 
@@ -145,7 +148,8 @@ fun BugReport() {
                         },
                         fontSize = 14.sp,
                         color = Color.Gray,
-                        lineHeight = 18.sp
+                        lineHeight = 18.sp,
+                        style = TextStyle()
                     )
                 }
 
@@ -161,7 +165,8 @@ fun BugReport() {
             text = "Potential bug fix",
             modifier = Modifier.padding(start = 26.dp, end = 32.dp, top = 12.dp, bottom = 6.dp),
             fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onTertiaryContainer
+            color = MaterialTheme.colorScheme.onTertiaryContainer,
+            style = TextStyle()
         )
 
         Column(
@@ -177,7 +182,8 @@ fun BugReport() {
             Text(
                 text = "Clear App Data",
                 fontSize = 18.sp,
-                color = Color.White
+                color = Color.White,
+                style = TextStyle()
             )
 
             Text(
@@ -190,7 +196,8 @@ fun BugReport() {
                         "Last resort would be reinstall the application.",
                 fontSize = 14.sp,
                 color = Color.Gray,
-                lineHeight = 18.sp
+                lineHeight = 18.sp,
+                style = TextStyle()
             )
         }
 

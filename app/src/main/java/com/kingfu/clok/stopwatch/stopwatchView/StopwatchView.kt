@@ -103,6 +103,9 @@ fun StopwatchView(
                     lapList = lapList
                 )
 
+                Spacer(modifier = Modifier.height(height = 20.dp))
+
+
                 Row(
                     modifier = Modifier,
                     horizontalArrangement = Arrangement.Center,
@@ -115,7 +118,7 @@ fun StopwatchView(
                     StopwatchStartButtonView(
                         vm = vm,
                         haptic = haptic,
-                        coroutineScopeStopwatch = coroutineScopeStopwatch
+                        coroutineScopeStopwatch = coroutineScopeStopwatch,
                     )
                 }
             }

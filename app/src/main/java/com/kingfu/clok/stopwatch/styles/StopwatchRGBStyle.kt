@@ -15,7 +15,6 @@ import kotlin.math.sin
 
 class StopwatchRGBStyle {
 
-
     object RGBVariable {
         var RGBColorCounter by mutableDoubleStateOf(value = 0.0)
         var RGBHrColorList = mutableStateListOf(0, 0, 0, 0, 0, 0)
