@@ -124,12 +124,10 @@ fun StopwatchLapView(
 
 @Composable
 fun RowScope.LapLabel(name: String, weight: Float) {
-
     Text(
         text = name,
         modifier = Modifier.weight(weight = weight),
         fontSize = 16.nonScaledSp,
-//        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.70f),
         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.70f),
         textAlign = TextAlign.Center,
         maxLines = 1,

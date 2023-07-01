@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -136,49 +137,53 @@ fun TimerTimeView(
                 TimerTime(
                     text = if (vm.isOverTime()) "-" else "",
                     color = MaterialTheme.colorScheme.primary,
-                    settingsViewModelTimer = settingsViewModelTimer
+                    settingsViewModelTimer = settingsViewModelTimer,
+                    padding = if (vm.isOverTime()) 5.dp else 0.dp
                 )
 
                 TimerTime(
                     text = vm.formatTimerTimeHr(timeMillis = vm.timerTime),
                     color = MaterialTheme.colorScheme.primary,
-                    settingsViewModelTimer = settingsViewModelTimer
+                    settingsViewModelTimer = settingsViewModelTimer,
                 )
 
                 TimerTime(
                     text = if (vm.formatTimerTimeHr(timeMillis = vm.timerTime) != "") ":" else "",
                     color = MaterialTheme.colorScheme.tertiary,
-                    settingsViewModelTimer = settingsViewModelTimer
+                    settingsViewModelTimer = settingsViewModelTimer,
+                    padding = if (vm.formatTimerTimeHr(timeMillis = vm.timerTime) != "")  5.dp else 0.dp
                 )
 
                 TimerTime(
                     text = vm.formatTimerTimeMin(timeMillis = vm.timerTime),
                     color = MaterialTheme.colorScheme.primary,
-                    settingsViewModelTimer = settingsViewModelTimer
+                    settingsViewModelTimer = settingsViewModelTimer,
                 )
 
                 TimerTime(
                     text = if (vm.formatTimerTimeMin(timeMillis = vm.timerTime) != "") ":" else "",
                     color = MaterialTheme.colorScheme.tertiary,
-                    settingsViewModelTimer = settingsViewModelTimer
+                    settingsViewModelTimer = settingsViewModelTimer,
+                    padding = if (vm.formatTimerTimeMin(timeMillis = vm.timerTime) != "") 5.dp else 0.dp
                 )
 
                 TimerTime(
                     text = vm.formatTimerTimeSec(timeMillis = vm.timerTime),
                     color = MaterialTheme.colorScheme.primary,
-                    settingsViewModelTimer = settingsViewModelTimer
+                    settingsViewModelTimer = settingsViewModelTimer,
                 )
 
                 TimerTime(
                     text = if (vm.formatTimerTimeMs(timeMillis = vm.timerTime) != "") "." else "",
                     color = MaterialTheme.colorScheme.tertiary,
-                    settingsViewModelTimer = settingsViewModelTimer
+                    settingsViewModelTimer = settingsViewModelTimer,
+                    padding = if (vm.formatTimerTimeMs(timeMillis = vm.timerTime) != "") 5.dp else 0.dp
                 )
 
                 TimerTime(
                     text = vm.formatTimerTimeMs(timeMillis = vm.timerTime),
                     color = MaterialTheme.colorScheme.primary,
-                    settingsViewModelTimer = settingsViewModelTimer
+                    settingsViewModelTimer = settingsViewModelTimer,
                 )
             }
         }
@@ -189,7 +194,8 @@ fun TimerTimeView(
 fun TimerTime(
     text: String,
     color: Color,
-    settingsViewModelTimer: SettingsViewModelTimer
+    settingsViewModelTimer: SettingsViewModelTimer,
+    padding: Dp = 0.dp
 ){
     Text(
         text = text,
@@ -207,6 +213,7 @@ fun TimerTime(
                 join = StrokeJoin.Round,
                 cap = StrokeCap.Round
             )
-        )
+        ),
+        modifier = Modifier.padding(horizontal = padding)
     )
 }

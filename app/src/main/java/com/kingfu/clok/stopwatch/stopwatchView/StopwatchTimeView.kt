@@ -105,25 +105,25 @@ fun StopwatchTimeView(
 
     Row(modifier = Modifier.alpha(alpha = if (lapList.isNotEmpty()) 1f else 0f)) {
 
-        DisplayStopwatchLapTimer(
-            text = if (vm.isAtLestOneHour()) vm.formatTimeStopWatchHr(timeMillis = vm.stopwatchTime - vm.lapPreviousTime) else "",
-            settingsViewModelStopwatch = settingsViewModelStopwatch,
-            color = MaterialTheme.colorScheme.secondary,
-            padding = 0.dp,
-        )
+        if (vm.isAtLestOneHour()) {
+            DisplayStopwatchLapTimer(
+                text = vm.formatTimeStopWatchHr(timeMillis = vm.stopwatchTime - vm.lapPreviousTime),
+                settingsViewModelStopwatch = settingsViewModelStopwatch,
+                color = MaterialTheme.colorScheme.secondary,
+            )
+        }
 
         DisplayStopwatchLapTimer(
             text = if (vm.isAtLestOneHour()) ":" else "",
             settingsViewModelStopwatch = settingsViewModelStopwatch,
             color = MaterialTheme.colorScheme.primary,
-            padding = 5.dp,
+            padding = if (vm.isAtLestOneHour()) 5.dp else 0.dp,
         )
 
         DisplayStopwatchLapTimer(
             text = vm.formatTimeStopWatchMin(timeMillis = vm.stopwatchTime - vm.lapPreviousTime),
             settingsViewModelStopwatch = settingsViewModelStopwatch,
             color = MaterialTheme.colorScheme.secondary,
-            padding = 0.dp,
         )
 
         DisplayStopwatchLapTimer(
@@ -133,14 +133,11 @@ fun StopwatchTimeView(
             padding = 5.dp,
         )
 
-
         DisplayStopwatchLapTimer(
             text = vm.formatTimeStopWatchSec(timeMillis = vm.stopwatchTime - vm.lapPreviousTime),
             settingsViewModelStopwatch = settingsViewModelStopwatch,
             color = MaterialTheme.colorScheme.secondary,
-            padding = 0.dp,
         )
-
 
         DisplayStopwatchLapTimer(
             text = ".",
@@ -153,7 +150,6 @@ fun StopwatchTimeView(
             text = vm.formatTimeStopWatchMs(timeMillis = vm.stopwatchTime - vm.lapPreviousTime),
             settingsViewModelStopwatch = settingsViewModelStopwatch,
             color = MaterialTheme.colorScheme.secondary,
-            padding = 0.dp,
         )
     }
 }
@@ -279,7 +275,7 @@ fun DisplayStopwatchLapTimer(
     text: String,
     settingsViewModelStopwatch: SettingsViewModelStopwatch,
     color: Color,
-    padding: Dp
+    padding: Dp = 0.dp
 ) {
     Text(
         text = text,
