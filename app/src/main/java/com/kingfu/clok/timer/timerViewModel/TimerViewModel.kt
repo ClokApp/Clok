@@ -234,18 +234,16 @@ class TimerViewModel(
 
     fun formatTimerTimeSec(timeMillis: Long): String {
         val seconds = timerTime / 1000 % 60
-
         return when{
             timeMillis >= 10_000L -> "%02d".format(seconds)
-            timeMillis < 10_000L -> "%01d".format(seconds)
-            else -> ""
+            else -> "%01d".format(seconds)
         }
     }
 
     fun formatTimerTimeMs(timeMillis: Long): String {
         val milliseconds = timerTime % 1000 / 10
 
-        return if (timeMillis < 10_000) "%02d".format(milliseconds) else ""
+        return if (timeMillis in 1..9999) "%02d".format(milliseconds) else ""
     }
 
     fun convertHrMinSecToMillis() {

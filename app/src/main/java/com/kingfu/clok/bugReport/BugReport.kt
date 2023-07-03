@@ -66,7 +66,7 @@ fun BugReport() {
             shape = RoundedCornerShape(size = 20.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.inverseOnSurface.copy(0.40f)
-            )
+            ),
         ) {
             Row(
                 modifier = Modifier
