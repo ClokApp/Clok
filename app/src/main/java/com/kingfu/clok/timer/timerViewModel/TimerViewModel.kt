@@ -2,7 +2,6 @@ package com.kingfu.clok.timer.timerViewModel
 
 import android.content.Context
 import android.os.SystemClock
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
@@ -243,11 +242,7 @@ class TimerViewModel(
 
     fun formatTimerTimeMs(timeMillis: Long): String {
         val milliseconds = timerTime % 1000 / 10
-
-        val result =  if(timeMillis in 1..9999) "%02d".format(milliseconds) else ""
-        Log.d("Testing", result)
-        return result
-//        return if (timeMillis in 1..9999) "%02d".format(milliseconds) else ""
+        return if (timeMillis in 1..9999) "%02d".format(milliseconds) else ""
     }
 
     fun convertHrMinSecToMillis() {
