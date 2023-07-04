@@ -175,7 +175,7 @@ fun SettingsTimerView(
                     color = if (vm.timerIsEdit()) Color.White else Color.Gray
                 )
                 Text(
-                    text = "Continue counting after the timer is finished.",
+                    text = "Continue counting after the timer is finished. (enabled when timer is in edit mode)",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Normal,
                     color = Color.Gray,
@@ -213,41 +213,17 @@ fun SettingsTimerView(
                 .fillMaxWidth()
                 .clickable {
                     haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
-//                    vm.updateTimerEnableScrollsHapticFeedback()
-//                    vm.saveTimerEnableScrollsHapticFeedback()
                     navController.navigate(route = Screens.SettingsTimerScrollsHapticFeedback.route)
                 }
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-//            Column(modifier = Modifier.fillMaxWidth(fraction = 0.75f)) {
             Text(
-//                    text = "Enable scrolls Haptic feedback",
                 text = "Scrolls haptic feedback",
                 fontSize = 18.sp,
                 color = Color.White
             )
-//            }
-
-
-//            CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
-//                Switch(
-//                    modifier = Modifier.scale(scale = 0.85f),
-//                    checked = vm.timerEnableScrollsHapticFeedback,
-//                    onCheckedChange = {
-//                        haptic.performHapticFeedback(hapticFeedbackType = HapticFeedbackType.LongPress)
-//                        vm.updateTimerEnableScrollsHapticFeedback()
-//                        vm.saveTimerEnableScrollsHapticFeedback()
-//                    },
-//                    colors = SwitchDefaults.colors(
-//                        checkedThumbColor = Color.White,
-//                        uncheckedThumbColor = Color.White,
-//                        checkedTrackColor = MaterialTheme.colorScheme.primary,
-//                        uncheckedTrackColor = Color.Gray,
-//                    )
-//                )
-//            }
         }
 
         Divider(

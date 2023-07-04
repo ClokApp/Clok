@@ -46,7 +46,6 @@ fun StopwatchStartButtonView(
             }
         }
     ) {
-
         Text(
             text = if (vm.stopwatchIsActive) "Pause" else "Start",
             modifier = Modifier.padding(horizontal = if(vm.stopwatchIsActive) 7.dp else 14.dp),

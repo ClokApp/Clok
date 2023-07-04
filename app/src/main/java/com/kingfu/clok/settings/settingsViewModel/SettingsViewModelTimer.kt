@@ -91,10 +91,6 @@ class SettingsViewModelTimer(
         timerLabelStyle = string
     }
 
-    fun updateTimerEnableScrollsHapticFeedback() {
-        timerEnableScrollsHapticFeedback = !timerEnableScrollsHapticFeedback
-    }
-
     fun updateTimerNotification(float: Float) {
         timerNotification = float
     }
