@@ -72,11 +72,11 @@ class StopwatchPreferences private constructor(context: Context) {
         }
     }
 
-    suspend fun clearStopwatchLapPreviousTime() {
-        stopwatchDataStore.edit { preferences ->
-            preferences.remove(_stopwatchLapPreviousTime)
-        }
-    }
+//    suspend fun clearStopwatchLapPreviousTime() {
+//        stopwatchDataStore.edit { preferences ->
+//            preferences.remove(_stopwatchLapPreviousTime)
+//        }
+//    }
 
     /************************************************ set ************************************************/
 

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.kingfu.clok.repository.preferencesDataStore.StopwatchPreferences
 import com.kingfu.clok.variable.Variable.DYNAMIC_COLOR
 import com.kingfu.clok.variable.Variable.settingsStopwatchSelectedFontStyle
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -106,19 +107,19 @@ class SettingsViewModelStopwatch(
     }
 
     fun saveStopwatchRefreshRateValue() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             stopwatchPreferences.setStopwatchRefreshRate(float = stopwatchRefreshRateValue)
         }
     }
 
     fun saveStopwatchShowLabel() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             stopwatchPreferences.setStopwatchShowLabel(boolean = stopwatchShowLabel)
         }
     }
 
     fun saveStopwatchLabelStyle() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             stopwatchPreferences.setStopwatchLabelStyle(
                 string = stopwatchLabelStyle
             )
@@ -126,7 +127,7 @@ class SettingsViewModelStopwatch(
     }
 
     fun saveStopwatchBackgroundEffects() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             stopwatchPreferences.setStopwatchBackgroundEffects(
                 string = stopwatchBackgroundEffects
             )
@@ -134,19 +135,19 @@ class SettingsViewModelStopwatch(
     }
 
     fun saveStopwatchLabelFontStyleSelectedOption() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             stopwatchPreferences.setStopwatchLabelFontStyle(string = stopwatchLabelFontStyle)
         }
     }
 
     fun saveStopwatchTimeFontStyleSelectedOption() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             stopwatchPreferences.setStopwatchTimeFontStyle(string = stopwatchTimeFontStyle)
         }
     }
 
     fun saveStopwatchLapTimeFontStyleSelectedOption() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             stopwatchPreferences.setStopwatchLapTimeFontStyle(string = stopwatchLapTimeFontStyle)
         }
     }

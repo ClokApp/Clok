@@ -187,7 +187,11 @@ fun DisplayTimerScroll(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val color by animateColorAsState(
-            if (lazyListState.isScrollInProgress) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.tertiaryContainer,
+            if (lazyListState.isScrollInProgress){
+                MaterialTheme.colorScheme.tertiary
+            } else {
+                MaterialTheme.colorScheme.tertiaryContainer
+            },
             animationSpec = tween(
                 durationMillis = 500,
                 delayMillis = 0,
@@ -217,7 +221,11 @@ fun DisplayTimerScroll(
                         text = if (index % timeUnit < 10) "0${index % timeUnit}" else "${index % timeUnit}",
                         fontSize = timerScrollerFontSize,
                         fontWeight = if (selectedItem == index) FontWeight.Light else FontWeight.ExtraLight,
-                        color = if (selectedItem == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
+                        color = if (selectedItem == index) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.secondaryContainer
+                        },
                         style = TextStyle(
                             drawStyle = timerFontStyle(
                                 string1 = settingsViewModelTimer.timerScrollsFontStyle,

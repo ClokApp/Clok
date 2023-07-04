@@ -169,18 +169,30 @@ fun SettingsTimerView(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.fillMaxWidth(fraction = 0.75f)) {
+                if(!vm.timerIsEdit()) {
+                    Text(
+                        text = "Enabled when timer is in edit mode.",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = MaterialTheme.colorScheme.error,
+                        lineHeight = 18.sp
+                    )
+                }
+
                 Text(
                     text = "Count overtime",
                     fontSize = 18.sp,
                     color = if (vm.timerIsEdit()) Color.White else Color.Gray
                 )
                 Text(
-                    text = "Continue counting after the timer is finished. (enabled when timer is in edit mode)",
+                    text = "Continue counting after the timer is finished.",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Normal,
                     color = Color.Gray,
                     lineHeight = 18.sp
                 )
+
+
             }
             CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
                 Switch(

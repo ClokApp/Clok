@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.kingfu.clok.repository.preferencesDataStore.TimerPreferences
 import com.kingfu.clok.variable.Variable.DYNAMIC_COLOR
 import com.kingfu.clok.variable.Variable.settingsTimerSelectedFontStyle
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -108,44 +109,44 @@ class SettingsViewModelTimer(
     }
 
     fun saveTimerLabelStyleSelectedOption() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             timerPreferences.setTimerLabelStyleSelectedOption(string = timerLabelStyle)
         }
     }
 
     fun saveScrollsHapticFeedback() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             timerPreferences.setTimerScrollsHapticFeedback(string = timerScrollsHapticFeedback)
         }
     }
 
     fun saveTimerCountOvertime() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             timerPreferences.setTimerCountOvertime(boolean = timerCountOvertime)
         }
     }
 
 
     fun saveTimerNotification() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             timerPreferences.setTimerNotification(float = timerNotification)
         }
     }
 
     fun saveTimerBackgroundEffectsSelectedOption() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             timerPreferences.setTimerBackgroundEffects(string = timerBackgroundEffects)
         }
     }
 
     fun saveTimerScrollsFontStyleSelectedOption() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             timerPreferences.setTimerScrollFontStyle(string = timerScrollsFontStyle)
         }
     }
 
     fun saveTimerTimeFontStyleSelectedOption() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             timerPreferences.setTimerTimeFontStyle(string = timerTimeFontStyle)
         }
     }
