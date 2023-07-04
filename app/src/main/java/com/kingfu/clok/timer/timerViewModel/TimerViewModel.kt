@@ -2,7 +2,6 @@ package com.kingfu.clok.timer.timerViewModel
 
 import android.content.Context
 import android.os.SystemClock
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
@@ -259,7 +258,6 @@ class TimerViewModel(
 
     fun initializeTimer() {
         if ((!timerIsEditState && timerIsFinished) || timerOffsetTime == 0L ) {
-            Log.d("Testing", "Executed")
             timerIsEditState = true
             timerIsFinished = false
             timerCurrentTimePercentage = 0f
