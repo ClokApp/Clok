@@ -59,6 +59,9 @@ class StopwatchViewModel(
     var longestLapIndex by mutableIntStateOf(value = 0)
         private set
 
+    var isScrollLazyColumn by mutableStateOf(value = false)
+        private set
+
 
     init {
         viewModelScope.launch {
@@ -80,6 +83,10 @@ class StopwatchViewModel(
             return
         }
         isLap = true
+    }
+
+    fun toggleIsScrollLazyColumn(){
+        isScrollLazyColumn = !isScrollLazyColumn
     }
 
 
@@ -119,7 +126,7 @@ class StopwatchViewModel(
                 if (isLap) {
                     isLap = false
                     addLap()
-                    delay(10)
+                    delay(timeMillis = 10)
                     recordShortestLap()
                     recordLongestLap()
 
@@ -168,8 +175,6 @@ class StopwatchViewModel(
             shortestLapIndex = 0
         }
         saveShortestLapIndex()
-
-
     }
 
     fun recordLongestLap() {
@@ -303,25 +308,26 @@ class StopwatchViewModel(
     }
 
     fun saveStopwatchTime() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setStopwatchTime(long = stopwatchTime)
         }
     }
 
     suspend fun saveStopwatchLapPreviousTime() {
+        // need to not save using Dispatchers.IO to work properly
 //        viewModelScope.launch(Dispatchers.IO) {
         stopwatchPreferences.setStopwatchLapPreviousTime(long = lapPreviousTime)
 //        }
     }
 
     fun saveStopwatchOffsetTime() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setStopwatchOffsetTime(long = stopwatchOffsetTime)
         }
     }
 
     fun saveRGBColorCounter() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setLabelStyleRGBColorCounter(double = StopwatchRGBStyle.RGBVariable.RGBColorCounter)
         }
     }
@@ -334,13 +340,13 @@ class StopwatchViewModel(
     }
 
     fun saveShortestLapIndex() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setStopwatchShortestLapIndex(int = shortestLapIndex)
         }
     }
 
     fun saveLongestLapIndex() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setStopwatchLongestLapIndex(int = longestLapIndex)
         }
     }

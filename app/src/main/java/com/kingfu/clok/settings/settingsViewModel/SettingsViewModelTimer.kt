@@ -109,44 +109,44 @@ class SettingsViewModelTimer(
     }
 
     fun saveTimerLabelStyleSelectedOption() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerLabelStyleSelectedOption(string = timerLabelStyle)
         }
     }
 
     fun saveScrollsHapticFeedback() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerScrollsHapticFeedback(string = timerScrollsHapticFeedback)
         }
     }
 
     fun saveTimerCountOvertime() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerCountOvertime(boolean = timerCountOvertime)
         }
     }
 
 
     fun saveTimerNotification() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerNotification(float = timerNotification)
         }
     }
 
     fun saveTimerBackgroundEffectsSelectedOption() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerBackgroundEffects(string = timerBackgroundEffects)
         }
     }
 
     fun saveTimerScrollsFontStyleSelectedOption() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerScrollFontStyle(string = timerScrollsFontStyle)
         }
     }
 
     fun saveTimerTimeFontStyleSelectedOption() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerTimeFontStyle(string = timerTimeFontStyle)
         }
     }

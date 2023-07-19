@@ -70,6 +70,9 @@ class TimerViewModel(
     var delay by mutableLongStateOf(value = 55L)
         private set
 
+    var loadInitialTime by mutableStateOf(value = true)
+        private set
+
 
     init {
         viewModelScope.launch {
@@ -89,6 +92,10 @@ class TimerViewModel(
         }
     }
 
+    fun setLoadInitialTimeToFalse() {
+        loadInitialTime = false
+    }
+
     fun timerSetTotalTime() {
         timerTotalTime = timerTime.toDouble()
     }
@@ -102,7 +109,7 @@ class TimerViewModel(
             saveTimerIsEditState()
 
             timerInitialTime = SystemClock.elapsedRealtime()
-            delay(if (timerTime * 0.005 > 100) 100L else (timerTime * 0.005).toLong())
+            delay(timeMillis = if (timerTime * 0.005 > 100) 100L else (timerTime * 0.005).toLong())
             while (timerIsActive) {
 
 
@@ -132,7 +139,7 @@ class TimerViewModel(
                         pauseTimer()
                     }
                 }
-                delay(delay)
+                delay(timeMillis = delay)
 
 
             }
@@ -257,7 +264,7 @@ class TimerViewModel(
     }
 
     fun initializeTimer() {
-        if ((!timerIsEditState && timerIsFinished) || timerOffsetTime == 0L ) {
+        if ((!timerIsEditState && timerIsFinished) || timerOffsetTime == 0L) {
             timerIsEditState = true
             timerIsFinished = false
             timerCurrentTimePercentage = 0f
@@ -271,55 +278,55 @@ class TimerViewModel(
     }
 
     fun saveTimerHour() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerHour(duration = timerHour)
         }
     }
 
     fun saveTimerMinute() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerMinute(duration = timerMinute)
         }
     }
 
     fun saveTimerSecond() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerSecond(duration = timerSecond)
         }
     }
 
     fun saveTimerIsFinished() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerIsFinished(isFinished = timerIsFinished)
         }
     }
 
     fun saveTimerTotalTime() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerTotalTime(double = timerTotalTime)
         }
     }
 
     fun saveTimerIsEditState() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerIsEditState(boolean = timerIsEditState)
         }
     }
 
     fun saveTimerCurrentPercentage() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerCurrentPercentage(float = timerCurrentTimePercentage)
         }
     }
 
     fun saveTimerOffsetTime() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerOffsetTime(long = timerOffsetTime)
         }
     }
 
     fun saveTimerRGBCounter() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             timerPreferences.setTimerRGBCounter(double = timerRGBCounter)
         }
     }

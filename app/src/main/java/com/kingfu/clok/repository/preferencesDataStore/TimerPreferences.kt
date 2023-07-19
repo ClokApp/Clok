@@ -21,10 +21,10 @@ class TimerPreferences private constructor(context: Context) {
         @Volatile
         private var INSTANCE: TimerPreferences? = null
         fun getInstance(context: Context): TimerPreferences {
-            return INSTANCE ?: synchronized(this) {
+            return INSTANCE ?: synchronized(lock = this) {
                 var instance = INSTANCE
                 if(instance == null) {
-                    instance = TimerPreferences(context)
+                    instance = TimerPreferences(context = context)
                     INSTANCE = instance
                 }
                 return instance

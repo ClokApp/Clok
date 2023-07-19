@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.unit.IntSize
 import com.kingfu.clok.ui.theme.Black00
 import kotlin.math.sin
@@ -113,7 +114,7 @@ fun TimerSnowEffect(size: IntSize) {
                 .background(
                     Brush.verticalGradient(
                         0.1f to Black00,
-                        1f to Color.Transparent,
+                        1f to Transparent,
                         startY = 0.0f,
                         endY = 100.0f
                     )

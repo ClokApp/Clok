@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.kingfu.clok.components.bottomBar.BottomBar
@@ -29,6 +30,9 @@ import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.variable.Variable.isShowSnackbar
 import com.kingfu.clok.variable.Variable.isShowTimerNotification
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -84,21 +88,52 @@ fun AppScaffold() {
         },
         topBar = {
             if (currentDestination?.route == Screens.Stopwatch.route || currentDestination?.route == Screens.Timer.route) {
-                TopBar(navController = navController)
+                TopBar(
+                    currentDestination = currentDestination,
+                    navigateToSettingsScreen = {
+                        navController.navigate(route = Screens.Settings.route)
+                    },
+                    navigateToBugReportScreen = {
+                        navController.navigate(route = Screens.BugReport.route)
+                    }
+                )
             }
         },
         bottomBar = {
             if (currentDestination?.route == Screens.Stopwatch.route || currentDestination?.route == Screens.Timer.route) {
                 BottomBar(
                     currentDestination = currentDestination,
-                    navController = navController,
-                    navigationPreferences = navigationPreferences
+                    navigateToStopwatch = {
+                        navController.navigate(route = Screens.Stopwatch.route) {
+                            CoroutineScope(context = Dispatchers.IO).launch {
+                                navigationPreferences.setStartDestination(string = Screens.Stopwatch.route)
+                            }
+                            popUpTo(id = navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    navigateToTimer = {
+                        navController.navigate(route = Screens.Timer.route) {
+                            CoroutineScope(context = Dispatchers.IO).launch {
+                                navigationPreferences.setStartDestination(string = Screens.Timer.route)
+                            }
+                            popUpTo(id = navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
                 )
             }
         },
         content = { paddingValues ->
             AppHavHost(
                 navController = navController,
+                currentDestination = currentDestination,
                 timerViewModel = timerViewModel,
                 stopwatchViewModel = stopwatchViewModel,
                 settingsViewModelStopwatch = settingsViewModelStopwatch,
@@ -109,5 +144,7 @@ fun AppScaffold() {
         }
     )
 }
+
+
 
 

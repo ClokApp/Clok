@@ -107,19 +107,19 @@ class SettingsViewModelStopwatch(
     }
 
     fun saveStopwatchRefreshRateValue() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setStopwatchRefreshRate(float = stopwatchRefreshRateValue)
         }
     }
 
     fun saveStopwatchShowLabel() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setStopwatchShowLabel(boolean = stopwatchShowLabel)
         }
     }
 
     fun saveStopwatchLabelStyle() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setStopwatchLabelStyle(
                 string = stopwatchLabelStyle
             )
@@ -127,7 +127,7 @@ class SettingsViewModelStopwatch(
     }
 
     fun saveStopwatchBackgroundEffects() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setStopwatchBackgroundEffects(
                 string = stopwatchBackgroundEffects
             )
@@ -135,19 +135,19 @@ class SettingsViewModelStopwatch(
     }
 
     fun saveStopwatchLabelFontStyleSelectedOption() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setStopwatchLabelFontStyle(string = stopwatchLabelFontStyle)
         }
     }
 
     fun saveStopwatchTimeFontStyleSelectedOption() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setStopwatchTimeFontStyle(string = stopwatchTimeFontStyle)
         }
     }
 
     fun saveStopwatchLapTimeFontStyleSelectedOption() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setStopwatchLapTimeFontStyle(string = stopwatchLapTimeFontStyle)
         }
     }

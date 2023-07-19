@@ -10,15 +10,15 @@ fun stopwatchFontStyle(
     string2: String,
     minter: Float?,
     width: Float?,
-    join: StrokeJoin?,
-    cap: StrokeCap?
+    join: StrokeJoin? = StrokeJoin.Round,
+    cap: StrokeCap? = StrokeCap.Round
 ): DrawStyle? {
     if (string1 == string2) {
         return Stroke(
             miter = minter ?: 0f,
             width = width ?: 4.0f,
-            join = join ?: StrokeJoin.Miter,
-            cap = cap ?: StrokeCap.Butt
+            join = join ?: StrokeJoin.Round,
+            cap = cap ?: StrokeCap.Round
         )
     }
     return null

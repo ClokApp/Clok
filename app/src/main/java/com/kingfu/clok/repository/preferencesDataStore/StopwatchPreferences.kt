@@ -25,7 +25,7 @@ class StopwatchPreferences private constructor(context: Context) {
             return INSTANCE ?: synchronized(lock = this) {
                 var instance = INSTANCE
                 if(instance == null){
-                    instance = StopwatchPreferences(context)
+                    instance = StopwatchPreferences(context = context)
                     INSTANCE = instance
                 }
                 return instance

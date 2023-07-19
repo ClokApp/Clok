@@ -1,6 +1,9 @@
 package com.kingfu.clok.components.topBar
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
@@ -8,7 +11,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -16,14 +19,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import com.kingfu.clok.navigation.Screens
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.variable.Variable.settingsStopwatchSelectedFontStyle
@@ -32,18 +35,21 @@ import kotlin.math.abs
 import kotlin.math.sin
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun LargeTopBar(
-    navController: NavController,
     topBarScrollBehavior: TopAppBarScrollBehavior,
+    currentDestination: NavDestination?,
+    navigateUp: () -> Unit,
 ) {
-    val currentRoute by rememberSaveable{ mutableStateOf(navController.currentDestination?.route) }
+    val currentRoute by rememberSaveable { mutableStateOf(value = currentDestination?.route) }
 
-    val titleFontSize = ((1 - sin(x = abs(topBarScrollBehavior.state.collapsedFraction) * 2.6)) * 40).sp
+    val titleFontSize =
+        ((1 - sin(x = abs(topBarScrollBehavior.state.collapsedFraction) * 2.6)) * 40).sp
+
 
     LargeTopAppBar(
-        scrollBehavior =  topBarScrollBehavior,
+        scrollBehavior = topBarScrollBehavior,
         title = {
             Text(
                 text = when (currentRoute) {
@@ -60,11 +66,11 @@ fun LargeTopBar(
                     }
 
                     Screens.SettingsStopwatchBackgroundEffects.route -> {
-                        "Background Effects"
+                        Screens.SettingsStopwatchBackgroundEffects.name
                     }
 
                     Screens.SettingsTimerBackgroundEffects.route -> {
-                        "Background Effects"
+                        Screens.SettingsTimerBackgroundEffects.name
                     }
 
                     Screens.BugReport.route -> {
@@ -87,62 +93,59 @@ fun LargeTopBar(
                         settingsStopwatchSelectedFontStyle
                     }
 
-                    Screens.SettingsTimerScrollsHapticFeedback.route ->{
-                        "Haptic Feedback"
+                    Screens.SettingsTimerScrollsHapticFeedback.route -> {
+                        Screens.SettingsTimerScrollsHapticFeedback.name
                     }
 
                     else -> {
                         ""
                     }
                 },
-                fontSize = if (topBarScrollBehavior.state.collapsedFraction <= 0.545) titleFontSize * 0.90 else titleFontSize * 1.10,
-                overflow = TextOverflow.Ellipsis,
+                fontSize =
+                if (topBarScrollBehavior.state.collapsedFraction <= 0.545) {
+                    titleFontSize * 0.90
+                } else {
+                    titleFontSize * 1.10
+                },
                 maxLines = 1,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = if (topBarScrollBehavior.state.collapsedFraction <= 0.545) TextAlign.Center else TextAlign.Start,
+                color = colorScheme.primary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(x = if (topBarScrollBehavior.state.collapsedFraction <= 0.5f) (-7.5).dp else 0.dp)
+                    .basicMarquee(iterations = Int.MAX_VALUE),
+                textAlign =
+                if (topBarScrollBehavior.state.collapsedFraction <= 0.545) {
+                    TextAlign.Center
+                } else {
+                    TextAlign.Start
+                },
                 style = TextStyle()
             )
+
         },
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Black00),
         navigationIcon =
         {
             IconButton(
-                enabled = navController.previousBackStackEntry != null && currentRoute != Screens.Stopwatch.route && currentRoute != Screens.Timer.route,
-                onClick = { navController.navigateUp() },
+                enabled = currentRoute != Screens.Stopwatch.route && currentRoute != Screens.Timer.route,
+                onClick = { navigateUp() },
                 modifier = Modifier
                     .alpha(
-                        if (navController.previousBackStackEntry != null && currentRoute != Screens.Stopwatch.route
-                            && currentRoute != Screens.Timer.route
+                        if (
+                            currentRoute != Screens.Stopwatch.route &&
+                            currentRoute != Screens.Timer.route
                         ) 1f else 0f
                     )
-                    .wrapContentHeight(align = Alignment.Bottom),
-
-                ) {
+                    .wrapContentHeight(align = Bottom),
+            ) {
                 Icon(
                     imageVector = Icons.Rounded.ArrowBackIosNew,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-
-        },
-        actions = {
-            IconButton(
-                enabled = false,
-                onClick = {},
-                modifier = Modifier
-                    .alpha(alpha = 0f)
-                    .wrapContentHeight(align = Alignment.Bottom),
-                ) {
-                Icon(
-                    imageVector = Icons.Rounded.ArrowBackIosNew,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = colorScheme.primary
                 )
             }
         }
     )
-
 }
+
 

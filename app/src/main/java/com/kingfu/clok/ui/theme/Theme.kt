@@ -29,6 +29,7 @@ private val DarkColorScheme = darkColorScheme(
     tertiaryContainer = tertiaryContainer,
     onTertiaryContainer = onTertiaryContainer,
     inversePrimary = inversePrimary,
+    onSurfaceVariant = onSurfaceVariant
 )
 
 private val LightColorScheme = lightColorScheme(

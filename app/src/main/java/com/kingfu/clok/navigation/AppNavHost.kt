@@ -10,29 +10,30 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.kingfu.clok.bugReport.BugReport
+import com.kingfu.clok.bugReport.BugReportScreen
 import com.kingfu.clok.components.topBar.LargeTopBar
 import com.kingfu.clok.repository.preferencesDataStore.NavigationPreferences
-import com.kingfu.clok.settings.settingsView.SettingsView
-import com.kingfu.clok.settings.settingsView.settingsStopwatchView.SettingsStopwatchBackgroundEffects
-import com.kingfu.clok.settings.settingsView.settingsStopwatchView.SettingsStopwatchLabelStyle
-import com.kingfu.clok.settings.settingsView.settingsStopwatchView.fontStyle.SettingsStopwatchFontStylesView
-import com.kingfu.clok.settings.settingsView.settingsStopwatchView.fontStyle.SettingsStopwatchSelectedFontStyleView
-import com.kingfu.clok.settings.settingsView.settingsTimerView.SettingsTimerBackgroundEffects
-import com.kingfu.clok.settings.settingsView.settingsTimerView.SettingsTimerProgressBarStyle
-import com.kingfu.clok.settings.settingsView.settingsTimerView.SettingsTimerScrollsHapticFeedback
-import com.kingfu.clok.settings.settingsView.settingsTimerView.fontStyle.SettingsTimerFontStyles
-import com.kingfu.clok.settings.settingsView.settingsTimerView.fontStyle.SettingsTimerSelectedFontStyleView
+import com.kingfu.clok.settings.settingsScreen.SettingsScreen
+import com.kingfu.clok.settings.settingsScreen.settingsStopwatchScreen.SettingsStopwatchBackgroundEffects
+import com.kingfu.clok.settings.settingsScreen.settingsStopwatchScreen.SettingsStopwatchLabelStyle
+import com.kingfu.clok.settings.settingsScreen.settingsStopwatchScreen.fontStyle.SettingsStopwatchFontStylesScreen
+import com.kingfu.clok.settings.settingsScreen.settingsStopwatchScreen.fontStyle.SettingsStopwatchSelectedFontStyleScreen
+import com.kingfu.clok.settings.settingsScreen.settingsTimerScreen.SettingsTimerBackgroundEffects
+import com.kingfu.clok.settings.settingsScreen.settingsTimerScreen.SettingsTimerProgressBarStyle
+import com.kingfu.clok.settings.settingsScreen.settingsTimerScreen.SettingsTimerScrollsHapticFeedback
+import com.kingfu.clok.settings.settingsScreen.settingsTimerScreen.fontStyle.SettingsTimerFontStylesScreen
+import com.kingfu.clok.settings.settingsScreen.settingsTimerScreen.fontStyle.SettingsTimerSelectedFontStyleScreen
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
-import com.kingfu.clok.stopwatch.stopwatchView.StopwatchView
+import com.kingfu.clok.stopwatch.stopwatchScreen.StopwatchScreen
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
-import com.kingfu.clok.timer.timerView.TimerView
+import com.kingfu.clok.timer.timerScreen.TimerScreen
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
 import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.variable.Variable.navigateToStartScreen
@@ -44,14 +45,17 @@ import kotlinx.coroutines.flow.first
 @Composable
 fun AppHavHost(
     navController: NavHostController,
+    currentDestination: NavDestination?,
     timerViewModel: TimerViewModel,
     stopwatchViewModel: StopwatchViewModel,
     settingsViewModelStopwatch: SettingsViewModelStopwatch,
     settingsViewModelTimer: SettingsViewModelTimer,
     navigationPreferences: NavigationPreferences,
     mainScaffoldPaddingValues: PaddingValues,
-) {
+
+    ) {
     LaunchedEffect(key1 = Unit) {
+//    LaunchedEffect(key1 = startDestination) {
         if (navigateToStartScreen) {
             startDestination = navigationPreferences.getStartDestination.first()
         }
@@ -67,18 +71,16 @@ fun AppHavHost(
 
             composable(route = Screens.Stopwatch.route) {
                 Box(modifier = Modifier.padding(paddingValues = mainScaffoldPaddingValues)) {
-                    StopwatchView(
-                        navController = navController,
+                    StopwatchScreen(
                         vm = stopwatchViewModel,
-                        settingsViewModelStopwatch = settingsViewModelStopwatch
+                        settingsViewModelStopwatch = settingsViewModelStopwatch,
                     )
                 }
             }
 
             composable(route = Screens.Timer.route) {
                 Box(modifier = Modifier.padding(paddingValues = mainScaffoldPaddingValues)) {
-                    TimerView(
-                        navController = navController,
+                    TimerScreen(
                         vm = timerViewModel,
                         settingsViewModelTimer = settingsViewModelTimer
                     )
@@ -90,19 +92,55 @@ fun AppHavHost(
 
                 Scaffold(
                     modifier = Modifier.nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
-                    containerColor = Color.Transparent,
+                    containerColor = Transparent,
                     topBar = {
                         LargeTopBar(
-                            navController = navController,
                             topBarScrollBehavior = topBarScrollBehavior,
+                            currentDestination = currentDestination,
+                            navigateUp = { navController.navigateUp() },
                         )
                     },
                     content = { paddingValue ->
                         Box(modifier = Modifier.padding(paddingValues = paddingValue)) {
-                            SettingsView(
-                                navController = navController,
-                                settingsViewModelStopwatch = settingsViewModelStopwatch,
+                            val vm: SettingsViewModelStopwatch = settingsViewModelStopwatch
+                            SettingsScreen(
+                                settingsViewModelStopwatch = vm,
                                 settingsViewModelTimer = settingsViewModelTimer,
+                                navigateToSettingsStopwatchBackgroundEffects = {
+                                    navController.navigate(
+                                        route = Screens.SettingsStopwatchBackgroundEffects.route
+                                    )
+                                },
+                                navigateToSettingsStopwatchFontStyles = {
+                                    navController.navigate(
+                                        route = Screens.SettingsStopwatchFontStyles.route
+                                    )
+                                },
+                                navigateToSettingsStopwatchLabelStyles = {
+                                    navController.navigate(
+                                        route = Screens.SettingsStopwatchLabelStyles.route
+                                    )
+                                },
+                                navigateToSettingsTimerProgressBarStyles = {
+                                    navController.navigate(
+                                        route = Screens.SettingsTimerProgressBarStyles.route
+                                    )
+                                },
+                                navigateToSettingsTimerFontStyles = {
+                                    navController.navigate(
+                                        route = Screens.SettingsTimerFontStyles.route
+                                    )
+                                },
+                                navigateToSettingsTimerBackgroundEffects = {
+                                    navController.navigate(
+                                        route = Screens.SettingsTimerBackgroundEffects.route
+                                    )
+                                },
+                                navigateToSettingsTimerScrollsHapticFeedback = {
+                                    navController.navigate(
+                                        route = Screens.SettingsTimerScrollsHapticFeedback.route
+                                    )
+                                }
                             )
                         }
                     }
@@ -114,11 +152,12 @@ fun AppHavHost(
 
                 Scaffold(
                     modifier = Modifier.nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
-                    containerColor = Color.Transparent,
+                    containerColor = Transparent,
                     topBar = {
                         LargeTopBar(
-                            navController = navController,
                             topBarScrollBehavior = topBarScrollBehavior,
+                            currentDestination = currentDestination,
+                            navigateUp = { navController.navigateUp() },
                         )
                     },
                     content = { paddingValue ->
@@ -134,11 +173,12 @@ fun AppHavHost(
 
                 Scaffold(
                     modifier = Modifier.nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
-                    containerColor = Color.Transparent,
+                    containerColor = Transparent,
                     topBar = {
                         LargeTopBar(
-                            navController = navController,
                             topBarScrollBehavior = topBarScrollBehavior,
+                            currentDestination = currentDestination,
+                            navigateUp = { navController.navigateUp() },
                         )
                     },
                     content = { paddingValue ->
@@ -154,16 +194,17 @@ fun AppHavHost(
 
                 Scaffold(
                     modifier = Modifier.nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
-                    containerColor = Color.Transparent,
+                    containerColor = Transparent,
                     topBar = {
                         LargeTopBar(
-                            navController = navController,
                             topBarScrollBehavior = topBarScrollBehavior,
+                            currentDestination = currentDestination,
+                            navigateUp = { navController.navigateUp() },
                         )
                     },
                     content = { paddingValue ->
                         Box(modifier = Modifier.padding(paddingValues = paddingValue)) {
-                            BugReport()
+                            BugReportScreen()
                         }
                     }
                 )
@@ -174,11 +215,12 @@ fun AppHavHost(
 
                 Scaffold(
                     modifier = Modifier.nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
-                    containerColor = Color.Transparent,
+                    containerColor = Transparent,
                     topBar = {
                         LargeTopBar(
-                            navController = navController,
                             topBarScrollBehavior = topBarScrollBehavior,
+                            currentDestination = currentDestination,
+                            navigateUp = { navController.navigateUp() },
                         )
                     },
                     content = { paddingValue ->
@@ -194,11 +236,12 @@ fun AppHavHost(
 
                 Scaffold(
                     modifier = Modifier.nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
-                    containerColor = Color.Transparent,
+                    containerColor = Transparent,
                     topBar = {
                         LargeTopBar(
-                            navController = navController,
                             topBarScrollBehavior = topBarScrollBehavior,
+                            currentDestination = currentDestination,
+                            navigateUp = { navController.navigateUp() },
                         )
                     },
                     content = { paddingValue ->
@@ -214,18 +257,23 @@ fun AppHavHost(
 
                 Scaffold(
                     modifier = Modifier.nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
-                    containerColor = Color.Transparent,
+                    containerColor = Transparent,
                     topBar = {
                         LargeTopBar(
-                            navController = navController,
                             topBarScrollBehavior = topBarScrollBehavior,
+                            currentDestination = currentDestination,
+                            navigateUp = { navController.navigateUp() },
                         )
                     },
                     content = { paddingValue ->
                         Box(modifier = Modifier.padding(paddingValues = paddingValue)) {
-                            SettingsTimerFontStyles(
+                            SettingsTimerFontStylesScreen(
                                 vm = settingsViewModelTimer,
-                                navController = navController
+                                navigateToSettingsTimerSelectedFontStyle = {
+                                    navController.navigate(
+                                        route = Screens.SettingsTimerSelectedFontStyle.route
+                                    )
+                                }
                             )
                         }
                     }
@@ -237,16 +285,17 @@ fun AppHavHost(
 
                 Scaffold(
                     modifier = Modifier.nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
-                    containerColor = Color.Transparent,
+                    containerColor = Transparent,
                     topBar = {
                         LargeTopBar(
-                            navController = navController,
                             topBarScrollBehavior = topBarScrollBehavior,
+                            currentDestination = currentDestination,
+                            navigateUp = { navController.navigateUp() },
                         )
                     },
-                    content = { paddingValue ->
-                        Box(modifier = Modifier.padding(paddingValues = paddingValue)) {
-                            SettingsTimerSelectedFontStyleView(vm = settingsViewModelTimer)
+                    content = { paddingValues ->
+                        Box(modifier = Modifier.padding(paddingValues = paddingValues)) {
+                            SettingsTimerSelectedFontStyleScreen(vm = settingsViewModelTimer)
                         }
                     }
                 )
@@ -257,18 +306,23 @@ fun AppHavHost(
 
                 Scaffold(
                     modifier = Modifier.nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
-                    containerColor = Color.Transparent,
+                    containerColor = Transparent,
                     topBar = {
                         LargeTopBar(
-                            navController = navController,
                             topBarScrollBehavior = topBarScrollBehavior,
+                            currentDestination = currentDestination,
+                            navigateUp = { navController.navigateUp() },
                         )
                     },
-                    content = { paddingValue ->
-                        Box(modifier = Modifier.padding(paddingValues = paddingValue)) {
-                            SettingsStopwatchFontStylesView(
+                    content = { paddingValues ->
+                        Box(modifier = Modifier.padding(paddingValues = paddingValues)) {
+                            SettingsStopwatchFontStylesScreen(
                                 vm = settingsViewModelStopwatch,
-                                navController = navController
+                                navigateToSettingsStopwatchSelectedFontStyle = {
+                                    navController.navigate(
+                                        Screens.SettingsStopwatchSelectedFontStyle.route
+                                    )
+                                }
                             )
                         }
                     }
@@ -280,16 +334,17 @@ fun AppHavHost(
 
                 Scaffold(
                     modifier = Modifier.nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
-                    containerColor = Color.Transparent,
+                    containerColor = Transparent,
                     topBar = {
                         LargeTopBar(
-                            navController = navController,
                             topBarScrollBehavior = topBarScrollBehavior,
+                            currentDestination = currentDestination,
+                            navigateUp = { navController.navigateUp() },
                         )
                     },
-                    content = { paddingValue ->
-                        Box(modifier = Modifier.padding(paddingValues = paddingValue)) {
-                            SettingsStopwatchSelectedFontStyleView(vm = settingsViewModelStopwatch)
+                    content = { paddingValues ->
+                        Box(modifier = Modifier.padding(paddingValues = paddingValues)) {
+                            SettingsStopwatchSelectedFontStyleScreen(vm = settingsViewModelStopwatch)
                         }
                     }
                 )
@@ -300,15 +355,16 @@ fun AppHavHost(
 
                 Scaffold(
                     modifier = Modifier.nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
-                    containerColor = Color.Transparent,
+                    containerColor = Transparent,
                     topBar = {
                         LargeTopBar(
-                            navController = navController,
                             topBarScrollBehavior = topBarScrollBehavior,
+                            currentDestination = currentDestination,
+                            navigateUp = { navController.navigateUp() },
                         )
                     },
-                    content = { paddingValue ->
-                        Box(modifier = Modifier.padding(paddingValues = paddingValue)) {
+                    content = { paddingValues ->
+                        Box(modifier = Modifier.padding(paddingValues = paddingValues)) {
                             SettingsTimerScrollsHapticFeedback(vm = settingsViewModelTimer)
                         }
                     }
@@ -317,3 +373,5 @@ fun AppHavHost(
         }
     }
 }
+
+

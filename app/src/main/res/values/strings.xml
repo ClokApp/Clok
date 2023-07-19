@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Clok</string>
+
+    <string name = "navigate_to_timer_screen">Timer</string>
+    <string name = "navigate_to_stopwatch_screen">Stopwatch</string>
+
 </resources>
