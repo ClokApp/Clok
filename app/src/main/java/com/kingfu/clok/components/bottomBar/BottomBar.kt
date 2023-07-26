@@ -46,7 +46,11 @@ fun BottomBar(
                     ),
                     icon = {
                         Icon(
-                            imageVector = if (selected) items[screen].filledIconId!! else items[screen].outlinedIconId!!,
+                            imageVector = if (selected){
+                                items[screen].filledIconId!!
+                            } else{
+                                items[screen].outlinedIconId!!
+                            },
                             contentDescription = null
                         )
                     },

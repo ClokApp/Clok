@@ -56,24 +56,32 @@ fun TimerTimeView(
         }
     }
 
-    Box(modifier = Modifier.clip(shape = if (configurationOrientation == ORIENTATION_PORTRAIT) CircleShape else RectangleShape)) {
+    Box(
+        modifier = Modifier.clip(
+            shape = if (configurationOrientation == ORIENTATION_PORTRAIT) {
+                CircleShape
+            } else {
+                RectangleShape
+            }
+        )
+    ) {
         val animatedProgress by animateFloatAsState(
             targetValue = if (!vm.timerCurrentTimePercentage.isNaN()) vm.timerCurrentTimePercentage else 0f,
             animationSpec = tween(
                 durationMillis = if (vm.timerTime * 0.005 > 250) 250 else (vm.timerTime * 0.005).toInt(),
                 easing = LinearEasing,
 
-            ),
+                ),
             label = ""
         )
 
         val circularProgressBarColor =
-            if(vm.timerIsActive) {
+            if (vm.timerIsActive) {
                 listOf(
                     colorScheme.tertiary,
                     colorScheme.tertiary
                 )
-            }else{
+            } else {
                 listOf(
                     colorScheme.tertiaryContainer,
                     colorScheme.tertiaryContainer,
@@ -154,7 +162,7 @@ fun TimerTimeView(
                     text = if (vm.formatTimerTimeHr(timeMillis = vm.timerTime) != "") ":" else "",
                     color = colorScheme.tertiary,
                     settingsViewModelTimer = settingsViewModelTimer,
-                    padding = if (vm.formatTimerTimeHr(timeMillis = vm.timerTime) != "")  5.dp else 0.dp
+                    padding = if (vm.formatTimerTimeHr(timeMillis = vm.timerTime) != "") 5.dp else 0.dp
                 )
 
                 TimerTime(
@@ -199,7 +207,7 @@ fun TimerTime(
     color: Color,
     settingsViewModelTimer: SettingsViewModelTimer,
     padding: Dp = 0.dp
-){
+) {
     Text(
         text = text,
         color = color,

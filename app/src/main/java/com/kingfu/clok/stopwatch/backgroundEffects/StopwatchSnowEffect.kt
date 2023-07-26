@@ -58,7 +58,8 @@ fun StopwatchSnowEffect(size: IntSize) {
                     delayMillis = duration / 8,
                     easing = LinearEasing
                 ),
-            )
+            ),
+            label = ""
         )
         snowSizeList.add(element = snowSize)
 
@@ -84,7 +85,8 @@ fun StopwatchSnowEffect(size: IntSize) {
                     delayMillis = duration / 8,
                     easing = LinearEasing
                 ),
-            )
+            ),
+            label = ""
         )
 
         snowYOffsetList.add(snowYOffset)
@@ -105,6 +107,7 @@ fun StopwatchSnowEffect(size: IntSize) {
                     easing = LinearEasing
                 ),
             ),
+            label = "",
         )
 
         snowXOffsetList.add(index = 0, element = snowXOffset)

@@ -21,7 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.DarkGray
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.LongPress
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
@@ -86,14 +87,14 @@ fun SettingsTimerScrollsHapticFeedback(
                     Text(
                         text = radioOptions.elementAt(index = i),
                         fontSize = 18.sp,
-                        color = Color.White,
+                        color = White,
                         style = TextStyle()
                     )
                 }
                 if (i != radioOptions.size - 1) {
                     Divider(
                         modifier = Modifier.padding(horizontal = 24.dp),
-                        color = Color.DarkGray.copy(alpha = 0.75f),
+                        color = DarkGray.copy(alpha = 0.75f),
                         thickness = 0.8.dp
                     )
                 }

@@ -60,7 +60,7 @@ fun SettingsStopwatchSelectedFontStyleScreen(
         Card(
             shape = RoundedCornerShape(size = 20.dp),
             colors = cardColors(
-                containerColor = colorScheme.inverseOnSurface.copy(alpha =0.40f)
+                containerColor = colorScheme.inverseOnSurface.copy(alpha = 0.40f)
             )
         ) {
             for (i in vm.stopwatchStyleRadioOptions.indices) {
@@ -82,15 +82,21 @@ fun SettingsStopwatchSelectedFontStyleScreen(
                         modifier = Modifier.padding(horizontal = 12.dp),
                         selected = when (settingsStopwatchSelectedFontStyle) {
                             vm.fontStyleOptions.elementAt(index = 0) -> {
-                                vm.stopwatchStyleRadioOptions.elementAt(index = i) == vm.stopwatchLabelFontStyle
+                                vm.stopwatchStyleRadioOptions.elementAt(
+                                    index = i
+                                ) == vm.stopwatchLabelFontStyle
                             }
 
                             vm.fontStyleOptions.elementAt(index = 1) -> {
-                                vm.stopwatchStyleRadioOptions.elementAt(index = i) == vm.stopwatchTimeFontStyle
+                                vm.stopwatchStyleRadioOptions.elementAt(
+                                    index = i
+                                ) == vm.stopwatchTimeFontStyle
                             }
 
                             else -> {
-                                vm.stopwatchStyleRadioOptions.elementAt(index = i) == vm.stopwatchLapTimeFontStyle
+                                vm.stopwatchStyleRadioOptions.elementAt(
+                                    index = i
+                                ) == vm.stopwatchLapTimeFontStyle
                             }
                         },
                         onClick = null,
@@ -103,9 +109,8 @@ fun SettingsStopwatchSelectedFontStyleScreen(
                         style = TextStyle(
                             drawStyle =
                             if (
-                                vm.stopwatchStyleRadioOptions.elementAt(index = i) == vm.stopwatchStyleRadioOptions.elementAt(
-                                    index = 1
-                                )
+                                vm.stopwatchStyleRadioOptions.elementAt(index = i) ==
+                                vm.stopwatchStyleRadioOptions.elementAt(index = 1)
                             ) Stroke() else null
                         )
                     )

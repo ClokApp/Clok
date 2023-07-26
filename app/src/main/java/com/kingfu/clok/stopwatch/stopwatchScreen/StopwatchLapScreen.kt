@@ -169,7 +169,8 @@ fun RowScope.LapContent(
             colorScheme.tertiaryContainer
         } else {
             colorScheme.onSurfaceVariant.copy(alpha = alpha)
-        }
+        },
+        label = ""
     )
 
     Text(

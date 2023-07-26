@@ -131,7 +131,7 @@ fun LargeTopBar(
                 onClick = { navigateUp() },
                 modifier = Modifier
                     .alpha(
-                        if (
+                        alpha = if (
                             currentRoute != Screens.Stopwatch.route &&
                             currentRoute != Screens.Timer.route
                         ) 1f else 0f

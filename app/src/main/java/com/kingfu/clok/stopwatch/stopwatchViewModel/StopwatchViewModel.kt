@@ -85,7 +85,7 @@ class StopwatchViewModel(
         isLap = true
     }
 
-    fun toggleIsScrollLazyColumn(){
+    fun toggleIsScrollLazyColumn() {
         isScrollLazyColumn = !isScrollLazyColumn
     }
 
@@ -314,10 +314,9 @@ class StopwatchViewModel(
     }
 
     suspend fun saveStopwatchLapPreviousTime() {
-        // need to not save using Dispatchers.IO to work properly
-//        viewModelScope.launch(Dispatchers.IO) {
-        stopwatchPreferences.setStopwatchLapPreviousTime(long = lapPreviousTime)
-//        }
+        viewModelScope.launch(context = Dispatchers.IO) {
+            stopwatchPreferences.setStopwatchLapPreviousTime(long = lapPreviousTime)
+        }
     }
 
     fun saveStopwatchOffsetTime() {
@@ -334,8 +333,9 @@ class StopwatchViewModel(
 
 
     suspend fun saveLap(lap: StopwatchLapData) {
-//        viewModelScope.launch(Dispatchers.IO) {
-        stopwatchLapDatabase.itemDao().insert(lap = lap)
+        // need to not save using Dispatchers.IO to work properly
+//        viewModelScope.launch(context = Dispatchers.IO) {
+            stopwatchLapDatabase.itemDao().insert(lap = lap)
 //        }
     }
 

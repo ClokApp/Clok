@@ -70,7 +70,8 @@ fun SettingsStopwatchFontStylesScreen(
                         .clickable {
                             coroutine.launch {
                                 haptic.performHapticFeedback(hapticFeedbackType = LongPress)
-                                settingsStopwatchSelectedFontStyle = vm.fontStyleOptions.elementAt(index = i)
+                                settingsStopwatchSelectedFontStyle =
+                                    vm.fontStyleOptions.elementAt(index = i)
                                 navigateToSettingsStopwatchSelectedFontStyle()
                             }
                         }

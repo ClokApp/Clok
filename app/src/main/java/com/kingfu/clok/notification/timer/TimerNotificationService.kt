@@ -65,7 +65,7 @@ class TimerNotificationService(
             .setContentText("Timer is finished!")
             .setContentIntent(activityPendingIntent)
             .addAction(R.drawable.ic_round_hourglass_empty_24, "Close", closeIntent)
-            .setColor(Color.argb(255, 0, 255, 255))
+            .setColor(Color.argb(255, 135, 215, 186))
             .build()
 
         notificationManager.notify(NOTIFICATION_ID, notification)

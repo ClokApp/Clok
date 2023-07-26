@@ -6,7 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
@@ -28,7 +28,7 @@ fun NavGraphBuilder.settingsTimerFontStylesGraph(
 
         Scaffold(
             modifier = Modifier.nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
-            containerColor = Color.Transparent,
+            containerColor = Transparent,
             topBar = {
                 LargeTopBar(
                     topBarScrollBehavior = topBarScrollBehavior,

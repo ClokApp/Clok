@@ -31,7 +31,8 @@ fun StopwatchResetButton(
             colorScheme.secondary
         } else {
             colorScheme.inversePrimary
-        }
+        },
+        label = ""
     )
 
     OutlinedButton(

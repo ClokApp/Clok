@@ -27,7 +27,7 @@ import kotlin.math.sin
 @Composable
 fun TimerSnowEffect(size: IntSize) {
 
-    val transition = rememberInfiniteTransition()
+    val transition = rememberInfiniteTransition(label = "")
     val snowXOffsetList = mutableListOf<Float>()
     val snowYOffsetList = mutableListOf<Float>()
     val snowSizeList = mutableListOf<Float>()
@@ -48,7 +48,8 @@ fun TimerSnowEffect(size: IntSize) {
                     delayMillis = duration / 8,
                     easing = LinearEasing
                 ),
-            )
+            ),
+            label = ""
         )
         snowSizeList.add(element = snowSize)
 
@@ -69,7 +70,8 @@ fun TimerSnowEffect(size: IntSize) {
                     delayMillis = duration / 8,
                     easing = LinearEasing
                 ),
-            )
+            ),
+            label = ""
         )
         snowYOffsetList.add(element = snowYOffset)
 
@@ -87,6 +89,7 @@ fun TimerSnowEffect(size: IntSize) {
                     easing = LinearEasing
                 ),
             ),
+            label = "",
         )
         snowXOffsetList.add(index = 0, element = snowXOffset)
     }

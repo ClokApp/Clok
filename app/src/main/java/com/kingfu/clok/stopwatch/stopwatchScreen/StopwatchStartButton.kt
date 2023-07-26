@@ -28,7 +28,10 @@ fun StopwatchStartButton(
     haptic: HapticFeedback,
     coroutineScopeStopwatch: CoroutineScope,
 ) {
-    val startStopWatchColor by animateColorAsState(if (vm.stopwatchIsActive) colorScheme.tertiary else colorScheme.primary)
+    val startStopWatchColor by animateColorAsState(
+        targetValue = if (vm.stopwatchIsActive) colorScheme.tertiary else colorScheme.primary,
+        label = ""
+    )
 
     OutlinedButton(
         shape = RoundedCornerShape(percent = 50),
@@ -48,7 +51,7 @@ fun StopwatchStartButton(
     ) {
         Text(
             text = if (vm.stopwatchIsActive) "Pause" else "Start",
-            modifier = Modifier.padding(horizontal = if(vm.stopwatchIsActive) 7.dp else 14.dp),
+            modifier = Modifier.padding(horizontal = if (vm.stopwatchIsActive) 7.dp else 14.dp),
             fontSize = 20.nonScaledSp,
             color = startStopWatchColor,
             fontWeight = Bold,

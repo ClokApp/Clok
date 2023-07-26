@@ -16,68 +16,68 @@ sealed class Screens(
     val filledIconId: ImageVector? = null,
     val outlinedIconId: ImageVector? = null
 ) {
-    object BugReport : Screens(
+    data object BugReport : Screens(
         route = "bugReport",
         name = "Bug report",
     )
 
-    object Settings : Screens(
+    data object Settings : Screens(
         route = "settings",
         name = "Settings",
     )
 
-    object Stopwatch : Screens(
+    data object Stopwatch : Screens(
         route = "stopwatch",
         name = "Stopwatch",
         filledIconId = Icons.Filled.Timer,
         outlinedIconId = Icons.Outlined.Timer
     )
 
-    object SettingsStopwatchLabelStyles : Screens(
+    data object SettingsStopwatchLabelStyles : Screens(
         route = "settingsStopwatchLabelStyles",
         name = "Label styles",
     )
 
-    object SettingsStopwatchLabelBackgroundEffects : Screens(
+    data object SettingsStopwatchLabelBackgroundEffects : Screens(
         route = "settingsStopwatchBackgroundEffects",
         name = "Label background effects",
     )
 
-    object Timer : Screens(
+    data object Timer : Screens(
         route = "timer",
         name = "Timer",
         filledIconId = Icons.Rounded.HourglassFull,
         outlinedIconId = Icons.Rounded.HourglassEmpty
     )
 
-    object SettingsTimerProgressBarBackgroundEffects : Screens(
+    data object SettingsTimerProgressBarBackgroundEffects : Screens(
         route = "settingsTimerBackgroundEffects",
         name = "Progress bar background effects",
     )
 
-    object SettingsTimerProgressBarStyles : Screens(
+    data object SettingsTimerProgressBarStyles : Screens(
         route = "settingsTimerProgressBarStyles",
         name = "Progress bar styles",
     )
 
-    object SettingsTimerFontStyles : Screens(
+    data object SettingsTimerFontStyles : Screens(
         route = "settingsTimerFontStyles",
         name = "Font styles",
     )
-    object SettingsTimerSelectedFontStyle : Screens(
+    data object SettingsTimerSelectedFontStyle : Screens(
         route = "settingsTimerSelectedFontStyle",
         name = settingsTimerSelectedFontStyle,
     )
-    object SettingsTimerScrollsHapticFeedback : Screens(
+    data object SettingsTimerScrollsHapticFeedback : Screens(
         route = "settingsTimerScrollsHapticFeedback",
         name = "Settings Timer Scrolls Haptic Feedback",
     )
-    object SettingsStopwatchFontStyles : Screens(
+    data object SettingsStopwatchFontStyles : Screens(
         route = "settingsStopwatchFontStyles",
         name = "Font styles",
     )
 
-    object SettingsStopwatchSelectedFontStyle : Screens(
+    data object SettingsStopwatchSelectedFontStyle : Screens(
         route = "settingsStopwatchSelectedFontStyle",
         name = settingsStopwatchSelectedFontStyle,
     )

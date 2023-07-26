@@ -174,7 +174,8 @@ fun DisplayTimerScroll(
                 durationMillis = 500,
                 delayMillis = 0,
                 easing = LinearEasing
-            )
+            ),
+            label = ""
         )
 
         Text(
