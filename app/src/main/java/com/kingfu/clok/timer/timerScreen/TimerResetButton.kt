@@ -42,16 +42,19 @@ fun TimerResetButton(
     context: Context,
 ) {
     val stopwatchResetButtonColor by animateColorAsState(
-        targetValue = colorScheme.secondary
+        targetValue = colorScheme.secondary,
+        label = ""
     )
 
     val padding by animateDpAsState(
-        targetValue = if ((vm.timerHour != 0 || vm.timerMinute != 0 || vm.timerSecond != 0) && !vm.loadInitialTime) 25.dp else 0.dp,
-        animationSpec = tween(durationMillis = 100)
+//        targetValue = if ((vm.timerHour != 0 || vm.timerMinute != 0 || vm.timerSecond != 0) && !vm.loadInitialTime) 25.dp else 0.dp,
+        targetValue = if ((vm.timerHour != 0 || vm.timerMinute != 0 || vm.timerSecond != 0) && (!vm.loadInitialTime || !vm.timerIsEditState)) 25.dp else 0.dp,
+        animationSpec = tween(durationMillis = 100),
+        label = ""
     )
 
     AnimatedVisibility(
-        visible = ((vm.timerHour != 0 || vm.timerMinute != 0 || vm.timerSecond != 0) && !vm.loadInitialTime || !vm.timerIsEditState),
+        visible = ((vm.timerHour != 0 || vm.timerMinute != 0 || vm.timerSecond != 0) && (!vm.loadInitialTime || !vm.timerIsEditState)),
         enter = slideInHorizontally(
             initialOffsetX = { 250 },
             animationSpec = tween(
@@ -79,18 +82,9 @@ fun TimerResetButton(
                     if (vm.timerIsEditState) {
                         vm.resetTimer()
                         coroutineScopeTimer.launch {
-                            lazyListStateHr.scrollToItem(
-                                index = Int.MAX_VALUE / 2 - 24,
-//                                scrollOffset = timerScrollerFontSize.value.toInt()
-                            )
-                            lazyListStateMin.scrollToItem(
-                                index = Int.MAX_VALUE / 2 - 4,
-//                                scrollOffset = timerScrollerFontSize.value.toInt()
-                            )
-                            lazyListStateSec.scrollToItem(
-                                index = Int.MAX_VALUE / 2 - 4,
-//                                scrollOffset = timerScrollerFontSize.value.toInt()
-                            )
+                            lazyListStateHr.scrollToItem(index = Int.MAX_VALUE / 2 - 24)
+                            lazyListStateMin.scrollToItem(index = Int.MAX_VALUE / 2 - 4)
+                            lazyListStateSec.scrollToItem(index = Int.MAX_VALUE / 2 - 4)
                         }
                         TimerNotificationService(context = context).cancelNotification()
                     } else {

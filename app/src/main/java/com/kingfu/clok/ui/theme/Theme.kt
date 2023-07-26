@@ -32,10 +32,13 @@ private val DarkColorScheme = darkColorScheme(
     onSurfaceVariant = onSurfaceVariant
 )
 
+
+
 private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Pink40
+
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -50,10 +53,8 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun ClokTheme(
-//    darkTheme: Boolean = isSystemInDarkTheme(),
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-//    dynamicColor: Boolean = DynamicColors.isDynamicColorAvailable(),
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
@@ -113,5 +114,6 @@ fun ClokTheme(
         }
 
     )
+
 //    systemUiController.setNavigationBarColor(color = Color.Transparent, darkIcons = !isDarkTheme)
 }

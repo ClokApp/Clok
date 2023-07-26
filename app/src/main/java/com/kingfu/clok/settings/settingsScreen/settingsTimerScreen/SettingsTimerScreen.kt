@@ -148,7 +148,7 @@ fun SettingsTimerScreen(
         ) {
             Column {
                 Text(
-                    text = Screens.SettingsTimerBackgroundEffects.name,
+                    text = Screens.SettingsTimerProgressBarBackgroundEffects.name,
                     fontSize = 18.sp,
                     color = White,
                     style = TextStyle()

@@ -1,4 +1,4 @@
-package com.kingfu.clok.settings.settingsScreen.settingsStopwatchScreen
+package com.kingfu.clok.settings.settingsScreen.settingsTimerScreen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement.Start
@@ -21,21 +21,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color.Companion.DarkGray
-import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.LongPress
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kingfu.clok.navigation.Screens
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
+import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
 
 @Composable
-fun SettingsStopwatchBackgroundEffects(
-    vm: SettingsViewModelStopwatch = viewModel()
+fun SettingsTimerProgressBarBackgroundEffects(
+    vm: SettingsViewModelTimer
 ) {
     val haptic = LocalHapticFeedback.current
     val radioOptions = setOf("None", "Snow")
@@ -48,7 +46,7 @@ fun SettingsStopwatchBackgroundEffects(
             .verticalScroll(state = scrollState)
     ) {
         Text(
-            text = Screens.Stopwatch.name,
+            text = Screens.Timer.name,
             modifier = Modifier.padding(start = 26.dp, end = 32.dp, top = 12.dp, bottom = 6.dp),
             fontSize = 16.sp,
             fontWeight = SemiBold,
@@ -62,17 +60,18 @@ fun SettingsStopwatchBackgroundEffects(
                 containerColor = colorScheme.inverseOnSurface.copy(alpha = 0.40f)
             )
         ) {
-
             for (i in radioOptions.indices) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
                             haptic.performHapticFeedback(hapticFeedbackType = LongPress)
-                            vm.updateStopwatchBackgroundEffect(
-                                radioOptions.elementAt(index = i)
+                            vm.updateTimerBackgroundEffects(
+                                string = radioOptions.elementAt(
+                                    index = i
+                                )
                             )
-                            vm.saveStopwatchBackgroundEffects()
+                            vm.saveTimerBackgroundEffectsSelectedOption()
                         }
                         .padding(horizontal = 16.dp, vertical = 20.dp),
                     horizontalArrangement = Start,
@@ -80,7 +79,7 @@ fun SettingsStopwatchBackgroundEffects(
                 ) {
                     RadioButton(
                         modifier = Modifier.padding(horizontal = 12.dp),
-                        selected = (radioOptions.elementAt(index = i) == vm.stopwatchBackgroundEffects),
+                        selected = (radioOptions.elementAt(index = i) == vm.timerBackgroundEffects),
                         onClick = null,
                         colors = RadioButtonDefaults.colors(selectedColor = colorScheme.primary)
 
@@ -88,14 +87,15 @@ fun SettingsStopwatchBackgroundEffects(
                     Text(
                         text = radioOptions.elementAt(index = i),
                         fontSize = 18.sp,
-                        color = White,
+                        color = Color.White,
                         style = TextStyle()
                     )
+
                 }
                 if (i != radioOptions.size - 1) {
                     Divider(
                         modifier = Modifier.padding(horizontal = 24.dp),
-                        color = DarkGray.copy(alpha = 0.75f),
+                        color = Color.DarkGray.copy(alpha = 0.75f),
                         thickness = 0.8.dp
                     )
                 }
@@ -103,3 +103,4 @@ fun SettingsStopwatchBackgroundEffects(
         }
     }
 }
+

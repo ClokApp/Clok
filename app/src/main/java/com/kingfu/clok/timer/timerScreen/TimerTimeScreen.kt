@@ -56,13 +56,15 @@ fun TimerTimeView(
         }
     }
 
-    Box(modifier = Modifier.clip(if (configurationOrientation == ORIENTATION_PORTRAIT) CircleShape else RectangleShape)) {
+    Box(modifier = Modifier.clip(shape = if (configurationOrientation == ORIENTATION_PORTRAIT) CircleShape else RectangleShape)) {
         val animatedProgress by animateFloatAsState(
             targetValue = if (!vm.timerCurrentTimePercentage.isNaN()) vm.timerCurrentTimePercentage else 0f,
             animationSpec = tween(
                 durationMillis = if (vm.timerTime * 0.005 > 250) 250 else (vm.timerTime * 0.005).toInt(),
-                easing = LinearEasing
-            )
+                easing = LinearEasing,
+
+            ),
+            label = ""
         )
 
         val circularProgressBarColor =

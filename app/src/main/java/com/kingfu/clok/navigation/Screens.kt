@@ -38,7 +38,7 @@ sealed class Screens(
         name = "Label styles",
     )
 
-    object SettingsStopwatchBackgroundEffects : Screens(
+    object SettingsStopwatchLabelBackgroundEffects : Screens(
         route = "settingsStopwatchBackgroundEffects",
         name = "Label background effects",
     )
@@ -50,7 +50,7 @@ sealed class Screens(
         outlinedIconId = Icons.Rounded.HourglassEmpty
     )
 
-    object SettingsTimerBackgroundEffects : Screens(
+    object SettingsTimerProgressBarBackgroundEffects : Screens(
         route = "settingsTimerBackgroundEffects",
         name = "Progress bar background effects",
     )
@@ -64,17 +64,14 @@ sealed class Screens(
         route = "settingsTimerFontStyles",
         name = "Font styles",
     )
-
     object SettingsTimerSelectedFontStyle : Screens(
         route = "settingsTimerSelectedFontStyle",
         name = settingsTimerSelectedFontStyle,
     )
-
     object SettingsTimerScrollsHapticFeedback : Screens(
         route = "settingsTimerScrollsHapticFeedback",
         name = "Settings Timer Scrolls Haptic Feedback",
     )
-
     object SettingsStopwatchFontStyles : Screens(
         route = "settingsStopwatchFontStyles",
         name = "Font styles",

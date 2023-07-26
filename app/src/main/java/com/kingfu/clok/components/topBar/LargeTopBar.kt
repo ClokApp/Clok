@@ -65,12 +65,12 @@ fun LargeTopBar(
                         Screens.SettingsTimerProgressBarStyles.name
                     }
 
-                    Screens.SettingsStopwatchBackgroundEffects.route -> {
-                        Screens.SettingsStopwatchBackgroundEffects.name
+                    Screens.SettingsStopwatchLabelBackgroundEffects.route -> {
+                        Screens.SettingsStopwatchLabelBackgroundEffects.name
                     }
 
-                    Screens.SettingsTimerBackgroundEffects.route -> {
-                        Screens.SettingsTimerBackgroundEffects.name
+                    Screens.SettingsTimerProgressBarBackgroundEffects.route -> {
+                        Screens.SettingsTimerProgressBarBackgroundEffects.name
                     }
 
                     Screens.BugReport.route -> {

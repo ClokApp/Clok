@@ -196,7 +196,7 @@ fun SettingsStopwatchScreen(
         ) {
             Column {
                 Text(
-                    text = Screens.SettingsStopwatchBackgroundEffects.name,
+                    text = Screens.SettingsStopwatchLabelBackgroundEffects.name,
                     fontSize = 18.sp,
                     color = White,
                     style = TextStyle()

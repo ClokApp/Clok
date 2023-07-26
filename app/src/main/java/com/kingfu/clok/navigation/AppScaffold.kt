@@ -43,7 +43,6 @@ fun AppScaffold() {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
-
     val stopwatchViewModel: StopwatchViewModel = viewModel(
         factory = StopwatchFactory(
             stopwatchPreferences = StopwatchPreferences.getInstance(context = context),
@@ -76,7 +75,6 @@ fun AppScaffold() {
     LaunchedEffect(key1 = isShowSnackbar) {
         showSnackBar(snackbarHostState = snackbarHostState)
     }
-
 
     Scaffold(
         containerColor = Black00,
@@ -144,7 +142,3 @@ fun AppScaffold() {
         }
     )
 }
-
-
-
-

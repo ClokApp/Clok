@@ -46,7 +46,7 @@ fun TimerScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .alpha(if (vm.loadInitialTime && vm.timerIsEditState) 0f else 1f)
+            .alpha(alpha = if (vm.loadInitialTime && vm.timerIsEditState) 0f else 1f)
             .background(color = Black00)
             .verticalScroll(
                 state = scrollState,

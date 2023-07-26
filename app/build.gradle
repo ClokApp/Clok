@@ -1,7 +1,11 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
+
+    // For Room
+//    id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
+
 }
 
 android {
@@ -11,8 +15,8 @@ android {
         applicationId "com.kingfu.clok"
         minSdk 26
         targetSdk 34
-        versionCode 12
-        versionName "1.5.4"
+        versionCode 13
+        versionName "1.5.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -95,13 +99,12 @@ dependencies {
     implementation "androidx.compose.material:material-icons-extended:1.4.3"
 
     // Room
-//    implementation "androidx.room:room-runtime:2.5.2"
-//    kapt "androidx.room:room-compiler:2.5.2"
     implementation "androidx.room:room-runtime:2.6.0-alpha02"
-    kapt "androidx.room:room-compiler:2.6.0-alpha02"
+//    kapt "androidx.room:room-compiler:2.6.0-alpha02"
+    ksp 'androidx.room:room-compiler:2.6.0-alpha02'
+
 
     // Kotlin Extensions and Coroutines support for Room
-//    implementation "androidx.room:room-ktx:2.5.2"
     implementation "androidx.room:room-ktx:2.6.0-alpha02"
 
     // Splash API

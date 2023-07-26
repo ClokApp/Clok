@@ -21,12 +21,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             ClokTheme {
                 NotificationPermissionForAndroid13()
-
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = colorScheme.background
-                ) {
+                ){
                     AppScaffold()
                 }
             }

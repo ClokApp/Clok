@@ -48,6 +48,7 @@ fun TimerStartButton(
             colorScheme.tertiary
         else
             colorScheme.primary,
+        label = "",
     )
 
     val enableStartBtn = startTimerColor != colorScheme.inversePrimary
