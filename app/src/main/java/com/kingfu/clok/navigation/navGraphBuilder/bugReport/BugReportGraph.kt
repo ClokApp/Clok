@@ -1,5 +1,7 @@
 package com.kingfu.clok.navigation.navGraphBuilder.bugReport
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,7 +23,33 @@ fun NavGraphBuilder.bugReportGraph(
     currentDestination: NavDestination?,
     navController: NavHostController
 ) {
-    composable(route = Screens.BugReport.route) {
+    composable(
+        route = Screens.BugReport.route,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(durationMillis = 200)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(durationMillis = 200)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(durationMillis = 200)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(durationMillis = 200)
+            )
+        }
+    ) {
         val topBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
         Scaffold(

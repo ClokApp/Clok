@@ -1,5 +1,7 @@
 package com.kingfu.clok.navigation.navGraphBuilder.settings.settingsTimer
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,7 +26,21 @@ fun NavGraphBuilder.settingsTimerProgressBarStylesGraph(
     navController: NavHostController,
     settingsViewModelTimer: SettingsViewModelTimer
 ) {
-    composable(route = Screens.SettingsTimerProgressBarStyles.route) {
+    composable(
+        route = Screens.SettingsTimerProgressBarStyles.route,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(durationMillis = 200)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(durationMillis = 200)
+            )
+        }
+    ) {
         val topBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
         Scaffold(

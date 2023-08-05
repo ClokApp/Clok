@@ -10,18 +10,16 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kingfu.clok.variable.Variable.DARK
 import com.kingfu.clok.variable.Variable.LIGHT
 import com.kingfu.clok.variable.Variable.appTheme
 
 
-private val DarkColorScheme = darkColorScheme(
+private val darkColorScheme = darkColorScheme(
     primary = primary,
     secondary = secondary,
     secondaryContainer = secondaryContainer,
@@ -34,7 +32,7 @@ private val DarkColorScheme = darkColorScheme(
 
 
 
-private val LightColorScheme = lightColorScheme(
+private val lightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Pink40
@@ -71,29 +69,23 @@ fun ClokTheme(
                 )
             }
         }
-        (appTheme == DARK) -> DarkColorScheme
-        (appTheme == LIGHT) -> LightColorScheme
-        else -> if (isSystemInDarkTheme()) DarkColorScheme else LightColorScheme
+        (appTheme == DARK) -> darkColorScheme
+        (appTheme == LIGHT) -> lightColorScheme
+        else -> if (isSystemInDarkTheme()) darkColorScheme else lightColorScheme
     }
 
     val view = LocalView.current
-
     if (!view.isInEditMode) {
-        /* getting the current window by tapping into the Activity */
-        val currentWindow = (view.context as? Activity)?.window
-            ?: throw Exception("Not in an activity - unable to get Window reference")
-
         SideEffect {
-            /* the default code did the same cast here - might as well use our new variable! */
-//            currentWindow.statusBarColor = colorScheme.primary.toArgb()
-            /* accessing the insets controller to change appearance of the status bar, with 100% less deprecation warnings */
-//            WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightStatusBars = !darkTheme
-            currentWindow.statusBarColor = Black00.toArgb()
-            currentWindow.navigationBarColor = Black00.toArgb()
+            val window = (view.context as Activity).window
+            window.statusBarColor = Black00.toArgb()
+            window.navigationBarColor = Black00.toArgb()
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                currentWindow.isNavigationBarContrastEnforced = false
+                window.isNavigationBarContrastEnforced = false
             }
-            WindowCompat.setDecorFitsSystemWindows(currentWindow, false)
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+            WindowCompat.setDecorFitsSystemWindows(window, false)
         }
     }
 
@@ -103,17 +95,4 @@ fun ClokTheme(
         content = content
     )
 
-    val systemUiController = rememberSystemUiController()
-
-    systemUiController.setStatusBarColor(
-        color = Color.Transparent, darkIcons =
-        when (appTheme) {
-            DARK ->  if(isSystemInDarkTheme()) !darkTheme else darkTheme
-            LIGHT -> if(isSystemInDarkTheme()) darkTheme else !darkTheme
-            else -> !isSystemInDarkTheme()
-        }
-
-    )
-
-//    systemUiController.setNavigationBarColor(color = Color.Transparent, darkIcons = !isDarkTheme)
 }

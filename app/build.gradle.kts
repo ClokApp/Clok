@@ -15,8 +15,8 @@ android {
         applicationId = "com.kingfu.clok"
         minSdk = 26
         targetSdk = 34
-        versionCode = 13
-        versionName = "1.5.5"
+        versionCode = 14
+        versionName = "1.5.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -34,10 +34,13 @@ android {
             )
             signingConfig = signingConfigs.getByName(name = "debug")
         }
-//        getByName("debug"){
-//            isMinifyEnabled = true
-//            isShrinkResources = true
-//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//        getByName("debug") {
+//            isMinifyEnabled = false
+//            isShrinkResources = false
+//            proguardFiles(
+//                getDefaultProguardFile(name = "proguard-android-optimize.txt"),
+//                "proguard-rules.pro"
+//            )
 //        }
     }
     compileOptions {
@@ -80,19 +83,16 @@ dependencies {
     implementation("androidx.compose.material:material:1.4.3")
 
     // Material Design 3
-    implementation("androidx.compose.material3:material3:1.2.0-alpha03")
+    implementation("androidx.compose.material3:material3:1.2.0-alpha04")
 
-    // bottom navigation
-    implementation("androidx.navigation:navigation-compose:2.6.0")
-
-    // To change status bar color
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.0")
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.0-rc01")
 
     // preferences DataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     // SnapFlingBehavior
-    implementation("androidx.compose.foundation:foundation:1.6.0-alpha01")
+    implementation("androidx.compose.foundation:foundation:1.6.0-alpha02")
 
     // Icons
     implementation("androidx.compose.material:material-icons-extended:1.4.3")

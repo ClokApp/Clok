@@ -13,7 +13,7 @@ abstract class StopwatchLapDatabase: RoomDatabase() {
         private var INSTANCE: StopwatchLapDatabase? = null
 
         fun getInstance(context: Context): StopwatchLapDatabase {
-            return INSTANCE ?: synchronized(this){
+            return INSTANCE ?: synchronized(lock = this){
                 var instance = INSTANCE
                 if(instance == null){
                     instance = Room.databaseBuilder(

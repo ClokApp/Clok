@@ -60,20 +60,20 @@ fun AppHavHost(
             stopwatchGraph(
                 mainScaffoldPaddingValues = mainScaffoldPaddingValues,
                 stopwatchViewModel = stopwatchViewModel,
-                settingsViewModelStopwatch = settingsViewModelStopwatch
+                settingsViewModelStopwatch = settingsViewModelStopwatch,
             )
 
             timerGraph(
                 mainScaffoldPaddingValues = mainScaffoldPaddingValues,
                 timerViewModel = timerViewModel,
-                settingsViewModelTimer = settingsViewModelTimer
+                settingsViewModelTimer = settingsViewModelTimer,
             )
 
             settingsGraph(
                 currentDestination = currentDestination,
                 navController = navController,
                 settingsViewModelStopwatch = settingsViewModelStopwatch,
-                settingsViewModelTimer = settingsViewModelTimer
+                settingsViewModelTimer = settingsViewModelTimer,
             )
 
             settingsStopwatchLabelStyleGraph(

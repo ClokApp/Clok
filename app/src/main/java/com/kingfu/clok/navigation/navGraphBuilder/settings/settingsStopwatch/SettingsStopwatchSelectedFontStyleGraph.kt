@@ -1,5 +1,7 @@
 package com.kingfu.clok.navigation.navGraphBuilder.settings.settingsStopwatch
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,7 +26,21 @@ fun NavGraphBuilder.settingsStopwatchSelectedFontStyleGraph(
     navController: NavHostController,
     settingsViewModelStopwatch: SettingsViewModelStopwatch
 ){
-    composable(route = Screens.SettingsStopwatchSelectedFontStyle.route) {
+    composable(
+        route = Screens.SettingsStopwatchSelectedFontStyle.route,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(durationMillis = 200)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(durationMillis = 200)
+            )
+        }
+    ) {
         val topBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
         Scaffold(

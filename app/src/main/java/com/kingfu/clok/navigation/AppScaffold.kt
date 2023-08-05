@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.kingfu.clok.components.bottomBar.BottomBar
@@ -106,9 +105,9 @@ fun AppScaffold() {
                             CoroutineScope(context = Dispatchers.IO).launch {
                                 navigationPreferences.setStartDestination(string = Screens.Stopwatch.route)
                             }
-                            popUpTo(id = navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
+//                            popUpTo(id = navController.graph.findStartDestination().id) {
+//                                saveState = true
+//                            }
                             launchSingleTop = true
                             restoreState = true
                         }
@@ -118,9 +117,9 @@ fun AppScaffold() {
                             CoroutineScope(context = Dispatchers.IO).launch {
                                 navigationPreferences.setStartDestination(string = Screens.Timer.route)
                             }
-                            popUpTo(id = navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
+//                            popUpTo(id = navController.graph.findStartDestination().id) {
+//                                saveState = true
+//                            }
                             launchSingleTop = true
                             restoreState = true
                         }

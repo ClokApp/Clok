@@ -1,5 +1,7 @@
 package com.kingfu.clok.navigation.navGraphBuilder.settings.settingsTimer
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,7 +25,54 @@ fun NavGraphBuilder.settingsTimerFontStylesGraph(
     navController: NavHostController,
     settingsViewModelTimer: SettingsViewModelTimer
 ){
-    composable(route = Screens.SettingsTimerFontStyles.route) {
+    composable(
+        route = Screens.SettingsTimerFontStyles.route,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(durationMillis = 200)
+            )
+        },
+        exitTransition = {
+            when (targetState.destination.route) {
+                Screens.Settings.route -> {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(durationMillis = 200)
+                    )
+                }
+
+                else -> {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(durationMillis = 200)
+                    )
+                }
+            }
+        },
+        popEnterTransition = {
+            when (initialState.destination.route) {
+                Screens.Settings.route -> {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(durationMillis = 200)
+                    )
+                }
+                else -> {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(durationMillis = 200)
+                    )
+                }
+            }
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(durationMillis = 200)
+            )
+        }
+    ) {
         val topBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
         Scaffold(

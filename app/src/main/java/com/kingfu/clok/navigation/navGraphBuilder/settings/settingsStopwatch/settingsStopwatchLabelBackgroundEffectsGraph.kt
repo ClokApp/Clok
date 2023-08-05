@@ -1,5 +1,7 @@
 package com.kingfu.clok.navigation.navGraphBuilder.settings.settingsStopwatch
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,14 +20,41 @@ import com.kingfu.clok.settings.settingsScreen.settingsStopwatchScreen.SettingsS
 import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
 
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.settingsStopwatchLabelBackgroundEffectsGraph(
     currentDestination: NavDestination?,
     navController: NavHostController,
     settingsViewModelStopwatch: SettingsViewModelStopwatch
 ) {
-    composable(route = Screens.SettingsStopwatchLabelBackgroundEffects.route) {
+    composable(
+        route = Screens.SettingsStopwatchLabelBackgroundEffects.route,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(durationMillis = 200)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(durationMillis = 200)
+            )
+        },
+        popEnterTransition = {
+
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(durationMillis = 200)
+            )
+
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(durationMillis = 200)
+            )
+        }
+    ) {
         val topBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
         Scaffold(

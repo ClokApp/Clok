@@ -9,7 +9,7 @@ plugins {
     id("com.google.devtools.ksp") version "1.9.0-1.0.11" apply false
 }
 
-tasks.register(name = "clean", type =  Delete::class){
+tasks.register(name = "clean", type = Delete::class){
     delete(rootProject.buildDir)
 }
 
