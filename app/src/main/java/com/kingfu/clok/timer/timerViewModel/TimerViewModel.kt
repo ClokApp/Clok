@@ -2,22 +2,24 @@ package com.kingfu.clok.timer.timerViewModel
 
 import android.content.Context
 import android.os.SystemClock
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
+import androidx.lifecycle.viewmodel.compose.saveable
 import com.kingfu.clok.notification.timer.TimerNotificationService
 import com.kingfu.clok.repository.preferencesDataStore.TimerPreferences
-import com.kingfu.clok.timer.styles.TimerRGBStyle
-import com.kingfu.clok.timer.styles.TimerRGBStyle.TimerRGBStyleVariable.timerRGBCounter
-import com.kingfu.clok.timer.timerViewModel.TimerViewModel.TimerViewModelVariable.timerTotalTime
-import com.kingfu.clok.variable.Variable.DYNAMIC_COLOR
-import com.kingfu.clok.variable.Variable.RGB
+import com.kingfu.clok.timer.feature.timerFontStyle.TimerFontStyleType
+import com.kingfu.clok.timer.feature.timerProgressBarBackgroundEffects.TimerProgressBarBackgroundEffectType
+import com.kingfu.clok.timer.feature.timerProgressBarStyle.TimerProgressBarRgbStyle
+import com.kingfu.clok.timer.feature.timerProgressBarStyle.TimerProgressBarRgbStyle.TimerProgressBarRgbStyleVariable.timerRgbCounter
+import com.kingfu.clok.timer.feature.timerProgressBarStyle.TimerProgressBarStyleType
+import com.kingfu.clok.timer.feature.timerScrollsHapticFeedback.TimerScrollsHapticFeedbackType
+import com.kingfu.clok.util.formatTimeHr
+import com.kingfu.clok.util.formatTimeMin
+import com.kingfu.clok.util.formatTimeMs
+import com.kingfu.clok.util.formatTimeSec
 import com.kingfu.clok.variable.Variable.isShowSnackbar
 import com.kingfu.clok.variable.Variable.isShowTimerNotification
 import com.kingfu.clok.variable.Variable.snackbarAction
@@ -28,101 +30,83 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlin.math.ceil
 
+@OptIn(SavedStateHandleSaveableApi::class)
 class TimerViewModel(
-    private val timerPreferences: TimerPreferences
+    private val timerPreferences: TimerPreferences,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    object TimerViewModelVariable {
-        var timerTotalTime by mutableDoubleStateOf(value = 0.0)
-    }
+//    object TimerViewModelVariable {
+//        var timerTotalTime by mutableDoubleStateOf(value = 0.0)
+//    }
 
-    var timerTime by mutableLongStateOf(value = 0L)
-        private set
 
-    var timerIsFinished by mutableStateOf(value = false)
-        private set
-
-    var timerIsActive by mutableStateOf(value = false)
-        private set
-
-    var timerHour by mutableIntStateOf(value = 0)
-        private set
-
-    var timerMinute by mutableIntStateOf(value = 0)
-        private set
-
-    var timerSecond by mutableIntStateOf(value = 0)
-        private set
-
-    var timerCurrentTimePercentage by mutableFloatStateOf(value = 0.0f)
-        private set
-
-    var timerIsEditState by mutableStateOf(value = true)
-        private set
-
-    var timerInitialTime by mutableLongStateOf(value = 0L)
-        private set
-
-    var timerOffsetTime by mutableLongStateOf(value = 0L)
-        private set
-
-    var delay by mutableLongStateOf(value = 55L)
-        private set
-
-    var loadInitialTime by mutableStateOf(value = true)
+    var state by savedStateHandle.saveable { mutableStateOf(value = TimerState()) }
         private set
 
 
     init {
         viewModelScope.launch {
-            loadTimerHour()
-            loadTimerMinute()
-            loadTimerSecond()
-            loadTimerIsFinished()
-            loadTimerIsEditState()
-            loadTimerTotalTime()
-            loadTimerCurrentTimePercentage()
-            loadTimerOffsetTime()
 
-            timerTime = timerOffsetTime
-
-            loadTimerRGBCounter()
+            loadAllData()
+            state = state.copy(timerTime = state.timerOffsetTime)
             initializeTimer()
+
+            if (state.timerIsActive) {
+                state = state.copy(
+                    timerOffsetTime = state.timerTime,
+                    timerCurrentTimePercentage = (state.timerTime.toDouble() / state.timerTotalTime).toFloat()
+                )
+
+                startTimer()
+            }
         }
     }
 
-    fun setLoadInitialTimeToFalse() {
-        loadInitialTime = false
+    fun setIsLoadInitialTimeToFalse() {
+        state = state.copy(isLoadInitialTime = false)
     }
 
     fun timerSetTotalTime() {
-        timerTotalTime = timerTime.toDouble()
+        state = state.copy(timerTotalTime = state.timerTime.toDouble())
     }
 
 
     fun startTimer() {
-        timerIsActive = true
-
         viewModelScope.launch {
-            timerIsEditState = false
+            state = state.copy(
+                timerIsActive = true,
+                timerIsEditState = false,
+                timerInitialTime = SystemClock.elapsedRealtime()
+            )
             saveTimerIsEditState()
+            delay(timeMillis = if (state.timerTime * 0.005 > 100) 100L else (state.timerTime * 0.005).toLong())
+            while (state.timerIsActive) {
+                if (state.timerTime >= 0L && !state.timerIsFinished) {
+                    state = state.copy(
+                        timerCurrentTimePercentage = state.timerTime / state.timerTotalTime.toFloat(),
+                        timerTime = state.timerOffsetTime + (state.timerInitialTime - SystemClock.elapsedRealtime())
+                    )
 
-            timerInitialTime = SystemClock.elapsedRealtime()
-            delay(timeMillis = if (timerTime * 0.005 > 100) 100L else (timerTime * 0.005).toLong())
-            while (timerIsActive) {
-
-
-                if (timerTime >= 0L && !timerIsFinished) {
-                    timerCurrentTimePercentage = (timerTime.toDouble() / timerTotalTime).toFloat()
-                    timerTime = timerOffsetTime + (timerInitialTime - SystemClock.elapsedRealtime())
-                    timerProgressBarStyles()
                 } else {
-                    if (!timerIsFinished) {
-                        timerIsFinished = true
-                        timerCurrentTimePercentage = 0f
-                        timerOffsetTime = 0L
-                        timerInitialTime = SystemClock.elapsedRealtime()
+                    if (timerPreferences.getTimerIsCountOvertime.first()) {
+                        state = state.copy(
+                            timerTime = state.timerOffsetTime + (SystemClock.elapsedRealtime() - state.timerInitialTime)
+                        )
+                    } else {
+                        state = state.copy(timerTime = 0)
+                        pauseTimer()
+                    }
+
+                    if (!state.timerIsFinished) {
+                        state = state.copy(
+                            timerIsFinished = true,
+                            timerCurrentTimePercentage = 0f,
+                            timerOffsetTime = 0L,
+                            timerInitialTime = SystemClock.elapsedRealtime()
+                        )
                         isShowTimerNotification = true
                         snackbarMessage = "Timer is finished!"
                         snackbarIsWithDismissAction = false
@@ -130,25 +114,17 @@ class TimerViewModel(
                         snackbarAction = { cancelTimer() }
                         isShowSnackbar = true
                     }
-
-                    if (timerPreferences.getTimerCountOvertime.first()) {
-                        timerTime =
-                            timerOffsetTime + (SystemClock.elapsedRealtime() - timerInitialTime)
-                    } else {
-                        timerTime = 0
-                        pauseTimer()
-                    }
                 }
-                delay(timeMillis = delay)
-
-
+                delay(timeMillis = state.delay)
             }
         }
     }
 
     fun pauseTimer() {
-        timerIsActive = false
-        timerOffsetTime = timerTime
+        state = state.copy(
+            timerIsActive = false,
+            timerOffsetTime = state.timerTime
+        )
         saveTimerOffsetTime()
         saveTimerCurrentPercentage()
         saveTimerIsEditState()
@@ -157,13 +133,14 @@ class TimerViewModel(
     }
 
     fun cancelTimer() {
-        timerIsActive = false
-        timerCurrentTimePercentage = 0f
-        timerTotalTime = 0.0
-        timerIsFinished = false
-        timerOffsetTime = 0L
-        timerIsEditState = true
-
+        state = state.copy(
+            timerIsActive = false,
+            timerCurrentTimePercentage = 0f,
+            timerTotalTime = 0.0,
+            timerIsFinished = false,
+            timerOffsetTime = 0L,
+            timerIsEditState = true
+        )
         saveTimerIsFinished()
         saveTimerOffsetTime()
         saveTimerIsEditState()
@@ -171,44 +148,48 @@ class TimerViewModel(
     }
 
     fun resetTimer() {
-
-        timerIsActive = false
-
-        timerHour = 0
-        timerMinute = 0
-        timerSecond = 0
-
+        state = state.copy(
+            timerIsActive = false,
+            timerHour = 0,
+            timerMinute = 0,
+            timerSecond = 0
+        )
         saveTimerHour()
         saveTimerMinute()
         saveTimerSecond()
-
     }
 
-    suspend fun timerProgressBarStyles() {
-        when (timerPreferences.getTimerLabelStyle.first()) {
-            DYNAMIC_COLOR -> {}
-            RGB -> {
-                TimerRGBStyle().timerUpdateStartAndEndRGB(initialize = false)
-                saveTimerRGBCounter()
+    fun updateTimerStyle(selectedProgressBarStyle: TimerProgressBarStyleType) {
+        when (selectedProgressBarStyle) {
+            TimerProgressBarStyleType.DynamicColor -> {}
+            TimerProgressBarStyleType.RGB -> {
+                viewModelScope.launch {
+                    TimerProgressBarRgbStyle().updateTimerProgressBarRgbStyleStartAndEndColor()
+                    saveTimerRGBCounter()
+                }
             }
         }
     }
 
-    suspend fun timerNotification(context: Context) {
-        for (i in 0 until timerPreferences.getTimerNotification.first().toInt()) {
-            if (isShowTimerNotification && timerIsFinished) {
-                TimerNotificationService(context = context).showNotification()
-                delay(timeMillis = 2000)
-            } else {
-                break
+    fun timerNotification(context: Context) {
+        viewModelScope.launch {
+            val timerNotifications = ceil(timerPreferences.getTimerNotification.first()).toInt()
+            for (i in 0 until timerNotifications) {
+                if (isShowTimerNotification && state.timerIsFinished) {
+                    TimerNotificationService(context = context).showNotification()
+                    delay(timeMillis = 3000)
+                } else {
+                    break
+                }
             }
+            isShowTimerNotification = false
         }
     }
 
     fun isOverTime(): Boolean {
         var result = false
         viewModelScope.launch {
-            if (timerIsFinished && timerPreferences.getTimerCountOvertime.first()) {
+            if (state.timerIsFinished && timerPreferences.getTimerIsCountOvertime.first()) {
                 result = true
             }
         }
@@ -216,58 +197,59 @@ class TimerViewModel(
     }
 
     fun formatTimerTimeHr(timeMillis: Long): String {
-        val hours = timerTime / 1000 / 60 / 60 % 100
         return when {
-            timeMillis >= 36_000_000L -> "%02d".format(hours)
-            timeMillis in 3_600_000L until 36_000_000 -> "%01d".format(hours)
+            timeMillis >= 36_000_000L -> timeMillis.formatTimeHr()
+            timeMillis in 3_600_000L until 36_000_000 -> timeMillis.formatTimeHr(format = "%01d")
             else -> ""
         }
     }
 
     fun formatTimerTimeMin(timeMillis: Long): String {
-        val minutes = timerTime / 1000 / 60 % 60
         return when {
-            timeMillis >= 600_000L -> "%02d".format(minutes)
-            timeMillis in 60_000 until 600_000L -> "%01d".format(minutes)
+            timeMillis >= 600_000L -> timeMillis.formatTimeMin()
+            timeMillis in 60_000 until 600_000L -> timeMillis.formatTimeMin(format = "%01d")
             else -> ""
         }
     }
 
     fun formatTimerTimeSec(timeMillis: Long): String {
-        val seconds = timerTime / 1000 % 60
-        return when {
-            timeMillis >= 10_000L -> "%02d".format(seconds)
-            else -> "%01d".format(seconds)
+        return if (timeMillis >= 10_000L){
+            timeMillis.formatTimeSec()
+        } else {
+            timeMillis.formatTimeSec(format = "%01d")
         }
     }
 
     fun formatTimerTimeMs(timeMillis: Long): String {
-        val milliseconds = timerTime % 1000 / 10
-        return if (timeMillis in 1..9999) "%02d".format(milliseconds) else ""
+        return if (timeMillis in 1..9999) timeMillis.formatTimeMs() else ""
     }
 
     fun convertHrMinSecToMillis() {
-        timerTime = timerHour * 3_600_000L + timerMinute * 60_000L + timerSecond * 1_000L
-        timerOffsetTime = timerTime
+        state = state.copy(
+            timerTime = state.timerHour * 3_600_000L + state.timerMinute * 60_000L + state.timerSecond * 1_000L,
+            timerOffsetTime = state.timerHour * 3_600_000L + state.timerMinute * 60_000L + state.timerSecond * 1_000L
+        )
     }
 
     fun updateTimerHour(hour: Int) {
-        timerHour = hour
+        state = state.copy(timerHour = hour)
     }
 
     fun updateTimerMinute(minute: Int) {
-        timerMinute = minute
+        state = state.copy(timerMinute = minute)
     }
 
     fun updateTimerSecond(second: Int) {
-        timerSecond = second
+        state = state.copy(timerSecond = second)
     }
 
-    fun initializeTimer() {
-        if ((!timerIsEditState && timerIsFinished) || timerOffsetTime == 0L) {
-            timerIsEditState = true
-            timerIsFinished = false
-            timerCurrentTimePercentage = 0f
+    private fun initializeTimer() {
+        if ((!state.timerIsEditState && state.timerIsFinished) || state.timerOffsetTime == 0L) {
+            state = state.copy(
+                timerIsEditState = true,
+                timerIsFinished = false,
+                timerCurrentTimePercentage = 0f
+            )
             saveTimerIsEditState()
             saveTimerIsFinished()
         }
@@ -277,94 +259,122 @@ class TimerViewModel(
         timerPreferences.clearAll()
     }
 
+    fun getTimerScrollsHapticFeedback(): TimerScrollsHapticFeedbackType {
+        var result = TimerScrollsHapticFeedbackType.Strong.name
+        viewModelScope.launch {
+            result = timerPreferences.getTimerScrollsHapticFeedback.first()
+        }
+        return enumValueOf(result)
+    }
+
+    fun getTimerScrollsFontStyle(): TimerFontStyleType {
+        var result = TimerFontStyleType.Default.name
+        viewModelScope.launch {
+            result = timerPreferences.getTimerScrollsFontStyle.first()
+        }
+        return enumValueOf(result)
+    }
+
+    fun getTimerTimeFontStyle(): TimerFontStyleType {
+        var result = TimerFontStyleType.Default.name
+        viewModelScope.launch {
+            result = timerPreferences.getTimerTimeFontStyle.first()
+        }
+        return enumValueOf(result)
+    }
+
+    fun getTimerProgressBarBackgroundEffects(): TimerProgressBarBackgroundEffectType {
+        var result = TimerProgressBarBackgroundEffectType.Snow.name
+        viewModelScope.launch {
+            result = timerPreferences.getTimerProgressBarBackgroundEffects.first()
+        }
+        return enumValueOf(result)
+    }
+
+    fun getTimerProgressBarStyle(): TimerProgressBarStyleType {
+        var result = TimerProgressBarStyleType.DynamicColor.name
+        viewModelScope.launch {
+            result = timerPreferences.getTimerProgressBarStyle.first()
+        }
+        return enumValueOf(result)
+    }
+
+    fun getTimerIsCountOverTime(): Boolean {
+        var result = false
+        viewModelScope.launch {
+            result = timerPreferences.getTimerIsCountOvertime.first()
+        }
+        return result
+    }
+
     fun saveTimerHour() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            timerPreferences.setTimerHour(duration = timerHour)
+            timerPreferences.setTimerHour(duration = state.timerHour)
         }
     }
 
     fun saveTimerMinute() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            timerPreferences.setTimerMinute(duration = timerMinute)
+            timerPreferences.setTimerMinute(duration = state.timerMinute)
         }
     }
 
     fun saveTimerSecond() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            timerPreferences.setTimerSecond(duration = timerSecond)
+            timerPreferences.setTimerSecond(duration = state.timerSecond)
         }
     }
 
-    fun saveTimerIsFinished() {
+    private fun saveTimerIsFinished() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            timerPreferences.setTimerIsFinished(isFinished = timerIsFinished)
+            timerPreferences.setTimerIsFinished(isFinished = state.timerIsFinished)
         }
     }
 
-    fun saveTimerTotalTime() {
+    private fun saveTimerTotalTime() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            timerPreferences.setTimerTotalTime(double = timerTotalTime)
+            timerPreferences.setTimerTotalTime(double = state.timerTotalTime)
         }
     }
 
-    fun saveTimerIsEditState() {
+    private fun saveTimerIsEditState() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            timerPreferences.setTimerIsEditState(boolean = timerIsEditState)
+            timerPreferences.setTimerIsEditState(boolean = state.timerIsEditState)
         }
     }
 
-    fun saveTimerCurrentPercentage() {
+    private fun saveTimerCurrentPercentage() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            timerPreferences.setTimerCurrentPercentage(float = timerCurrentTimePercentage)
+            timerPreferences.setTimerCurrentPercentage(float = state.timerCurrentTimePercentage)
         }
     }
 
-    fun saveTimerOffsetTime() {
+    private fun saveTimerOffsetTime() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            timerPreferences.setTimerOffsetTime(long = timerOffsetTime)
+            timerPreferences.setTimerOffsetTime(long = state.timerOffsetTime)
         }
     }
 
-    fun saveTimerRGBCounter() {
+    private fun saveTimerRGBCounter() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            timerPreferences.setTimerRGBCounter(double = timerRGBCounter)
+            timerPreferences.setTimerRGBCounter(double = timerRgbCounter)
         }
     }
 
-    suspend fun loadTimerRGBCounter() {
-        timerRGBCounter = timerPreferences.getTimerRGBCounter.first()
+    private suspend fun loadAllData() {
+        timerRgbCounter = timerPreferences.getTimerRGBCounter.first()
+
+        state = state.copy(
+            timerHour = timerPreferences.getTimerHour.first(),
+            timerMinute = timerPreferences.getTimerMinute.first(),
+            timerSecond = timerPreferences.getTimerSecond.first(),
+            timerIsFinished = timerPreferences.getTimerIsFinished.first(),
+            timerIsEditState = timerPreferences.getTimerIsEditState.first(),
+            timerTotalTime = timerPreferences.getTimerTotalTime.first(),
+            timerCurrentTimePercentage = timerPreferences.getTimerCurrentPercentage.first(),
+            timerOffsetTime = timerPreferences.getTimerOffsetTime.first()
+        )
     }
 
-    suspend fun loadTimerHour() {
-        timerHour = timerPreferences.getTimerHour.first()
-    }
-
-    suspend fun loadTimerMinute() {
-        timerMinute = timerPreferences.getTimerMinute.first()
-    }
-
-    suspend fun loadTimerSecond() {
-        timerSecond = timerPreferences.getTimerSecond.first()
-    }
-
-    suspend fun loadTimerIsFinished() {
-        timerIsFinished = timerPreferences.getTimerIsFinished.first()
-    }
-
-    suspend fun loadTimerIsEditState() {
-        timerIsEditState = timerPreferences.getTimerIsEditState.first()
-    }
-
-    suspend fun loadTimerTotalTime() {
-        timerTotalTime = timerPreferences.getTimerTotalTime.first()
-    }
-
-    suspend fun loadTimerCurrentTimePercentage() {
-        timerCurrentTimePercentage = timerPreferences.getTimerCurrentPercentage.first()
-    }
-
-    suspend fun loadTimerOffsetTime() {
-        timerOffsetTime = timerPreferences.getTimerOffsetTime.first()
-    }
 
 }

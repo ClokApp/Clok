@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.kingfu.clok.navigation.Screen
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -18,7 +19,7 @@ class NavigationPreferences private constructor(context: Context) {
         fun getInstance(context: Context): NavigationPreferences {
             return INSTANCE ?: synchronized(lock = this) {
                 var instance = INSTANCE
-                if(instance == null) {
+                if (instance == null) {
                     instance = NavigationPreferences(context = context)
                     INSTANCE = instance
                 }
@@ -29,27 +30,24 @@ class NavigationPreferences private constructor(context: Context) {
 
     private val Context.navigationDataStore: DataStore<Preferences> by preferencesDataStore(name = "navigationDataStore")
     private val navigationDataStore: DataStore<Preferences> = context.navigationDataStore
-
-    private val startDestinationDefault = "stopwatch"
-
-    private val _startDestination = stringPreferencesKey(name = "startDestination")
+    private val _startRoute = stringPreferencesKey(name = "startRoute")
 
     /************************************************ Clear ************************************************/
 
 
     /************************************************ set ************************************************/
 
-    suspend fun setStartDestination(string: String){
+    suspend fun setStartRoute(string: String) {
         navigationDataStore.edit { preferences ->
-            preferences[_startDestination] = string
+            preferences[_startRoute] = string
         }
     }
 
     /************************************************ get ************************************************/
 
-    val getStartDestination: Flow<String> = navigationDataStore.data
+    val getStartRoute: Flow<String> = navigationDataStore.data
         .map { preferences ->
-            preferences[_startDestination] ?: startDestinationDefault
+            preferences[_startRoute] ?: Screen.Stopwatch.route
         }
 
 }

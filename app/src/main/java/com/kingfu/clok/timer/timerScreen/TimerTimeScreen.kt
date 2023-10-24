@@ -1,10 +1,10 @@
 package com.kingfu.clok.timer.timerScreen
 
-import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -20,10 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
@@ -32,66 +34,63 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Light
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntSize.Companion.Zero
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
-import com.kingfu.clok.timer.backgroundEffects.TimerSnowEffect
-import com.kingfu.clok.timer.styles.TimerRGBStyle
-import com.kingfu.clok.timer.timerFontStyle.timerFontStyle
-import com.kingfu.clok.timer.timerViewModel.TimerViewModel
-import com.kingfu.clok.util.nonScaledSp
-import com.kingfu.clok.variable.Variable.RGB
+import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
+import com.kingfu.clok.timer.feature.timerFontStyle.TimerFontStyleType
+import com.kingfu.clok.timer.feature.timerFontStyle.timerFontStyle
+import com.kingfu.clok.timer.feature.timerProgressBarBackgroundEffects.TimerProgressBarBackgroundEffect
+import com.kingfu.clok.timer.feature.timerProgressBarBackgroundEffects.TimerProgressBarBackgroundEffectType
+import com.kingfu.clok.timer.feature.timerProgressBarStyle.TimerProgressBarStyle
+import com.kingfu.clok.timer.feature.timerProgressBarStyle.TimerProgressBarStyleType
+import com.kingfu.clok.ui.util.isPortrait
+import com.kingfu.clok.ui.util.nonScaledSp
 
 @Composable
-fun TimerTimeView(
-    vm: TimerViewModel,
-    configurationOrientation: Int,
-    settingsViewModelTimer: SettingsViewModelTimer
+fun TimerTimeScreen(
+    timerTime: Long,
+    updateTimerStyle: (selectedProgressBarStyle: TimerProgressBarStyleType) -> Unit,
+    getTimerProgressBarStyle: () -> TimerProgressBarStyleType,
+    timerCurrentTimePercentage: Float,
+    timerIsActive: Boolean,
+    getTimerProgressBarBackgroundEffects: () -> TimerProgressBarBackgroundEffectType,
+    isOverTime: () -> Boolean,
+    getTimerTimeFontStyle: () -> TimerFontStyleType,
+    formatTimerTimeHr: (timeMillis: Long) -> String,
+    formatTimerTimeMin: (timeMillis: Long) -> String,
+    formatTimerTimeSec: (timeMillis: Long) -> String,
+    formatTimerTimeMs: (timeMillis: Long) -> String,
+    theme: ThemeType
 ) {
 
-    LaunchedEffect(key1 = settingsViewModelTimer.timerLabelStyle) {
-        if (settingsViewModelTimer.timerLabelStyle == RGB) {
-            TimerRGBStyle().timerUpdateStartAndEndRGB(initialize = true)
-        }
+
+    LaunchedEffect(key1 = timerTime) {
+        updateTimerStyle(getTimerProgressBarStyle())
     }
 
     Box(
-        modifier = Modifier.clip(
-            shape = if (configurationOrientation == ORIENTATION_PORTRAIT) {
-                CircleShape
-            } else {
-                RectangleShape
-            }
-        )
+        modifier = Modifier
+            .clip(shape = if (isPortrait()) CircleShape else RectangleShape)
+            .background(color = Transparent)
     ) {
         val animatedProgress by animateFloatAsState(
-            targetValue = if (!vm.timerCurrentTimePercentage.isNaN()) vm.timerCurrentTimePercentage else 0f,
+            targetValue = if (!timerCurrentTimePercentage.isNaN()) timerCurrentTimePercentage else 0f,
             animationSpec = tween(
-                durationMillis = if (vm.timerTime * 0.005 > 250) 250 else (vm.timerTime * 0.005).toInt(),
+                durationMillis = if (timerTime * 0.005 > 250) 250 else (timerTime * 0.005).toInt(),
                 easing = LinearEasing,
 
                 ),
             label = ""
         )
 
-        val circularProgressBarColor =
-            if (vm.timerIsActive) {
-                listOf(
-                    colorScheme.tertiary,
-                    colorScheme.tertiary
-                )
-            } else {
-                listOf(
-                    colorScheme.tertiaryContainer,
-                    colorScheme.tertiaryContainer,
-                )
-            }
+        val arcColor = TimerProgressBarStyle(progressBarStyleType = getTimerProgressBarStyle())
 
-        if (configurationOrientation == ORIENTATION_PORTRAIT && !animatedProgress.isNaN()) {
+        if (!animatedProgress.isNaN() && isPortrait()) {
             Canvas(
                 modifier = Modifier
                     .size(width = 325.dp, height = 325.dp)
+                    .alpha(alpha = if (timerIsActive) 1f else 0.5f)
                     .padding(all = 5.dp)
             ) {
                 drawArc(
@@ -102,18 +101,7 @@ fun TimerTimeView(
                     style = Stroke(width = 5f),
                 )
                 drawArc(
-                    brush = Brush.linearGradient(
-                        colors =
-                        when (settingsViewModelTimer.timerLabelStyle) {
-                            RGB -> {
-                                TimerRGBStyle().rgbStyleListRGB()
-                            }
-
-                            else -> {
-                                circularProgressBarColor
-                            }
-                        }
-                    ),
+                    brush = Brush.linearGradient(colors = arcColor),
                     startAngle = -90f,
                     sweepAngle = 360f * animatedProgress,
                     useCenter = false,
@@ -122,7 +110,7 @@ fun TimerTimeView(
             }
         }
 
-        var backgroundEffectsBoxSize by remember { mutableStateOf(value = Zero) }
+        var backgroundEffectsBoxSize by remember { mutableStateOf(value = IntSize.Zero) }
 
         Box(
             modifier = Modifier
@@ -132,69 +120,68 @@ fun TimerTimeView(
                 .zIndex(zIndex = -1f)
                 .onSizeChanged { backgroundEffectsBoxSize = it }
         ) {
-            if (vm.timerIsActive && backgroundEffectsBoxSize.width.dp != 0.dp
-                && configurationOrientation == ORIENTATION_PORTRAIT
-            ) {
-                when (settingsViewModelTimer.timerBackgroundEffects) {
-                    "Snow" -> {
-                        TimerSnowEffect(size = backgroundEffectsBoxSize)
-                    }
-                }
+            if (timerIsActive && backgroundEffectsBoxSize.width.dp != 0.dp && isPortrait()) {
+                TimerProgressBarBackgroundEffect(
+                    size = backgroundEffectsBoxSize,
+                    backgroundEffect = getTimerProgressBarBackgroundEffects(),
+                    theme = theme
+                )
             }
         }
 
         Box(modifier = Modifier.align(alignment = Alignment.Center)) {
             Row {
                 TimerTime(
-                    text = if (vm.isOverTime()) "-" else "",
+                    text = if (isOverTime()) "-" else "",
                     color = colorScheme.primary,
-                    settingsViewModelTimer = settingsViewModelTimer,
-                    padding = if (vm.isOverTime()) 5.dp else 0.dp
+                    padding = if (isOverTime()) 5.dp else 0.dp,
+                    getTimerTimeFontStyle = getTimerTimeFontStyle
                 )
 
                 TimerTime(
-                    text = vm.formatTimerTimeHr(timeMillis = vm.timerTime),
+                    text = formatTimerTimeHr(timerTime),
                     color = colorScheme.primary,
-                    settingsViewModelTimer = settingsViewModelTimer,
+                    getTimerTimeFontStyle = getTimerTimeFontStyle
                 )
 
                 TimerTime(
-                    text = if (vm.formatTimerTimeHr(timeMillis = vm.timerTime) != "") ":" else "",
+                    text = if (formatTimerTimeHr(timerTime) != "") ":" else "",
                     color = colorScheme.tertiary,
-                    settingsViewModelTimer = settingsViewModelTimer,
-                    padding = if (vm.formatTimerTimeHr(timeMillis = vm.timerTime) != "") 5.dp else 0.dp
+                    padding = if (formatTimerTimeHr(timerTime) != "") 5.dp else 0.dp,
+                    getTimerTimeFontStyle = getTimerTimeFontStyle
                 )
 
                 TimerTime(
-                    text = vm.formatTimerTimeMin(timeMillis = vm.timerTime),
+                    text = formatTimerTimeMin(timerTime),
                     color = colorScheme.primary,
-                    settingsViewModelTimer = settingsViewModelTimer,
+                    getTimerTimeFontStyle = getTimerTimeFontStyle
                 )
 
                 TimerTime(
-                    text = if (vm.formatTimerTimeMin(timeMillis = vm.timerTime) != "") ":" else "",
+                    text = if (formatTimerTimeMin(timerTime) != "") ":" else "",
                     color = colorScheme.tertiary,
-                    settingsViewModelTimer = settingsViewModelTimer,
-                    padding = if (vm.formatTimerTimeMin(timeMillis = vm.timerTime) != "") 5.dp else 0.dp
+                    padding = if (formatTimerTimeMin(timerTime) != "") 5.dp else 0.dp,
+                    getTimerTimeFontStyle = getTimerTimeFontStyle
                 )
 
                 TimerTime(
-                    text = vm.formatTimerTimeSec(timeMillis = vm.timerTime),
+                    text = formatTimerTimeSec(timerTime),
                     color = colorScheme.primary,
-                    settingsViewModelTimer = settingsViewModelTimer,
+                    getTimerTimeFontStyle = getTimerTimeFontStyle
+
                 )
 
                 TimerTime(
-                    text = if (vm.formatTimerTimeMs(timeMillis = vm.timerTime) != "") "." else "",
+                    text = if (formatTimerTimeMs(timerTime) != "") "." else "",
                     color = colorScheme.tertiary,
-                    settingsViewModelTimer = settingsViewModelTimer,
-                    padding = if (vm.formatTimerTimeMs(timeMillis = vm.timerTime) != "") 5.dp else 0.dp
+                    padding = if (formatTimerTimeMs(timerTime) != "") 5.dp else 0.dp,
+                    getTimerTimeFontStyle = getTimerTimeFontStyle
                 )
 
                 TimerTime(
-                    text = vm.formatTimerTimeMs(timeMillis = vm.timerTime),
+                    text = formatTimerTimeMs(timerTime) + if (isOverTime()) " " else "",
                     color = colorScheme.primary,
-                    settingsViewModelTimer = settingsViewModelTimer,
+                    getTimerTimeFontStyle = getTimerTimeFontStyle
                 )
             }
         }
@@ -205,22 +192,19 @@ fun TimerTimeView(
 fun TimerTime(
     text: String,
     color: Color,
-    settingsViewModelTimer: SettingsViewModelTimer,
-    padding: Dp = 0.dp
+    padding: Dp = 0.dp,
+    getTimerTimeFontStyle: () -> TimerFontStyleType
 ) {
     Text(
         text = text,
         color = color,
-        fontSize = 60.nonScaledSp,
+        fontSize = 60.dp.value.nonScaledSp,
         fontWeight = Light,
         style = TextStyle(
             drawStyle = timerFontStyle(
-                string1 = settingsViewModelTimer.timerTimeFontStyle,
-                string2 = settingsViewModelTimer.timerFontStyleRadioOptions.elementAt(
-                    index = 1
-                ),
-                minter = 10f,
-                width = 5f,
+                selectedStyle = getTimerTimeFontStyle(),
+                miter = 10f,
+                width = 2.5f,
                 join = StrokeJoin.Round,
                 cap = StrokeCap.Round
             )

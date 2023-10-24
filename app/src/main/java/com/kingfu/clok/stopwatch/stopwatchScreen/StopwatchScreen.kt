@@ -1,8 +1,7 @@
 package com.kingfu.clok.stopwatch.stopwatchScreen
 
-import android.content.res.Configuration.ORIENTATION_PORTRAIT
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement.Center
+import androidx.compose.foundation.layout.Arrangement.SpaceEvenly
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +9,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -19,50 +21,57 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
+import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
+import com.kingfu.clok.stopwatch.feature.labelStyle.StopwatchLabelStyleType
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
-import com.kingfu.clok.ui.theme.Black00
+import com.kingfu.clok.ui.util.isPortrait
 
 
 @Composable
 fun StopwatchScreen(
     vm: StopwatchViewModel,
-    settingsViewModelStopwatch: SettingsViewModelStopwatch,
+    theme: ThemeType
 ) {
     val lazyColumnState = rememberLazyListState()
-
     val haptic = LocalHapticFeedback.current
-    val configurationOrientation = LocalConfiguration.current.orientation
     val coroutineScopeStopwatch = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
-    val lapList = vm.lapList.collectAsState().value
-
-
-    if (configurationOrientation == ORIENTATION_PORTRAIT) {
+    if (isPortrait()) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Black00),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Center,
             horizontalAlignment = CenterHorizontally,
         ) {
             StopwatchTime(
-                vm = vm,
-                settingsViewModelStopwatch = settingsViewModelStopwatch,
-                lapList = lapList
+                getStopwatchLapTimeFontStyle = {vm.getStopwatchLapTimeFontStyle()},
+                getStopwatchTimeFontStyle = { vm.getStopwatchTimeFontStyle() },
+                getStopwatchLabelFontStyle = { vm.getStopwatchLabelFontStyle() },
+                getStopwatchLabelStyle = { vm.getStopwatchLabelStyle() },
+                getStopwatchLabelBackgroundEffect = { vm.getStopwatchLabelBackgroundEffect() },
+                getStopwatchIsShowLabel = { vm.getStopwatchIsShowLabel() },
+                lapList = vm.lapList.collectAsState().value,
+                stopwatchTime = vm.state.stopwatchTime,
+                updateStopwatchLabelStyle = { selectedLabelStyle: StopwatchLabelStyleType ->
+                    vm.updateStopwatchLabelStyle(selectedLabelStyle)
+                },
+                stopwatchIsActive = vm.state.stopwatchIsActive,
+                lapPreviousTime = vm.state.lapPreviousTime,
+                theme = theme
             )
 
             Spacer(modifier = Modifier.height(height = 20.dp))
 
             StopwatchLapScreen(
-                vm = vm,
                 lazyColumnState = lazyColumnState,
-                configurationOrientation = configurationOrientation,
-                lapList = { lapList }
+                lapList = vm.lapList.collectAsState().value,
+                isScrollLazyColumn = vm.state.isScrollLazyColumn,
+                toggleIsScrollLazyColumn = { vm.toggleIsScrollLazyColumn() },
+                shortestLapIndex = vm.state.shortestLapIndex,
+                longestLapIndex = vm.state.longestLapIndex,
+                theme = theme
             )
 
             Spacer(modifier = Modifier.height(height = 20.dp))
@@ -70,66 +79,110 @@ fun StopwatchScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .verticalScroll(state = scrollState),
-                horizontalArrangement = Center
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = CenterVertically,
+                horizontalArrangement = SpaceEvenly,
             ) {
                 StopwatchResetButton(
-                    vm = vm,
-                    haptic = haptic
+                    haptic = haptic,
+                    stopwatchTime = vm.state.stopwatchTime,
+                    stopwatchIsActive = vm.state.stopwatchIsActive,
+                    lap = { vm.lap() },
+                    isScrollLazyColumn = vm.state.isScrollLazyColumn,
+                    toggleIsScrollLazyColumn = { vm.toggleIsScrollLazyColumn() },
+                    resetStopwatch = { vm.resetStopwatch() },
+                    clearLapTimes = { vm.clearLapTimes() }
                 )
 
                 StopwatchStartButton(
-                    vm = vm,
                     haptic = haptic,
                     coroutineScopeStopwatch = coroutineScopeStopwatch,
+                    stopwatchIsActive = vm.state.stopwatchIsActive,
+                    pauseStopwatch = { vm.pauseStopwatch() },
+                    saveStopwatchLapPreviousTime = { vm.saveStopwatchLapPreviousTime() },
+                    saveStopwatchOffsetTime = { vm.saveStopwatchOffsetTime() },
+                    startStopwatch = { vm.startStopwatch() }
                 )
             }
         }
     } else {
-        Row {
+        Row(
+            modifier = Modifier.padding(horizontal = 40.dp)
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .weight(weight = 0.5f)
-                    .verticalScroll(state = scrollState)
-                    .background(color = Black00),
+                    .verticalScroll(state = scrollState),
                 verticalArrangement = Center,
                 horizontalAlignment = CenterHorizontally
             ) {
                 StopwatchTime(
-                    vm = vm,
-                    settingsViewModelStopwatch = settingsViewModelStopwatch,
-                    lapList = lapList
+                    getStopwatchLapTimeFontStyle = {vm.getStopwatchLapTimeFontStyle()},
+                    getStopwatchTimeFontStyle = { vm.getStopwatchTimeFontStyle() },
+                    getStopwatchLabelFontStyle = { vm.getStopwatchLabelFontStyle() },
+                    getStopwatchLabelStyle = { vm.getStopwatchLabelStyle() },
+                    getStopwatchLabelBackgroundEffect = { vm.getStopwatchLabelBackgroundEffect() },
+                    getStopwatchIsShowLabel = { vm.getStopwatchIsShowLabel() },
+                    lapList = vm.lapList.collectAsState().value,
+                    stopwatchTime = vm.state.stopwatchTime,
+                    updateStopwatchLabelStyle = { selectedLabelStyle: StopwatchLabelStyleType ->
+                        vm.updateStopwatchLabelStyle(selectedLabelStyle)
+                    },
+                    stopwatchIsActive = vm.state.stopwatchIsActive,
+                    lapPreviousTime = vm.state.lapPreviousTime,
+                    theme = theme
                 )
 
                 Spacer(modifier = Modifier.height(height = 20.dp))
 
-
                 Row(
-                    horizontalArrangement = Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = SpaceEvenly,
                     verticalAlignment = CenterVertically
                 ) {
                     StopwatchResetButton(
-                        vm = vm,
-                        haptic = haptic
+                        haptic = haptic,
+                        stopwatchTime = vm.state.stopwatchTime,
+                        stopwatchIsActive = vm.state.stopwatchIsActive,
+                        lap = { vm.lap() },
+                        isScrollLazyColumn = vm.state.isScrollLazyColumn,
+                        toggleIsScrollLazyColumn = { vm.toggleIsScrollLazyColumn() },
+                        resetStopwatch = { vm.resetStopwatch() },
+                        clearLapTimes = { vm.clearLapTimes() }
                     )
                     StopwatchStartButton(
-                        vm = vm,
                         haptic = haptic,
                         coroutineScopeStopwatch = coroutineScopeStopwatch,
+                        stopwatchIsActive = vm.state.stopwatchIsActive,
+                        pauseStopwatch = { vm.pauseStopwatch() },
+                        saveStopwatchLapPreviousTime = { vm.saveStopwatchLapPreviousTime() },
+                        saveStopwatchOffsetTime = { vm.saveStopwatchOffsetTime() },
+                        startStopwatch = { vm.startStopwatch() }
                     )
                 }
             }
 
-            Box(modifier = Modifier.weight(weight = 0.5f)) {
+            Box(
+                modifier = Modifier
+                    .weight(weight = 0.5f)
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+            ) {
                 StopwatchLapScreen(
-                    vm = vm,
                     lazyColumnState = lazyColumnState,
-                    configurationOrientation = configurationOrientation,
-                    lapList = { lapList }
+                    lapList = vm.lapList.collectAsState().value,
+                    isScrollLazyColumn = vm.state.isScrollLazyColumn,
+                    toggleIsScrollLazyColumn = { vm.toggleIsScrollLazyColumn() },
+                    shortestLapIndex = vm.state.shortestLapIndex,
+                    longestLapIndex = vm.state.longestLapIndex,
+                    theme = theme
                 )
             }
         }
     }
 }
+
 

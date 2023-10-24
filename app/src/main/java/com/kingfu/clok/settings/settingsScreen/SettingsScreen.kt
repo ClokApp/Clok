@@ -1,75 +1,72 @@
 package com.kingfu.clok.settings.settingsScreen
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.unit.dp
-import com.kingfu.clok.settings.settingsScreen.settingsPrivacyScreen.SettingsPrivacyPolicyScreen
-import com.kingfu.clok.settings.settingsScreen.settingsStopwatchScreen.SettingsStopwatchScreen
-import com.kingfu.clok.settings.settingsScreen.settingsTimerScreen.SettingsTimerScreen
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
+import com.kingfu.clok.settings.settingsScreen.settingsApp.SettingsApp
+import com.kingfu.clok.settings.settingsScreen.settingsPrivacy.SettingsPrivacyPolicy
+import com.kingfu.clok.settings.settingsScreen.settingsStopwatchScreen.SettingsStopwatch
+import com.kingfu.clok.settings.settingsScreen.settingsTimerScreen.SettingsTimer
+import com.kingfu.clok.settings.viewModel.settingsViewModelStopwatch.SettingsViewModelStopwatch
+import com.kingfu.clok.settings.viewModel.settingsViewModelTimer.SettingsViewModelTimer
+import com.kingfu.clok.ui.util.screenHeight
 
 @Composable
 fun SettingsScreen(
     settingsViewModelStopwatch: SettingsViewModelStopwatch,
     settingsViewModelTimer: SettingsViewModelTimer,
-    navigateToSettingsStopwatchBackgroundEffects: () -> Unit,
-    navigateToSettingsStopwatchFontStyles: () -> Unit,
-    navigateToSettingsStopwatchLabelStyles: () -> Unit,
-    navigateToSettingsTimerProgressBarStyles: () -> Unit,
-    navigateToSettingsTimerFontStyles: () -> Unit,
-    navigateToSettingsTimerBackgroundEffects: () -> Unit,
-    navigateToSettingsTimerScrollsHapticFeedback: () -> Unit,
+    goToSettingsStopwatchBackgroundEffects: () -> Unit,
+    goToSettingsStopwatchFontStyles: () -> Unit,
+    goToSettingsStopwatchLabelStyles: () -> Unit,
+    goToSettingsTimerProgressBarStyles: () -> Unit,
+    goToSettingsTimerFontStyles: () -> Unit,
+    goToSettingsTimerBackgroundEffects: () -> Unit,
+    goToSettingsTimerScrollsHapticFeedback: () -> Unit,
+    goToTheme: () -> Unit
 ) {
-    val haptic = LocalHapticFeedback.current
-    val settingsScrollState = rememberScrollState()
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
     val context = LocalContext.current
 
-    Column(
-        modifier = Modifier
-            .clip(shape = RoundedCornerShape(size = 20.dp))
-            .verticalScroll(state = settingsScrollState)
-    ) {
-        SettingsStopwatchScreen(
-            vm = settingsViewModelStopwatch,
-            haptic = haptic,
-            configuration = configuration,
-            navigateToSettingsStopwatchBackgroundEffects = { navigateToSettingsStopwatchBackgroundEffects() },
-            navigateToSettingsStopwatchFontStyles = { navigateToSettingsStopwatchFontStyles() },
-            navigateToSettingsStopwatchLabelStyles = { navigateToSettingsStopwatchLabelStyles() }
-        )
+    SettingsStopwatch(
+        goToSettingsStopwatchBackgroundEffects = { goToSettingsStopwatchBackgroundEffects() },
+        goToSettingsStopwatchFontStyles = { goToSettingsStopwatchFontStyles() },
+        goToSettingsStopwatchLabelStyles = { goToSettingsStopwatchLabelStyles() },
+        stopwatchSetShowLabelCheckState = { settingsViewModelStopwatch.toggleStopwatchIsShowLabel() },
+        saveStopwatchShowLabel = { settingsViewModelStopwatch.saveStopwatchShowLabel() },
+//        updateStopwatchRefreshRateValue = { refreshRate: Float ->
+        updateStopwatchRefreshRateValue = { refreshRate: Long ->
+            settingsViewModelStopwatch.updateStopwatchRefreshRateValue(refreshRate = refreshRate)
+        },
+        saveStopwatchRefreshRateValue = { settingsViewModelStopwatch.saveStopwatchRefreshRateValue() },
+        stopwatchShowLabel = settingsViewModelStopwatch.state.stopwatchIsShowLabel,
+        stopwatchRefreshRateValue = settingsViewModelStopwatch.state.stopwatchRefreshRateValue,
+    )
 
-        SettingsTimerScreen(
-            vm = settingsViewModelTimer,
-            haptic = haptic,
-            configuration = configuration,
-            navigateToSettingsTimerProgressBarStyles = { navigateToSettingsTimerProgressBarStyles() },
-            navigateToSettingsTimerFontStyles = { navigateToSettingsTimerFontStyles() },
-            navigateToSettingsTimerBackgroundEffects = { navigateToSettingsTimerBackgroundEffects() },
-            navigateToSettingsTimerScrollsHapticFeedback = { navigateToSettingsTimerScrollsHapticFeedback() }
-        )
+    SettingsTimer(
+        goToSettingsTimerProgressBarStyles = { goToSettingsTimerProgressBarStyles() },
+        goToSettingsTimerFontStyles = { goToSettingsTimerFontStyles() },
+        goToSettingsTimerBackgroundEffects = { goToSettingsTimerBackgroundEffects() },
+        goToSettingsTimerScrollsHapticFeedback = { goToSettingsTimerScrollsHapticFeedback() },
+        timerIsEdit = { settingsViewModelTimer.timerIsEdit() },
+        timerToggleCountOvertime = { settingsViewModelTimer.timerToggleCountOvertime() },
+        saveTimerCountOvertime = { settingsViewModelTimer.saveTimerIsCountOvertime() },
+        timerIsCountOvertime = settingsViewModelTimer.state.timerIsCountOvertime,
+        timerNotification = settingsViewModelTimer.state.timerNotification,
+        updateTimerNotification = { value: Float ->
+            settingsViewModelTimer.updateTimerNotification(float = value)
+        },
+        saveTimerNotification = { settingsViewModelTimer.saveTimerNotification() }
+    )
 
-        SettingsPrivacyPolicyScreen(
-            haptic = haptic,
-            context = context
-        )
+    SettingsApp(goToTheme = { goToTheme() })
 
-        Spacer(modifier = Modifier.height(height = screenHeight * 0.20f))
+    SettingsPrivacyPolicy(context = context)
 
-    }
+    Spacer(modifier = Modifier.height(height = screenHeight() * 0.80f))
 }
+
+
 
 
 

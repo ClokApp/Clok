@@ -10,6 +10,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+
+        // To use the latest Compose Compiler
+        maven(url = "https://androidx.dev/storage/compose-compiler/repository/")
     }
 }
 rootProject.name = "Clok"

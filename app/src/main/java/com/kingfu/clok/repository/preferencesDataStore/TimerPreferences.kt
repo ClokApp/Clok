@@ -11,7 +11,10 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.kingfu.clok.variable.Variable.DYNAMIC_COLOR
+import com.kingfu.clok.timer.feature.timerFontStyle.TimerFontStyleType
+import com.kingfu.clok.timer.feature.timerProgressBarBackgroundEffects.TimerProgressBarBackgroundEffectType
+import com.kingfu.clok.timer.feature.timerProgressBarStyle.TimerProgressBarStyleType
+import com.kingfu.clok.timer.feature.timerScrollsHapticFeedback.TimerScrollsHapticFeedbackType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -42,15 +45,15 @@ class TimerPreferences private constructor(context: Context) {
     private val timerTotalTimeDefault = 0.0
     private val timerIsEditStateDefault = true
     private val timerCurrentPercentageDefault = 0.0f
-    private val timerCountOvertimeDefault = true
-    private val timerLabelStyleDefault = DYNAMIC_COLOR
+    private val timerIsCountOvertimeDefault = true
+    private val timerProgressBarStyleDefault =  TimerProgressBarStyleType.DynamicColor.name
     private val timerNotificationDefault = 5f
     private val timerOffsetTimeDefault = 0L
     private val timerRGBCCounterDefault = 255.0
-    private val timerBackgroundEffectsDefault = "Snow"
-    private val timerScrollsFontStyleDefault = "Default"
-    private val timerTimeFontStyleDefault = "Default"
-    private val timerScrollsHapticFeedbackDefault = "Strong"
+    private val timerProgressBarBackgroundEffectsDefault = TimerProgressBarBackgroundEffectType.Snow.name
+    private val timerScrollsFontStyleDefault = TimerFontStyleType.Default.name
+    private val timerTimeFontStyleDefault = TimerFontStyleType.Default.name
+    private val timerScrollsHapticFeedbackDefault = TimerScrollsHapticFeedbackType.Strong.name
 
     private val _timerIsFinished = booleanPreferencesKey(name = "timerIsFinished")
     private val _timerHourKey = intPreferencesKey(name = "timerHour")
@@ -59,13 +62,12 @@ class TimerPreferences private constructor(context: Context) {
     private val _timerTotalTime = doublePreferencesKey(name = "timeTotalTime")
     private val _timerIsEditState = booleanPreferencesKey(name = "timerIsEditState")
     private val _timerCurrentPercentage = floatPreferencesKey(name = "timerCurrentPercentage")
-    private val _timerCounterOvertime = booleanPreferencesKey(name = "timerCounterOvertime")
-    private val _timerLabelStyle = stringPreferencesKey(name = "timerLabelStyle")
-    private val _timerEnableScrollsHapticFeedback = booleanPreferencesKey(name = "timerEnableScrollsHapticFeedback")
+    private val _timerIsCounterOvertime = booleanPreferencesKey(name = "timerIsCounterOvertime")
+    private val _timerProgressBarStyle = stringPreferencesKey(name = "timerProgressBarStyle")
     private val _timerNotification = floatPreferencesKey(name = "timerNotification")
     private val _timerOffsetTime = longPreferencesKey(name = "timerOffsetTime")
     private val _timerRGBCounter = doublePreferencesKey(name = "timerRGBCounter")
-    private val _timerBackgroundEffects = stringPreferencesKey(name = "timerBackgroundEffects")
+    private val _timerProgressBarBackgroundEffect = stringPreferencesKey(name = "timerProgressBarBackgroundEffect")
     private val _timerScrollsFontStyle = stringPreferencesKey(name = "timerScrollsFontStyle")
     private val _timerTimeFontStyle = stringPreferencesKey(name = "timerTimeFontStyle")
     private val _timerScrollsHapticFeedback = stringPreferencesKey(name = "timerScrollsHapticFeedback")
@@ -124,21 +126,15 @@ class TimerPreferences private constructor(context: Context) {
         }
     }
 
-    suspend fun setTimerCountOvertime(boolean: Boolean) {
+    suspend fun setTimerIsCountOvertime(boolean: Boolean) {
         timerDataStore.edit { preferences ->
-            preferences[_timerCounterOvertime] = boolean
+            preferences[_timerIsCounterOvertime] = boolean
         }
     }
 
-    suspend fun setTimerLabelStyleSelectedOption(string: String) {
+    suspend fun setTimerProgressBarStyle(string: String) {
         timerDataStore.edit { preferences ->
-            preferences[_timerLabelStyle] = string
-        }
-    }
-
-    suspend fun setTimerEnableScrollsHapticFeedback(boolean: Boolean) {
-        timerDataStore.edit { preferences ->
-            preferences[_timerEnableScrollsHapticFeedback] = boolean
+            preferences[_timerProgressBarStyle] = string
         }
     }
 
@@ -162,7 +158,7 @@ class TimerPreferences private constructor(context: Context) {
 
     suspend fun setTimerBackgroundEffects(string: String){
         timerDataStore.edit { preferences ->
-            preferences[_timerBackgroundEffects] = string
+            preferences[_timerProgressBarBackgroundEffect] = string
         }
     }
 
@@ -225,14 +221,14 @@ class TimerPreferences private constructor(context: Context) {
         }
 
 
-    val getTimerCountOvertime: Flow<Boolean> = timerDataStore.data
+    val getTimerIsCountOvertime: Flow<Boolean> = timerDataStore.data
         .map { preferences ->
-            preferences[_timerCounterOvertime] ?: timerCountOvertimeDefault
+            preferences[_timerIsCounterOvertime] ?: timerIsCountOvertimeDefault
         }
 
-    val getTimerLabelStyle: Flow<String> = timerDataStore.data
+    val getTimerProgressBarStyle: Flow<String> = timerDataStore.data
         .map { preferences ->
-            preferences[_timerLabelStyle] ?: timerLabelStyleDefault
+            preferences[_timerProgressBarStyle] ?: timerProgressBarStyleDefault
         }
 
     val getTimerNotification: Flow<Float> = timerDataStore.data
@@ -250,9 +246,9 @@ class TimerPreferences private constructor(context: Context) {
             preferences[_timerRGBCounter] ?: timerRGBCCounterDefault
         }
 
-    val getTimerBackgroundEffects: Flow<String> = timerDataStore.data
+    val getTimerProgressBarBackgroundEffects: Flow<String> = timerDataStore.data
         .map { preferences ->
-            preferences[_timerBackgroundEffects] ?: timerBackgroundEffectsDefault
+            preferences[_timerProgressBarBackgroundEffect] ?: timerProgressBarBackgroundEffectsDefault
         }
 
     val getTimerScrollsFontStyle: Flow<String> = timerDataStore.data
@@ -265,7 +261,7 @@ class TimerPreferences private constructor(context: Context) {
             preferences[_timerTimeFontStyle] ?: timerTimeFontStyleDefault
         }
 
-    val getTimerHapticFeedback: Flow<String> = timerDataStore.data
+    val getTimerScrollsHapticFeedback: Flow<String> = timerDataStore.data
         .map { preferences ->
             preferences[_timerScrollsHapticFeedback] ?: timerScrollsHapticFeedbackDefault
         }

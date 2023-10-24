@@ -1,32 +1,35 @@
 package com.kingfu.clok.navigation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.kingfu.clok.navigation.navGraphBuilder.bugReport.bugReportGraph
 import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsGraph
+import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsStopwatch.fontStyle.settingsStopwatchLabelFontStyleGraph
+import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsStopwatch.fontStyle.settingsStopwatchLapTimeFontStyleGraph
+import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsStopwatch.fontStyle.settingsStopwatchTimeFontStyleGraph
 import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsStopwatch.settingsStopwatchFontStylesGraph
 import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsStopwatch.settingsStopwatchLabelBackgroundEffectsGraph
 import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsStopwatch.settingsStopwatchLabelStyleGraph
-import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsStopwatch.settingsStopwatchSelectedFontStyleGraph
+import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsTheme.settingsThemeGraph
+import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsTimer.fontStyle.settingsTimerScrollsFontStyleGraph
+import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsTimer.fontStyle.settingsTimerTimeFontStyleGraph
 import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsTimer.settingsTimerBackgroundEffectsGraph
 import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsTimer.settingsTimerFontStylesGraph
 import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsTimer.settingsTimerProgressBarStylesGraph
 import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsTimer.settingsTimerScrollsHapticFeedbackGraph
-import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsTimer.settingsTimerSelectedFontStyleGraph
 import com.kingfu.clok.navigation.navGraphBuilder.stopwatch.stopwatchGraph
 import com.kingfu.clok.navigation.navGraphBuilder.timer.timerGraph
 import com.kingfu.clok.repository.preferencesDataStore.NavigationPreferences
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
+import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
+import com.kingfu.clok.settings.viewModel.settingsViewModel.SettingsViewModel
+import com.kingfu.clok.settings.viewModel.settingsViewModelStopwatch.SettingsViewModelStopwatch
+import com.kingfu.clok.settings.viewModel.settingsViewModelTimer.SettingsViewModelTimer
 import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
 import com.kingfu.clok.timer.timerViewModel.TimerViewModel
-import com.kingfu.clok.ui.theme.Black00
 import com.kingfu.clok.variable.Variable.navigateToStartScreen
 import com.kingfu.clok.variable.Variable.startDestination
 import kotlinx.coroutines.flow.first
@@ -40,12 +43,15 @@ fun AppHavHost(
     stopwatchViewModel: StopwatchViewModel,
     settingsViewModelStopwatch: SettingsViewModelStopwatch,
     settingsViewModelTimer: SettingsViewModelTimer,
+    settingsViewModel: SettingsViewModel,
     navigationPreferences: NavigationPreferences,
     mainScaffoldPaddingValues: PaddingValues,
+    isPortrait: Boolean,
+    theme: ThemeType
 ) {
     LaunchedEffect(key1 = Unit) {
         if (navigateToStartScreen) {
-            startDestination = navigationPreferences.getStartDestination.first()
+            startDestination = navigationPreferences.getStartRoute.first()
         }
         navigateToStartScreen = false
     }
@@ -54,19 +60,20 @@ fun AppHavHost(
         NavHost(
             navController = navController,
             startDestination = startDestination!!,
-            modifier = Modifier.background(color = Black00)
         ) {
 
             stopwatchGraph(
                 mainScaffoldPaddingValues = mainScaffoldPaddingValues,
                 stopwatchViewModel = stopwatchViewModel,
-                settingsViewModelStopwatch = settingsViewModelStopwatch,
+                isPortrait = isPortrait,
+                theme = theme
             )
 
             timerGraph(
                 mainScaffoldPaddingValues = mainScaffoldPaddingValues,
                 timerViewModel = timerViewModel,
-                settingsViewModelTimer = settingsViewModelTimer,
+                isPortrait = isPortrait,
+                theme = theme
             )
 
             settingsGraph(
@@ -74,65 +81,102 @@ fun AppHavHost(
                 navController = navController,
                 settingsViewModelStopwatch = settingsViewModelStopwatch,
                 settingsViewModelTimer = settingsViewModelTimer,
+                theme = theme
             )
 
             settingsStopwatchLabelStyleGraph(
                 currentDestination = currentDestination,
                 navController = navController,
-                settingsViewModelStopwatch = settingsViewModelStopwatch
+                settingsViewModelStopwatch = settingsViewModelStopwatch,
+                theme = theme
             )
 
             settingsTimerProgressBarStylesGraph(
                 currentDestination = currentDestination,
                 navController = navController,
-                settingsViewModelTimer = settingsViewModelTimer
+                settingsViewModelTimer = settingsViewModelTimer,
+                theme = theme
             )
 
             bugReportGraph(
                 currentDestination = currentDestination,
-                navController = navController
+                navController = navController,
+                theme = theme
             )
 
             settingsStopwatchLabelBackgroundEffectsGraph(
                 currentDestination = currentDestination,
                 navController = navController,
-                settingsViewModelStopwatch = settingsViewModelStopwatch
+                settingsViewModelStopwatch = settingsViewModelStopwatch,
+                theme = theme
             )
 
             settingsTimerBackgroundEffectsGraph(
                 currentDestination = currentDestination,
                 navController = navController,
-                settingsViewModelTimer = settingsViewModelTimer
+                settingsViewModelTimer = settingsViewModelTimer,
+                theme = theme
             )
 
             settingsTimerFontStylesGraph(
                 currentDestination = currentDestination,
                 navController = navController,
-                settingsViewModelTimer = settingsViewModelTimer
+                theme = theme
             )
 
-            settingsTimerSelectedFontStyleGraph(
+            settingsTimerTimeFontStyleGraph(
                 currentDestination = currentDestination,
                 navController = navController,
-                settingsViewModelTimer = settingsViewModelTimer
+                settingsViewModelTimer = settingsViewModelTimer,
+                theme = theme
+            )
+
+            settingsTimerScrollsFontStyleGraph(
+                currentDestination = currentDestination,
+                navController = navController,
+                settingsViewModelTimer = settingsViewModelTimer,
+                theme = theme
             )
 
             settingsStopwatchFontStylesGraph(
                 currentDestination = currentDestination,
                 navController = navController,
-                settingsViewModelStopwatch = settingsViewModelStopwatch
+                theme = theme
             )
 
-            settingsStopwatchSelectedFontStyleGraph(
+            settingsStopwatchLabelFontStyleGraph(
                 currentDestination = currentDestination,
                 navController = navController,
-                settingsViewModelStopwatch = settingsViewModelStopwatch
+                settingsViewModelStopwatch = settingsViewModelStopwatch,
+                theme = theme
+            )
+
+            settingsStopwatchTimeFontStyleGraph(
+                currentDestination = currentDestination,
+                navController = navController,
+                settingsViewModelStopwatch = settingsViewModelStopwatch,
+                theme = theme
+            )
+
+            settingsStopwatchLapTimeFontStyleGraph(
+                currentDestination = currentDestination,
+                navController = navController,
+                settingsViewModelStopwatch = settingsViewModelStopwatch,
+                theme = theme
             )
 
             settingsTimerScrollsHapticFeedbackGraph(
                 currentDestination = currentDestination,
                 navController = navController,
-                settingsViewModelTimer = settingsViewModelTimer
+                settingsViewModelTimer = settingsViewModelTimer,
+                theme = theme
+            )
+
+            settingsThemeGraph(
+                currentDestination = currentDestination,
+                navController = navController,
+                settingsViewModel = settingsViewModel,
+                theme = theme
             )
         }
     }

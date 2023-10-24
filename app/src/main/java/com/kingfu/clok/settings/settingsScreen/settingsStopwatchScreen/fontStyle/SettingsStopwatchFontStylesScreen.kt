@@ -1,100 +1,70 @@
 package com.kingfu.clok.settings.settingsScreen.settingsStopwatchScreen.fontStyle
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement.Start
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults.cardColors
-import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color.Companion.DarkGray
-import androidx.compose.ui.graphics.Color.Companion.White
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.LongPress
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.kingfu.clok.navigation.Screens
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
-import com.kingfu.clok.variable.Variable.settingsStopwatchSelectedFontStyle
-import kotlinx.coroutines.launch
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import com.kingfu.clok.R
+import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
+import com.kingfu.clok.ui.components.MyHorizontalDivider
+import com.kingfu.clok.ui.layouts.OneUI
+import com.kingfu.clok.ui.theme.ClokTheme
+import com.kingfu.clok.ui.theme.RoundedCornerFooter
+import com.kingfu.clok.ui.theme.RoundedCornerHeader
+import com.kingfu.clok.ui.theme.TextBodyLarge
+import com.kingfu.clok.ui.theme.TextBodyMediumHeading
+import com.kingfu.clok.ui.util.screenHeight
 
 @Composable
 fun SettingsStopwatchFontStylesScreen(
-    vm: SettingsViewModelStopwatch,
-    navigateToSettingsStopwatchSelectedFontStyle: () -> Unit,
+    goToSettingsStopwatchLabelFontStyle: () -> Unit,
+    goToSettingsStopwatchLapTimeFontStyle: () -> Unit,
+    goToSettingsStopwatchTimeFontStyle: () -> Unit
 ) {
-    val haptic = LocalHapticFeedback.current
-    val scrollState = rememberScrollState()
-    val coroutine = rememberCoroutineScope()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .clip(shape = RoundedCornerShape(size = 20.dp))
-            .verticalScroll(state = scrollState)
+    OneUI(
+        header = { TextBodyMediumHeading(text = stringResource(id = R.string.stopwatch_name_id)) },
+        middleColumn = { TextBodyLarge(text = stringResource(id = R.string.settings_stopwatch_radio_option_label)) },
+        onClick = { goToSettingsStopwatchLabelFontStyle() },
+        roundedCornerShape = RoundedCornerHeader
+    )
+
+    MyHorizontalDivider()
+
+    OneUI(
+        middleColumn = { TextBodyLarge(text = stringResource(id = R.string.settings_stopwatch_radio_option_time)) },
+        onClick = { goToSettingsStopwatchTimeFontStyle() }
+    )
+
+    MyHorizontalDivider()
+
+    OneUI(
+        middleColumn = { TextBodyLarge(text = stringResource(id = R.string.settings_stopwatch_radio_option_lap_time)) },
+        onClick = { goToSettingsStopwatchLapTimeFontStyle() },
+        roundedCornerShape = RoundedCornerFooter
+    )
+
+    Spacer(modifier = Modifier.height(height = screenHeight() * 0.90f))
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewSettingsStopwatchFontStylesScreen() {
+    ClokTheme(
+        dynamicColor = true,
+        theme = ThemeType.Dark
     ) {
-        Text(
-            text = Screens.Stopwatch.name,
-            modifier = Modifier.padding(start = 26.dp, end = 32.dp, top = 12.dp, bottom = 6.dp),
-            fontSize = 16.sp,
-            fontWeight = SemiBold,
-            color = colorScheme.onTertiaryContainer,
-            style = TextStyle()
-        )
-
-        Card(
-            shape = RoundedCornerShape(size = 20.dp),
-            colors = cardColors(
-                containerColor = colorScheme.inverseOnSurface.copy(alpha = 0.40f)
+        Column(modifier = Modifier.verticalScroll(state = rememberScrollState())) {
+            SettingsStopwatchFontStylesScreen(
+                goToSettingsStopwatchLabelFontStyle = {},
+                goToSettingsStopwatchLapTimeFontStyle = {},
+                goToSettingsStopwatchTimeFontStyle = {}
             )
-        ) {
-            for (i in vm.fontStyleOptions.indices) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            coroutine.launch {
-                                haptic.performHapticFeedback(hapticFeedbackType = LongPress)
-                                settingsStopwatchSelectedFontStyle =
-                                    vm.fontStyleOptions.elementAt(index = i)
-                                navigateToSettingsStopwatchSelectedFontStyle()
-                            }
-                        }
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
-                    horizontalArrangement = Start,
-                    verticalAlignment = CenterVertically
-                ) {
-                    Text(
-                        text = vm.fontStyleOptions.elementAt(index = i),
-                        fontSize = 18.sp,
-                        color = White,
-                        style = TextStyle()
-                    )
-                }
-
-                if (i != vm.fontStyleOptions.size - 1) {
-                    Divider(
-                        modifier = Modifier.padding(horizontal = 24.dp),
-                        color = DarkGray.copy(alpha = 0.75f),
-                        thickness = 0.8.dp
-                    )
-                }
-            }
         }
     }
 }

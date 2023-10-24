@@ -1,169 +1,210 @@
 package com.kingfu.clok.navigation.navGraphBuilder.settings
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.kingfu.clok.components.topBar.LargeTopBar
-import com.kingfu.clok.navigation.Screens
+import com.kingfu.clok.navigation.Screen
+import com.kingfu.clok.navigation.topBar.CustomTopBar
+import com.kingfu.clok.navigation.topBar.LargeTopBar
 import com.kingfu.clok.settings.settingsScreen.SettingsScreen
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelStopwatch
-import com.kingfu.clok.settings.settingsViewModel.SettingsViewModelTimer
+import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
+import com.kingfu.clok.settings.viewModel.settingsViewModelStopwatch.SettingsViewModelStopwatch
+import com.kingfu.clok.settings.viewModel.settingsViewModelTimer.SettingsViewModelTimer
+import kotlin.math.abs
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.settingsGraph(
     currentDestination: NavDestination?,
     navController: NavHostController,
     settingsViewModelStopwatch: SettingsViewModelStopwatch,
-    settingsViewModelTimer: SettingsViewModelTimer
+    settingsViewModelTimer: SettingsViewModelTimer,
+    theme: ThemeType
 ) {
+
+    val slideAnimation = AnimatedContentTransitionScope.SlideDirection
+    val tweenDuration = 200
     composable(
-        route = Screens.Settings.route,
+        route = Screen.Settings.route,
         enterTransition = {
-            when(initialState.destination.route){
-                Screens.Timer.route -> {
+            when (initialState.destination.route) {
+                Screen.Timer.route -> {
                     slideIntoContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Up,
-                        animationSpec = tween(durationMillis = 200)
+                        towards = slideAnimation.Up,
+                        animationSpec = tween(durationMillis = tweenDuration)
                     )
                 }
-                Screens.Stopwatch.route -> {
+
+                Screen.Stopwatch.route -> {
                     slideIntoContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Up,
-                        animationSpec = tween(durationMillis = 200)
+                        towards = slideAnimation.Up,
+                        animationSpec = tween(durationMillis = tweenDuration)
                     )
                 }
-                else ->{
+
+                else -> {
                     slideIntoContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                        animationSpec = tween(durationMillis = 200)
+                        towards = slideAnimation.Right,
+                        animationSpec = tween(durationMillis = tweenDuration)
                     )
                 }
             }
         },
         exitTransition = {
-            when(targetState.destination.route){
-                Screens.Timer.route -> {
+            when (targetState.destination.route) {
+                Screen.Timer.route -> {
                     slideOutOfContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Down,
-                        animationSpec = tween(durationMillis = 200)
+                        towards = slideAnimation.Down,
+                        animationSpec = tween(durationMillis = tweenDuration)
                     )
                 }
-                Screens.Stopwatch.route -> {
+
+                Screen.Stopwatch.route -> {
                     slideOutOfContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Down,
-                        animationSpec = tween(durationMillis = 200)
+                        towards = slideAnimation.Down,
+                        animationSpec = tween(durationMillis = tweenDuration)
                     )
                 }
-                else ->{
+
+                else -> {
                     slideOutOfContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                        animationSpec = tween(durationMillis = 200)
+                        towards = slideAnimation.Left,
+                        animationSpec = tween(durationMillis = tweenDuration)
                     )
                 }
             }
         },
         popEnterTransition = {
-            when(initialState.destination.route){
-                Screens.Settings.route -> {
+            when (initialState.destination.route) {
+                Screen.Settings.route -> {
                     slideIntoContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Down,
-                        animationSpec = tween(durationMillis = 200)
+                        towards = slideAnimation.Down,
+                        animationSpec = tween(durationMillis = tweenDuration)
                     )
                 }
-                else ->{
+
+                else -> {
                     slideIntoContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                        animationSpec = tween(durationMillis = 200)
+                        towards = slideAnimation.Right,
+                        animationSpec = tween(durationMillis = tweenDuration)
                     )
                 }
             }
         },
         popExitTransition = {
-            when(targetState.destination.route){
-                Screens.Stopwatch.route -> {
+            when (targetState.destination.route) {
+                Screen.Stopwatch.route -> {
                     slideOutOfContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Down,
-                        animationSpec = tween(durationMillis = 200)
+                        towards = slideAnimation.Down,
+                        animationSpec = tween(durationMillis = tweenDuration)
                     )
                 }
-                Screens.Timer.route -> {
+
+                Screen.Timer.route -> {
                     slideOutOfContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Down,
-                        animationSpec = tween(durationMillis = 200)
+                        towards = slideAnimation.Down,
+                        animationSpec = tween(durationMillis = tweenDuration)
                     )
                 }
+
                 else -> {
                     slideOutOfContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                        animationSpec = tween(durationMillis = 200)
+                        towards = slideAnimation.Left,
+                        animationSpec = tween(durationMillis = tweenDuration)
                     )
                 }
             }
         }
     ) {
-        val topBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+        val exitUntilCollapsed = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+        val exitUntilCollapsedFraction = exitUntilCollapsed.state.collapsedFraction
+        val pinned = TopAppBarDefaults.pinnedScrollBehavior()
 
         Scaffold(
-            modifier = Modifier.nestedScroll(connection = topBarScrollBehavior.nestedScrollConnection),
+            modifier = Modifier.nestedScroll(
+                connection = exitUntilCollapsed.nestedScrollConnection,
+            ),
             containerColor = Transparent,
             topBar = {
-                LargeTopBar(
-                    topBarScrollBehavior = topBarScrollBehavior,
-                    currentDestination = currentDestination,
-                    navigateUp = { navController.navigateUp() },
-                )
+                if (exitUntilCollapsedFraction <= 0.545) {
+                    LargeTopBar(
+                        exitUntilCollapsed = exitUntilCollapsed,
+                        currentRoute = currentDestination?.route,
+                        navigateUp = { navController.navigateUp() },
+                        theme = theme
+                    )
+                } else {
+                    CustomTopBar(
+                        exitUntilCollapsedFraction = exitUntilCollapsedFraction,
+                        currentRoute = currentDestination?.route,
+                        navigateUp = { navController.navigateUp() },
+                        pinned = pinned,
+                        theme = theme
+                    )
+                }
             },
             content = { paddingValue ->
-                Box(modifier = Modifier.padding(paddingValues = paddingValue)) {
-                    val vm: SettingsViewModelStopwatch = settingsViewModelStopwatch
+                val settingsScrollState = rememberScrollState()
+
+
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(state = settingsScrollState)
+                        .statusBarsPadding()
+                        .padding(top = 180.dp * abs(x = 1 - exitUntilCollapsedFraction / 1.5f))
+                ) {
                     SettingsScreen(
-                        settingsViewModelStopwatch = vm,
+                        settingsViewModelStopwatch = settingsViewModelStopwatch,
                         settingsViewModelTimer = settingsViewModelTimer,
-                        navigateToSettingsStopwatchBackgroundEffects = {
+                        goToSettingsStopwatchBackgroundEffects = {
                             navController.navigate(
-                                route = Screens.SettingsStopwatchLabelBackgroundEffects.route
+                                route = Screen.SettingsStopwatchLabelBackgroundEffects.route
                             )
                         },
-                        navigateToSettingsStopwatchFontStyles = {
+                        goToSettingsStopwatchFontStyles = {
+                            navController.navigate(route = Screen.SettingsStopwatchFontStyles.route)
+                        },
+                        goToSettingsStopwatchLabelStyles = {
                             navController.navigate(
-                                route = Screens.SettingsStopwatchFontStyles.route
+                                route = Screen.SettingsStopwatchLabelStyles.route
                             )
                         },
-                        navigateToSettingsStopwatchLabelStyles = {
+                        goToSettingsTimerProgressBarStyles = {
                             navController.navigate(
-                                route = Screens.SettingsStopwatchLabelStyles.route
+                                route = Screen.SettingsTimerProgressBarStyles.route
                             )
                         },
-                        navigateToSettingsTimerProgressBarStyles = {
+                        goToSettingsTimerFontStyles = {
+                            navController.navigate(route = Screen.SettingsTimerFontStyles.route)
+                        },
+                        goToSettingsTimerBackgroundEffects = {
                             navController.navigate(
-                                route = Screens.SettingsTimerProgressBarStyles.route
+                                route = Screen.SettingsTimerProgressBarBackgroundEffects.route
                             )
                         },
-                        navigateToSettingsTimerFontStyles = {
+                        goToSettingsTimerScrollsHapticFeedback = {
                             navController.navigate(
-                                route = Screens.SettingsTimerFontStyles.route
+                                route = Screen.SettingsTimerScrollsHapticFeedback.route
                             )
                         },
-                        navigateToSettingsTimerBackgroundEffects = {
-                            navController.navigate(
-                                route = Screens.SettingsTimerProgressBarBackgroundEffects.route
-                            )
-                        },
-                        navigateToSettingsTimerScrollsHapticFeedback = {
-                            navController.navigate(
-                                route = Screens.SettingsTimerScrollsHapticFeedback.route
-                            )
+                        goToTheme = {
+                            navController.navigate(route = Screen.SettingsTheme.route)
                         }
                     )
                 }

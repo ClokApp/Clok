@@ -1,19 +1,19 @@
 package com.kingfu.clok.stopwatch.stopwatchViewModel
 
 import android.os.SystemClock
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
+import androidx.lifecycle.viewmodel.compose.saveable
 import com.kingfu.clok.repository.preferencesDataStore.StopwatchPreferences
 import com.kingfu.clok.repository.room.stopwatchRoom.StopwatchLapData
 import com.kingfu.clok.repository.room.stopwatchRoom.StopwatchLapDatabase
-import com.kingfu.clok.stopwatch.styles.StopwatchRGBStyle
-import com.kingfu.clok.variable.Variable.DYNAMIC_COLOR
-import com.kingfu.clok.variable.Variable.RGB
+import com.kingfu.clok.stopwatch.feature.fontStyle.StopwatchFontStyleType
+import com.kingfu.clok.stopwatch.feature.labelBackgroundEffects.StopwatchLabelBackgroundEffectType
+import com.kingfu.clok.stopwatch.feature.labelStyle.StopwatchLabelStyleType
+import com.kingfu.clok.stopwatch.feature.styles.StopwatchRGBStyle
 import com.kingfu.clok.variable.Variable.isShowSnackbar
 import com.kingfu.clok.variable.Variable.snackbarMessage
 import kotlinx.coroutines.Dispatchers
@@ -21,57 +21,36 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.Collections.emptyList
 
+@OptIn(SavedStateHandleSaveableApi::class)
 class StopwatchViewModel(
     private val stopwatchPreferences: StopwatchPreferences,
     private val stopwatchLapDatabase: StopwatchLapDatabase,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    var stopwatchIsActive by mutableStateOf(value = false)
+
+    var state by savedStateHandle.saveable { mutableStateOf(value = StopwatchState()) }
         private set
 
-    var stopwatchTime by mutableLongStateOf(value = 0L)
-        private set
-
-    var lapPreviousTime by mutableLongStateOf(value = 0L)
-        private set
-
-    var stopwatchInitialTime by mutableLongStateOf(value = 0L)
-        private set
-
-    var stopwatchOffsetTime by mutableLongStateOf(value = 0L)
-        private set
-
-    var labelStyleSelectedOption by mutableStateOf(value = DYNAMIC_COLOR)
-        private set
-
-    var isLap by mutableStateOf(value = false)
-        private set
 
     var lapList: StateFlow<List<StopwatchLapData>> =
         stopwatchLapDatabase.itemDao().getAll().stateIn(
             viewModelScope, SharingStarted.Eagerly, emptyList()
         )
 
-    var shortestLapIndex by mutableIntStateOf(value = 0)
-        private set
-    var longestLapIndex by mutableIntStateOf(value = 0)
-        private set
-
-    var isScrollLazyColumn by mutableStateOf(value = false)
-        private set
-
-
     init {
+
         viewModelScope.launch {
-            loadStopwatchOffset()
-            loadStopwatchTime()
-            loadStopwatchLabelStyleSelectedOption()
-            loadStopwatchLapPreviousTime()
-            loadStopwatchShortestLapIndex()
-            loadStopwatchLongestLapIndex()
-            stopwatchOffsetTime = stopwatchTime
+            loadAllData()
+
+            state = state.copy(stopwatchOffsetTime = state.stopwatchTime)
+            if (state.stopwatchIsActive) {
+                startStopwatch()
+            }
         }
     }
 
@@ -82,69 +61,71 @@ class StopwatchViewModel(
             snackbarMessage = "Max lap number is reached"
             return
         }
-        isLap = true
+        state = state.copy(isLap = true)
     }
 
     fun toggleIsScrollLazyColumn() {
-        isScrollLazyColumn = !isScrollLazyColumn
+        state = state.copy(isScrollLazyColumn = !state.isScrollLazyColumn)
     }
 
 
     fun clearLapTimes() {
         viewModelScope.launch {
+            state = state.copy(
+                lapPreviousTime = 0L,
+                shortestLapIndex = 0,
+                longestLapIndex = 0
+            )
             clearAllLap()
-
-            lapPreviousTime = 0
             saveStopwatchLapPreviousTime()
-
-            shortestLapIndex = 0
             saveShortestLapIndex()
-
-            longestLapIndex = 0
             saveLongestLapIndex()
-
         }
     }
 
-    fun startStopWatch() {
-        stopwatchIsActive = true
-        stopwatchInitialTime = SystemClock.elapsedRealtime()
-
+    fun startStopwatch() {
+        state = state.copy(
+            stopwatchIsActive = true,
+            stopwatchInitialTime = SystemClock.elapsedRealtime()
+        )
 
         viewModelScope.launch {
-            while (stopwatchIsActive) {
-
-                if (stopwatchTime >= 360_000_000) {
-                    pauseStopWatch()
+            while (state.stopwatchIsActive) {
+                if (state.stopwatchTime >= 360_000_000 - 1) {
+                    state = state.copy(stopwatchTime = 360_000_000 - 1)
+                    pauseStopwatch()
                     break
                 }
 
-                stopwatchLabelStyles()
-                stopwatchTime =
-                    (SystemClock.elapsedRealtime() - stopwatchInitialTime) + stopwatchOffsetTime
+                state = state.copy(
+                    stopwatchTime = SystemClock.elapsedRealtime() -
+                            state.stopwatchInitialTime + state.stopwatchOffsetTime
+                )
 
-                if (isLap) {
-                    isLap = false
+                if (state.isLap) {
+                    state = state.copy(isLap = false)
                     addLap()
                     delay(timeMillis = 10)
                     recordShortestLap()
                     recordLongestLap()
-
                 }
 
-//                stopwatchTime += 50_000
+//                state = state.copy(
+//                    stopwatchTime = state.stopwatchTime + 90_999
+//                )
+
                 saveStopwatchLapPreviousTime()
                 saveStopwatchOffsetTime()
                 saveStopwatchTime()
-                delay(stopwatchPreferences.getStopwatchRefreshRate.first().toLong())
+                delay(timeMillis = stopwatchPreferences.getStopwatchRefreshRate.first())
 
             }
         }
     }
 
     suspend fun addLap() {
-        val curStopwatchTime = stopwatchTime - (stopwatchTime % 10)
-        val curLapPreviousTime = lapPreviousTime - (lapPreviousTime % 10)
+        val curStopwatchTime = state.stopwatchTime - (state.stopwatchTime % 10)
+        val curLapPreviousTime = state.lapPreviousTime - (state.lapPreviousTime % 10)
 
         val lap = StopwatchLapData(
             lapNumber = lapList.value.size + 1,
@@ -154,7 +135,7 @@ class StopwatchViewModel(
 
         saveLap(lap = lap)
 
-        lapPreviousTime = curStopwatchTime
+        state = state.copy(lapPreviousTime = curStopwatchTime)
         saveStopwatchLapPreviousTime()
     }
 
@@ -166,13 +147,13 @@ class StopwatchViewModel(
             return
         }
 
-        shortestLapIndex += 1
+        state = state.copy(shortestLapIndex = state.shortestLapIndex + 1)
 
-        val currentShortest = lapList.value[shortestLapIndex].lapTime
+        val currentShortest = lapList.value[state.shortestLapIndex].lapTime
         val newLapTime = lapList.value[0].lapTime
 
         if (currentShortest > newLapTime) {
-            shortestLapIndex = 0
+            state = state.copy(shortestLapIndex = 0)
         }
         saveShortestLapIndex()
     }
@@ -184,175 +165,161 @@ class StopwatchViewModel(
             return
         }
 
-        longestLapIndex += 1
+        state = state.copy(longestLapIndex = state.longestLapIndex + 1)
 
-        val currentShortest = lapList.value[longestLapIndex].lapTime
+        val currentShortest = lapList.value[state.longestLapIndex].lapTime
         val newLapTime = lapList.value[0].lapTime
 
         if (currentShortest < newLapTime) {
-            longestLapIndex = 0
+            state = state.copy(longestLapIndex = 0)
         }
 
         saveLongestLapIndex()
     }
 
-
-    suspend fun stopwatchLabelStyles() {
-        if (stopwatchPreferences.getStopwatchShowLabel.first()) {
-            when (stopwatchPreferences.getStopwatchLabelStyle.first()) {
-                DYNAMIC_COLOR -> {}
-                RGB -> {
-                    StopwatchRGBStyle().rgbStyleUpdateColors(stopwatchPreferences.getStopwatchRefreshRate.first())
-                    saveRGBColorCounter()
-                }
+    fun updateStopwatchLabelStyle(selectedLabelStyle: StopwatchLabelStyleType) {
+        when (selectedLabelStyle) {
+            StopwatchLabelStyleType.DynamicColor -> {}
+            StopwatchLabelStyleType.Rgb -> {
+                StopwatchRGBStyle().rgbStyleUpdateColors()
+                saveRGBColorCounter()
             }
         }
     }
 
-    fun pauseStopWatch() {
-        stopwatchIsActive = false
-        stopwatchOffsetTime = stopwatchTime
+    fun pauseStopwatch() {
+        state = state.copy(
+            stopwatchIsActive = false,
+            stopwatchOffsetTime = state.stopwatchTime
+        )
     }
 
-    fun resetStopWatch() {
+    fun resetStopwatch() {
         viewModelScope.launch {
-            shortestLapIndex = 0
-            longestLapIndex = 0
-
-            stopwatchIsActive = false
-            stopwatchTime = 0L
-            lapPreviousTime = 0
-
-            stopwatchOffsetTime = 0L
+            state = state.copy(
+                stopwatchIsActive = false,
+                stopwatchTime = 0L,
+                stopwatchOffsetTime = 0L,
+                lapPreviousTime = 0L
+            )
             saveStopwatchOffsetTime()
             saveStopwatchTime()
+            saveStopwatchLapPreviousTime()
         }
-    }
-
-    fun isAtLestOneHour(): Boolean {
-        return stopwatchTime >= 3_600_000
-    }
-
-    fun formatTimeStopWatchHr(timeMillis: Long): String {
-        val hours = timeMillis / 1000 / 60 / 60 % 100
-        return "%02d".format(hours)
-    }
-
-    fun formatTimeStopWatchMin(timeMillis: Long): String {
-        val minutes = timeMillis / 1000 / 60 % 60
-        return "%02d".format(minutes)
-    }
-
-    fun formatTimeStopWatchSec(timeMillis: Long): String {
-        val seconds = timeMillis / 1000 % 60
-        return "%02d".format(seconds)
-    }
-
-    fun formatTimeStopWatchMs(timeMillis: Long): String {
-        val milliseconds = timeMillis % 1000 / 10
-        return "%02d".format(milliseconds)
-    }
-
-    fun formatLapTime(timeMillis: Long, index: Int): String {
-        val hr = formatTimeStopWatchHr(timeMillis = timeMillis)
-        val min = formatTimeStopWatchMin(timeMillis = timeMillis)
-        val sec = formatTimeStopWatchSec(timeMillis = timeMillis)
-        val ms = formatTimeStopWatchMs(timeMillis = timeMillis)
-
-
-        return if (lapList.value[index].lapTotalTime >= 3_600_000) "$hr:$min:$sec.$ms" else "$min:$sec.$ms"
-    }
-
-
-    fun getLapNumber(index: Int): String {
-        val lapNumber = lapList.value[index].lapNumber
-        return if (lapNumber < 10) "0${lapNumber}" else lapNumber.toString()
-    }
-
-    fun getLapTime(index: Int): String {
-        val time = lapList.value[index].lapTime
-        return formatLapTime(timeMillis = time, index = index)
-    }
-
-    fun getLapTotalTime(index: Int): String {
-        val time = lapList.value[index].lapTotalTime
-        return formatLapTime(timeMillis = time, index = index)
     }
 
     suspend fun stopwatchTimeClearAll() {
         stopwatchPreferences.clearAll()
     }
 
-    suspend fun loadStopwatchTime() {
-        stopwatchTime = stopwatchPreferences.getStopwatchTime.first()
+    fun getStopwatchIsShowLabel(): Boolean {
+        var result = true
+        viewModelScope.launch {
+            result = stopwatchPreferences.getStopwatchIsShowLabel.first()
+        }
+        return result
     }
 
-    suspend fun loadStopwatchOffset() {
-        stopwatchOffsetTime = stopwatchPreferences.getStopwatchOffsetTime.first()
+    fun getStopwatchLabelBackgroundEffect(): StopwatchLabelBackgroundEffectType {
+        var result: String? = null
+        viewModelScope.launch {
+            result = stopwatchPreferences.getStopwatchLabelBackgroundEffects.firstOrNull()
+        }
+        return if (result != null) enumValueOf(result!!) else StopwatchLabelBackgroundEffectType.Snow
     }
 
-    suspend fun loadStopwatchShortestLapIndex() {
-        shortestLapIndex = stopwatchPreferences.getStopwatchShortestLapIndex.first()
+    fun getStopwatchLabelStyle(): StopwatchLabelStyleType {
+        var result: String? = null
+        viewModelScope.launch {
+            result = stopwatchPreferences.getStopwatchLabelStyle.first()
+        }
+        return if (result != null) enumValueOf(result!!) else StopwatchLabelStyleType.DynamicColor
+
     }
 
-    suspend fun loadStopwatchLabelStyleSelectedOption() {
-        labelStyleSelectedOption = stopwatchPreferences.getStopwatchLabelStyle.first()
+    fun getStopwatchLabelFontStyle(): StopwatchFontStyleType {
+        var result = StopwatchFontStyleType.Default.name
+        viewModelScope.launch {
+            result = stopwatchPreferences.getStopwatchLabelFontStyle.first()
+        }
+        return enumValueOf(result)
     }
 
-    suspend fun loadStopwatchLapPreviousTime() {
-        lapPreviousTime = stopwatchPreferences.getStopwatchLapPreviousTime.first()
+    fun getStopwatchTimeFontStyle(): StopwatchFontStyleType {
+        var result = StopwatchFontStyleType.Default.name
+        viewModelScope.launch {
+            result = stopwatchPreferences.getStopwatchTimeFontStyle.first()
+        }
+        return enumValueOf(result)
     }
 
-    suspend fun loadStopwatchLongestLapIndex() {
-        longestLapIndex = stopwatchPreferences.getStopwatchLongestLapIndex.first()
+    fun getStopwatchLapTimeFontStyle(): StopwatchFontStyleType {
+        var result = StopwatchFontStyleType.Default.name
+        viewModelScope.launch {
+            result = stopwatchPreferences.getStopwatchLapTimeFontStyle.first()
+        }
+        return enumValueOf(result)
     }
 
     fun saveStopwatchTime() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            stopwatchPreferences.setStopwatchTime(long = stopwatchTime)
+            stopwatchPreferences.setStopwatchTime(long = state.stopwatchTime)
         }
     }
 
-    suspend fun saveStopwatchLapPreviousTime() {
+    fun saveStopwatchLapPreviousTime() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            stopwatchPreferences.setStopwatchLapPreviousTime(long = lapPreviousTime)
+            stopwatchPreferences.setStopwatchLapPreviousTime(long = state.lapPreviousTime)
         }
     }
 
     fun saveStopwatchOffsetTime() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            stopwatchPreferences.setStopwatchOffsetTime(long = stopwatchOffsetTime)
+            stopwatchPreferences.setStopwatchOffsetTime(long = state.stopwatchOffsetTime)
         }
     }
 
     fun saveRGBColorCounter() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            stopwatchPreferences.setLabelStyleRGBColorCounter(double = StopwatchRGBStyle.RGBVariable.RGBColorCounter)
+            stopwatchPreferences.setLabelStyleRGBColorCounter(
+                double = StopwatchRGBStyle.RGBVariable.RGBColorCounter
+            )
         }
     }
 
 
     suspend fun saveLap(lap: StopwatchLapData) {
         // need to not save using Dispatchers.IO to work properly
+        // because it's already using flow coroutine
 //        viewModelScope.launch(context = Dispatchers.IO) {
-            stopwatchLapDatabase.itemDao().insert(lap = lap)
+        stopwatchLapDatabase.itemDao().insert(lap = lap)
 //        }
     }
 
     fun saveShortestLapIndex() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            stopwatchPreferences.setStopwatchShortestLapIndex(int = shortestLapIndex)
+            stopwatchPreferences.setStopwatchShortestLapIndex(int = state.shortestLapIndex)
         }
     }
 
     fun saveLongestLapIndex() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            stopwatchPreferences.setStopwatchLongestLapIndex(int = longestLapIndex)
+            stopwatchPreferences.setStopwatchLongestLapIndex(int = state.longestLapIndex)
         }
     }
 
     suspend fun clearAllLap() {
         stopwatchLapDatabase.itemDao().deleteAllItems()
+    }
+
+    private suspend fun loadAllData() {
+        state = state.copy(
+            stopwatchTime = stopwatchPreferences.getStopwatchTime.first(),
+            stopwatchOffsetTime = stopwatchPreferences.getStopwatchOffsetTime.first(),
+            shortestLapIndex = stopwatchPreferences.getStopwatchShortestLapIndex.first(),
+            lapPreviousTime = stopwatchPreferences.getStopwatchLapPreviousTime.first(),
+            longestLapIndex = stopwatchPreferences.getStopwatchLongestLapIndex.first()
+        )
     }
 
 
