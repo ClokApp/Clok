@@ -41,7 +41,7 @@ import com.kingfu.clok.ui.theme.themeBackgroundColor
 
 @Composable
 fun BugReportScreen() {
-
+    // Testing
     val context = LocalContext.current
     val bugReportEmail = stringResource(id = R.string.bug_report_email)
     val bugReportEmailIntent =
