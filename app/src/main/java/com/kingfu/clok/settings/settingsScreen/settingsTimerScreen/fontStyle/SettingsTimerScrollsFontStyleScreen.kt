@@ -14,8 +14,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.kingfu.clok.R
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
-import com.kingfu.clok.timer.feature.timerFontStyle.TimerFontStyleType
+import com.kingfu.clok.ui.theme.ThemeType
+import com.kingfu.clok.timer.util.timerFontStyle.TimerFontStyleType
 import com.kingfu.clok.ui.components.MyHorizontalDivider
 import com.kingfu.clok.ui.components.MyRadioButton
 import com.kingfu.clok.ui.layouts.OneUI

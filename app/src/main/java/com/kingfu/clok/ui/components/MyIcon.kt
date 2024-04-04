@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
+import com.kingfu.clok.ui.theme.ThemeType
 import com.kingfu.clok.ui.theme.ClokTheme
 
 

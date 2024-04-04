@@ -1,9 +1,9 @@
 package com.kingfu.clok.settings.viewModel.settingsViewModelTimer
 
-import com.kingfu.clok.timer.feature.timerFontStyle.TimerFontStyleType
-import com.kingfu.clok.timer.feature.timerProgressBarBackgroundEffects.TimerProgressBarBackgroundEffectType
-import com.kingfu.clok.timer.feature.timerProgressBarStyle.TimerProgressBarStyleType
-import com.kingfu.clok.timer.feature.timerScrollsHapticFeedback.TimerScrollsHapticFeedbackType
+import com.kingfu.clok.timer.util.timerFontStyle.TimerFontStyleType
+import com.kingfu.clok.timer.util.timerProgressBarBackgroundEffects.TimerProgressBarBackgroundEffectType
+import com.kingfu.clok.timer.util.timerProgressBarStyle.TimerProgressBarStyleType
+import com.kingfu.clok.timer.util.timerScrollsHapticFeedback.TimerScrollsHapticFeedbackType
 
 data class SettingViewModelTimerState(
     val timerProgressBarStyle: String = TimerProgressBarStyleType.DynamicColor.name,

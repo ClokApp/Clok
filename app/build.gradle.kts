@@ -15,8 +15,8 @@ android {
         applicationId = "com.kingfu.clok"
         minSdk = 26
         targetSdk = 34
-        versionCode = 15
-        versionName = "1.6.1"
+        versionCode = 16
+        versionName = "1.7.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -73,6 +73,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.8.0")
     implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -119,5 +120,7 @@ dependencies {
 
     // Splash API
     implementation("androidx.core:core-splashscreen:1.0.1")
+
+
 
 }

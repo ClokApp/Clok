@@ -11,15 +11,14 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.kingfu.clok.timer.feature.timerFontStyle.TimerFontStyleType
-import com.kingfu.clok.timer.feature.timerProgressBarBackgroundEffects.TimerProgressBarBackgroundEffectType
-import com.kingfu.clok.timer.feature.timerProgressBarStyle.TimerProgressBarStyleType
-import com.kingfu.clok.timer.feature.timerScrollsHapticFeedback.TimerScrollsHapticFeedbackType
+import com.kingfu.clok.timer.util.timerFontStyle.TimerFontStyleType
+import com.kingfu.clok.timer.util.timerProgressBarBackgroundEffects.TimerProgressBarBackgroundEffectType
+import com.kingfu.clok.timer.util.timerProgressBarStyle.TimerProgressBarStyleType
+import com.kingfu.clok.timer.util.timerScrollsHapticFeedback.TimerScrollsHapticFeedbackType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class TimerPreferences private constructor(context: Context) {
-
     companion object {
         @Volatile
         private var INSTANCE: TimerPreferences? = null

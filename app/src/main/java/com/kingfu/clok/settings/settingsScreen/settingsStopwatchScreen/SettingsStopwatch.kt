@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.kingfu.clok.R
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
 import com.kingfu.clok.ui.components.MyHorizontalDivider
 import com.kingfu.clok.ui.components.MyIcon
 import com.kingfu.clok.ui.components.MySlider
@@ -24,6 +23,8 @@ import com.kingfu.clok.ui.theme.TextBodyLarge
 import com.kingfu.clok.ui.theme.TextBodyMedium
 import com.kingfu.clok.ui.theme.TextBodyMediumHeading
 import com.kingfu.clok.ui.theme.TextTitleMedium
+import com.kingfu.clok.ui.theme.ThemeType
+import kotlin.math.roundToInt
 
 @Composable
 fun SettingsStopwatch(
@@ -32,12 +33,10 @@ fun SettingsStopwatch(
     goToSettingsStopwatchLabelStyles: () -> Unit,
     stopwatchSetShowLabelCheckState: () -> Unit,
     saveStopwatchShowLabel: () -> Unit,
-//    updateStopwatchRefreshRateValue: (Float) -> Unit,
-    updateStopwatchRefreshRateValue: (Long) -> Unit,
+    updateStopwatchRefreshRateValue: (Float) -> Unit,
     saveStopwatchRefreshRateValue: () -> Unit,
     stopwatchShowLabel: Boolean,
-//    stopwatchRefreshRateValue: Float,
-    stopwatchRefreshRateValue: Long,
+    stopwatchRefreshRateValue: Float,
 ) {
 
     OneUI(
@@ -92,9 +91,9 @@ fun SettingsStopwatch(
             TextBodyLarge(text = stringResource(id = R.string.settings_stopwatch_refresh_rate))
             TextBodyMedium(text = stringResource(id = R.string.settings_stopwatch_refresh_rate_description))
             MySlider(
-                value = stopwatchRefreshRateValue.toFloat(),
+                value = stopwatchRefreshRateValue,
                 onValueChange = {
-                    updateStopwatchRefreshRateValue(it.toLong())
+                    updateStopwatchRefreshRateValue(it)
                     saveStopwatchRefreshRateValue()
                 },
                 content = {
@@ -103,8 +102,7 @@ fun SettingsStopwatch(
                         tint = colorScheme.inversePrimary
                     )
                     TextTitleMedium(
-//                        text = "${stopwatchRefreshRateValue.roundToInt()} " +
-                        text = "$stopwatchRefreshRateValue ${stringResource(id = R.string.settings_stopwatch_screen_ms_delay)}"
+                        text = "${stopwatchRefreshRateValue.roundToInt()} ${stringResource(id = R.string.settings_stopwatch_screen_ms_delay)}"
                     )
                 }
             )
@@ -131,7 +129,7 @@ fun CustomCardPreviewSettingsStopwatch() {
                 updateStopwatchRefreshRateValue = {},
                 saveStopwatchRefreshRateValue = {},
                 stopwatchShowLabel = true,
-                stopwatchRefreshRateValue = 80L,
+                stopwatchRefreshRateValue = 80f,
             )
         }
     }

@@ -27,14 +27,15 @@ class MainActivity : ComponentActivity() {
                     settingsPreferences = SettingsPreferences.getInstance(context = context)
                 )
             )
-            val theme = settingsViewModel.state.appTheme
+            val theme = settingsViewModel.state.theme
 
             ClokTheme(theme = theme) {
                 NotificationPermissionForAndroid13()
                 Surface(color = themeBackgroundColor(theme = theme)) {
                     AppScaffold(
                         settingsViewModel = settingsViewModel,
-                        theme = theme
+                        theme = theme,
+                        context = context
                     )
                 }
             }

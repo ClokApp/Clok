@@ -19,7 +19,6 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
 
 
 private val darkColorScheme = darkColorScheme(
@@ -145,10 +144,12 @@ fun ClokTheme(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 window.isNavigationBarContrastEnforced = false
             }
+
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
                 isLightStatusBar
             WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars =
                 isLightStatusBar
+
             val insetsController = WindowCompat.getInsetsController(window, window.decorView)
 
             if(orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -160,6 +161,7 @@ fun ClokTheme(
                 }
             }
             WindowCompat.setDecorFitsSystemWindows(window, false)
+
 
         }
     }

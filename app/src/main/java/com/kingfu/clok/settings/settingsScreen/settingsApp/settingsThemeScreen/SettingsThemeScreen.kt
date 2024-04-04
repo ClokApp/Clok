@@ -17,6 +17,7 @@ import com.kingfu.clok.ui.theme.RoundedCornerFooter
 import com.kingfu.clok.ui.theme.RoundedCornerHeader
 import com.kingfu.clok.ui.theme.TextBodyLarge
 import com.kingfu.clok.ui.theme.TextBodyMediumHeading
+import com.kingfu.clok.ui.theme.ThemeType
 import com.kingfu.clok.ui.theme.themeBackgroundColor
 import com.kingfu.clok.ui.util.screenHeight
 

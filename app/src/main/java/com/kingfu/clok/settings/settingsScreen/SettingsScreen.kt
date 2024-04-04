@@ -34,8 +34,7 @@ fun SettingsScreen(
         goToSettingsStopwatchLabelStyles = { goToSettingsStopwatchLabelStyles() },
         stopwatchSetShowLabelCheckState = { settingsViewModelStopwatch.toggleStopwatchIsShowLabel() },
         saveStopwatchShowLabel = { settingsViewModelStopwatch.saveStopwatchShowLabel() },
-//        updateStopwatchRefreshRateValue = { refreshRate: Float ->
-        updateStopwatchRefreshRateValue = { refreshRate: Long ->
+        updateStopwatchRefreshRateValue = { refreshRate: Float ->
             settingsViewModelStopwatch.updateStopwatchRefreshRateValue(refreshRate = refreshRate)
         },
         saveStopwatchRefreshRateValue = { settingsViewModelStopwatch.saveStopwatchRefreshRateValue() },

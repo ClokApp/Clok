@@ -23,7 +23,7 @@ import com.kingfu.clok.bugReport.BugReportScreen
 import com.kingfu.clok.navigation.Screen
 import com.kingfu.clok.navigation.topBar.CustomTopBar
 import com.kingfu.clok.navigation.topBar.LargeTopBar
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
+import com.kingfu.clok.ui.theme.ThemeType
 import kotlin.math.abs
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

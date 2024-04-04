@@ -10,9 +10,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kingfu.clok.navigation.Screen
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
-import com.kingfu.clok.stopwatch.stopwatchScreen.StopwatchScreen
-import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
+import com.kingfu.clok.ui.theme.ThemeType
+import com.kingfu.clok.stopwatch.screen.StopwatchScreen
+import com.kingfu.clok.stopwatch.viewModel.StopwatchViewModel
 
 
 fun NavGraphBuilder.stopwatchGraph(

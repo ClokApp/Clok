@@ -23,7 +23,7 @@ import com.kingfu.clok.navigation.Screen
 import com.kingfu.clok.navigation.topBar.CustomTopBar
 import com.kingfu.clok.navigation.topBar.LargeTopBar
 import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.SettingsThemeScreen
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
+import com.kingfu.clok.ui.theme.ThemeType
 import com.kingfu.clok.settings.viewModel.settingsViewModel.SettingsViewModel
 import kotlin.math.abs
 

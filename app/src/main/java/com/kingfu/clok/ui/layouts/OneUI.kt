@@ -25,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kingfu.clok.R
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
 import com.kingfu.clok.ui.components.MyCard
 import com.kingfu.clok.ui.components.MyHorizontalDivider
 import com.kingfu.clok.ui.components.MyIcon
@@ -40,6 +39,7 @@ import com.kingfu.clok.ui.theme.TextBodyLarge
 import com.kingfu.clok.ui.theme.TextBodyMedium
 import com.kingfu.clok.ui.theme.TextBodyMediumHeading
 import com.kingfu.clok.ui.theme.TextTitleMedium
+import com.kingfu.clok.ui.theme.ThemeType
 import com.kingfu.clok.ui.theme.themeBackgroundColor
 
 @Composable

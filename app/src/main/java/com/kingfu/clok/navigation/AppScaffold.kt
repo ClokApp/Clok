@@ -1,5 +1,6 @@
 package com.kingfu.clok.navigation
 
+import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
@@ -21,7 +22,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Transparent
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -32,18 +32,18 @@ import com.kingfu.clok.repository.preferencesDataStore.NavigationPreferences
 import com.kingfu.clok.repository.preferencesDataStore.StopwatchPreferences
 import com.kingfu.clok.repository.preferencesDataStore.TimerPreferences
 import com.kingfu.clok.repository.room.stopwatchRoom.StopwatchLapDatabase
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
 import com.kingfu.clok.settings.viewModel.settingsViewModel.SettingsViewModel
 import com.kingfu.clok.settings.viewModel.settingsViewModelStopwatch.SettingsViewModelStopwatch
 import com.kingfu.clok.settings.viewModel.settingsViewModelTimer.SettingsViewModelTimer
-import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchFactory
-import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
-import com.kingfu.clok.timer.timerViewModel.TimerFactory
-import com.kingfu.clok.timer.timerViewModel.TimerViewModel
+import com.kingfu.clok.stopwatch.viewModel.StopwatchFactory
+import com.kingfu.clok.stopwatch.viewModel.StopwatchViewModel
+import com.kingfu.clok.timer.viewModel.TimerFactory
+import com.kingfu.clok.timer.viewModel.TimerViewModel
+import com.kingfu.clok.ui.theme.ThemeType
 import com.kingfu.clok.ui.util.isPortrait
 import com.kingfu.clok.ui.util.showSnackBar
-import com.kingfu.clok.variable.Variable.isShowSnackbar
-import com.kingfu.clok.variable.Variable.isShowTimerNotification
+import com.kingfu.clok.util.Variable.isShowSnackbar
+import com.kingfu.clok.util.Variable.isShowTimerNotification
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -51,13 +51,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun AppScaffold(
     settingsViewModel: SettingsViewModel,
-    theme: ThemeType
+    theme: ThemeType,
+    context: Context
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val currentRoute = currentDestination?.route
-    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     var isShowMenu by rememberSaveable { mutableStateOf(value = false) }
     val coroutine = rememberCoroutineScope()
@@ -66,19 +66,12 @@ fun AppScaffold(
         stopwatchLapDatabase = StopwatchLapDatabase.getInstance(context = context)
     )
     val timerFactory = TimerFactory(timerPreferences = TimerPreferences.getInstance(context = context))
-
     val stopwatchViewModel: StopwatchViewModel = viewModel(factory = stopwatchFactory)
-
     val timerViewModel: TimerViewModel = viewModel(factory = timerFactory)
-
     val settingsViewModelStopwatch: SettingsViewModelStopwatch = viewModel(factory = stopwatchFactory)
-
     val settingsViewModelTimer: SettingsViewModelTimer = viewModel(factory = timerFactory)
-
     val navigationPreferences: NavigationPreferences = NavigationPreferences.getInstance(context = context)
-
     val screens = listOf(Screen.Stopwatch, Screen.Timer)
-
     val floatAnimation = remember { Animatable(initialValue = 0f) }
     val animateFloatAnimation = {
         coroutine.launch {
@@ -101,7 +94,6 @@ fun AppScaffold(
             restoreState = true
         }
     }
-
     val goToTimer = {
         animateFloatAnimation()
         navController.navigate(route = Screen.Timer.route) {
@@ -112,7 +104,6 @@ fun AppScaffold(
             restoreState = true
         }
     }
-
     val goToSettingsScreen = { navController.navigate(route = Screen.Settings.route) }
     val goToBugReportScreen = { navController.navigate(route = Screen.BugReport.route) }
     val isNavigationVisible = (currentRoute == Screen.Stopwatch.route || currentRoute == Screen.Timer.route)
@@ -120,7 +111,6 @@ fun AppScaffold(
         targetValue = if (isShowMenu) 90f else 0f,
         label = ""
     )
-
     val enter =  fadeIn(animationSpec = tween(durationMillis = 200))
     val exit = fadeOut(animationSpec = tween(durationMillis = 0))
 

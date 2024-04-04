@@ -15,8 +15,8 @@ import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import com.kingfu.clok.navigation.Screen
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
 import com.kingfu.clok.ui.theme.ClokTheme
+import com.kingfu.clok.ui.theme.ThemeType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

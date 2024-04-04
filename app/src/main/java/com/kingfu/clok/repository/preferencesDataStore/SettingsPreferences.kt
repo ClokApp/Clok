@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
+import com.kingfu.clok.ui.theme.ThemeType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

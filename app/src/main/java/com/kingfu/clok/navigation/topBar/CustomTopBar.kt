@@ -29,9 +29,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kingfu.clok.navigation.Screen
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
 import com.kingfu.clok.ui.theme.ClokTheme
 import com.kingfu.clok.ui.theme.TextBodyLarge
+import com.kingfu.clok.ui.theme.ThemeType
 import com.kingfu.clok.ui.theme.themeBackgroundColor
 import com.kingfu.clok.ui.theme.typography
 import kotlin.math.abs

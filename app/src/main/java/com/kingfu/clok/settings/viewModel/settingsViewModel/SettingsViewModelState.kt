@@ -1,8 +1,8 @@
 package com.kingfu.clok.settings.viewModel.settingsViewModel
 
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
+import com.kingfu.clok.ui.theme.ThemeType
 import java.io.Serializable
 
 data class SettingsViewModelState(
-    val appTheme: ThemeType = ThemeType.System
+    val theme: ThemeType = ThemeType.System
 ) : Serializable

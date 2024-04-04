@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
 import com.kingfu.clok.repository.preferencesDataStore.SettingsPreferences
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
+import com.kingfu.clok.ui.theme.ThemeType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -28,17 +28,17 @@ class SettingsViewModel(
     }
 
     fun updateAppTheme(theme: ThemeType) {
-        state = state.copy(appTheme = theme)
+        state = state.copy(theme = theme)
     }
 
-    fun saveAppTheme(){
+    fun saveAppTheme() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            settingsPreferences.setAppTheme(string = state.appTheme.name)
+            settingsPreferences.setAppTheme(string = state.theme.name)
         }
     }
 
     private suspend fun loadAllData() {
-        state = state.copy(appTheme = enumValueOf(settingsPreferences.getAppTheme.first()))
+        state = state.copy(theme = enumValueOf(name = settingsPreferences.getAppTheme.first()))
     }
 
 

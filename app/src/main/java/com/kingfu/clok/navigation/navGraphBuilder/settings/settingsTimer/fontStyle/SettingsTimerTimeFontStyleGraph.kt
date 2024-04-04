@@ -22,7 +22,7 @@ import androidx.navigation.compose.composable
 import com.kingfu.clok.navigation.Screen
 import com.kingfu.clok.navigation.topBar.CustomTopBar
 import com.kingfu.clok.navigation.topBar.LargeTopBar
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
+import com.kingfu.clok.ui.theme.ThemeType
 import com.kingfu.clok.settings.settingsScreen.settingsTimerScreen.fontStyle.SettingsTimerTimeFontStyleScreen
 import com.kingfu.clok.settings.viewModel.settingsViewModelTimer.SettingsViewModelTimer
 import kotlin.math.abs

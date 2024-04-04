@@ -5,12 +5,13 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import com.kingfu.clok.MainActivity
 import com.kingfu.clok.R
-import com.kingfu.clok.variable.Variable.isShowSnackbar
-import com.kingfu.clok.variable.Variable.isShowTimerNotification
+import com.kingfu.clok.util.Variable.isShowSnackbar
+import com.kingfu.clok.util.Variable.isShowTimerNotification
 
 const val TIMER_NAME = "Timer Notification"
 
@@ -32,7 +33,8 @@ class TimerNotificationService(
         val channel = NotificationChannel(
             TIMER_CHANNEL_ID,
             TIMER_NAME,
-            NotificationManager.IMPORTANCE_DEFAULT
+//            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_HIGH
         )
 
         val notificationManager =
@@ -63,9 +65,12 @@ class TimerNotificationService(
 //            .setContentTitle("Timer for ${formatTimerTimeForNotification(timerTotalTime.toLong())}")
             .setContentText("Timer is finished!")
             .setContentIntent(activityPendingIntent)
-            .addAction(R.drawable.ic_round_hourglass_empty_24, "Close", closeIntent)
-            .setColor(Color.argb(255, 135, 215, 186))
+            .addAction(R.drawable.baseline_close_24, "Close", closeIntent)
+//            .setColor(Color.argb(255, 0, 0, 0))
+            .setColor(Black.toArgb())
+            .setPriority(NotificationManager.IMPORTANCE_MAX)
             .build()
+
 
         notificationManager.notify(NOTIFICATION_ID, notification)
     }

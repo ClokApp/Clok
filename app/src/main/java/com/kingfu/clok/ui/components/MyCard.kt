@@ -18,11 +18,11 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
 import com.kingfu.clok.ui.theme.ClokTheme
 import com.kingfu.clok.ui.theme.RoundedCornerBody
 import com.kingfu.clok.ui.theme.Shape
 import com.kingfu.clok.ui.theme.TextBodyLarge
+import com.kingfu.clok.ui.theme.ThemeType
 
 
 @Composable

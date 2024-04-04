@@ -10,9 +10,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kingfu.clok.navigation.Screen
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
-import com.kingfu.clok.timer.timerScreen.TimerScreen
-import com.kingfu.clok.timer.timerViewModel.TimerViewModel
+import com.kingfu.clok.ui.theme.ThemeType
+import com.kingfu.clok.timer.screen.TimerScreen
+import com.kingfu.clok.timer.viewModel.TimerViewModel
 
 
 fun NavGraphBuilder.timerGraph(

@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
 
 // Dark Theme
 val darkOnTertiaryContainer = Color(color = 0xFFBCECE5)
@@ -99,7 +98,7 @@ fun themeBackgroundColor(
 
 @OptIn(ExperimentalStdlibApi::class)
 @Composable
-fun GetAllThemeColorARGB(): String {
+fun getAllThemeColorARGB(): String {
 
     var allColorsARGB = ""
 

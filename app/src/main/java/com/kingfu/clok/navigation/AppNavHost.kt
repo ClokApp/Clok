@@ -24,14 +24,14 @@ import com.kingfu.clok.navigation.navGraphBuilder.settings.settingsTimer.setting
 import com.kingfu.clok.navigation.navGraphBuilder.stopwatch.stopwatchGraph
 import com.kingfu.clok.navigation.navGraphBuilder.timer.timerGraph
 import com.kingfu.clok.repository.preferencesDataStore.NavigationPreferences
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
 import com.kingfu.clok.settings.viewModel.settingsViewModel.SettingsViewModel
 import com.kingfu.clok.settings.viewModel.settingsViewModelStopwatch.SettingsViewModelStopwatch
 import com.kingfu.clok.settings.viewModel.settingsViewModelTimer.SettingsViewModelTimer
-import com.kingfu.clok.stopwatch.stopwatchViewModel.StopwatchViewModel
-import com.kingfu.clok.timer.timerViewModel.TimerViewModel
-import com.kingfu.clok.variable.Variable.navigateToStartScreen
-import com.kingfu.clok.variable.Variable.startDestination
+import com.kingfu.clok.stopwatch.viewModel.StopwatchViewModel
+import com.kingfu.clok.timer.viewModel.TimerViewModel
+import com.kingfu.clok.ui.theme.ThemeType
+import com.kingfu.clok.util.Variable.navigateToStartScreen
+import com.kingfu.clok.util.Variable.startDestination
 import kotlinx.coroutines.flow.first
 
 

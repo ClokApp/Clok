@@ -6,13 +6,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.kingfu.clok.stopwatch.feature.fontStyle.StopwatchFontStyleType
-import com.kingfu.clok.stopwatch.feature.labelBackgroundEffects.StopwatchLabelBackgroundEffectType
-import com.kingfu.clok.stopwatch.feature.labelStyle.StopwatchLabelStyleType
+import com.kingfu.clok.stopwatch.util.fontStyle.StopwatchFontStyleType
+import com.kingfu.clok.stopwatch.util.labelBackgroundEffects.StopwatchLabelBackgroundEffectType
+import com.kingfu.clok.stopwatch.util.labelStyle.StopwatchLabelStyleType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -38,7 +39,7 @@ class StopwatchPreferences private constructor(context: Context) {
     private val stopwatchDataStore: DataStore<Preferences> = context.stopwatchDataStore
 
     private val stopwatchTimeDefault = 0L
-    private val stopwatchRefreshRateDefault = 55L
+    private val stopwatchRefreshRateDefault = 55f
     private val stopwatchIsShowLabelDefault = true
     private val stopwatchLapPreviousTimeDefault = 0L
     private val stopwatchLabelStyleDefault = StopwatchLabelStyleType.DynamicColor.name
@@ -52,7 +53,7 @@ class StopwatchPreferences private constructor(context: Context) {
     private val stopwatchLongestLapIndexDefault = 0
 
     private val _stopwatchTime = longPreferencesKey(name = "stopwatchTime")
-    private val _stopwatchRefreshRate = longPreferencesKey(name = "stopwatchRefreshRate")
+    private val _stopwatchRefreshRate = floatPreferencesKey(name = "stopwatchRefreshRate")
     private val _stopwatchIsShowLabel = booleanPreferencesKey(name = "stopwatchIsShowLabel")
     private val _stopwatchLapPreviousTime = longPreferencesKey(name = "stopwatchLapPreviousTime")
     private val _stopwatchLabelStyle = stringPreferencesKey(name = "stopwatchLabelStyle")
@@ -85,8 +86,10 @@ class StopwatchPreferences private constructor(context: Context) {
     }
 
     //    suspend fun setStopwatchRefreshRate(float: Float) {
-    suspend fun setStopwatchRefreshRate(long: Long) {
-        stopwatchDataStore.edit { it[_stopwatchRefreshRate] = long }
+    suspend fun setStopwatchRefreshRate(float: Float) {
+        stopwatchDataStore.edit { preferences ->
+            preferences[_stopwatchRefreshRate] = float
+        }
     }
 
     suspend fun setStopwatchIsShowLabel(boolean: Boolean) {
@@ -162,7 +165,7 @@ class StopwatchPreferences private constructor(context: Context) {
             preferences[_stopwatchTime] ?: stopwatchTimeDefault
         }
 
-    val getStopwatchRefreshRate: Flow<Long> = stopwatchDataStore.data
+    val getStopwatchRefreshRate: Flow<Float> = stopwatchDataStore.data
         .map { preferences ->
             preferences[_stopwatchRefreshRate] ?: stopwatchRefreshRateDefault
         }

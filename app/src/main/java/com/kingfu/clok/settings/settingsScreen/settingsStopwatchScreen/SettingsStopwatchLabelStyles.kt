@@ -10,8 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.kingfu.clok.R
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
-import com.kingfu.clok.stopwatch.feature.labelStyle.StopwatchLabelStyleType
+import com.kingfu.clok.stopwatch.util.labelStyle.StopwatchLabelStyleType
 import com.kingfu.clok.ui.components.MyHorizontalDivider
 import com.kingfu.clok.ui.components.MyRadioButton
 import com.kingfu.clok.ui.layouts.OneUI
@@ -21,6 +20,7 @@ import com.kingfu.clok.ui.theme.RoundedCornerHeader
 import com.kingfu.clok.ui.theme.TextBodyLarge
 import com.kingfu.clok.ui.theme.TextBodyMedium
 import com.kingfu.clok.ui.theme.TextBodyMediumHeading
+import com.kingfu.clok.ui.theme.ThemeType
 import com.kingfu.clok.ui.util.screenHeight
 
 @Composable

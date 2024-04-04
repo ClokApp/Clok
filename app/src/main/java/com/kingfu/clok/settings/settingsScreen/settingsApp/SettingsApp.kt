@@ -4,12 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.kingfu.clok.R
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
 import com.kingfu.clok.ui.layouts.OneUI
 import com.kingfu.clok.ui.theme.ClokTheme
 import com.kingfu.clok.ui.theme.RoundedCornerHeaderAndFooter
 import com.kingfu.clok.ui.theme.TextBodyLarge
 import com.kingfu.clok.ui.theme.TextBodyMediumHeading
+import com.kingfu.clok.ui.theme.ThemeType
 
 
 @Composable

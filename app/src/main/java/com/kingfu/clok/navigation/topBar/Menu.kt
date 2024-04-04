@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.kingfu.clok.R
-import com.kingfu.clok.settings.settingsScreen.settingsApp.settingsThemeScreen.ThemeType
+import com.kingfu.clok.ui.theme.ThemeType
 import com.kingfu.clok.ui.theme.ClokTheme
 import com.kingfu.clok.ui.theme.Shape
 import com.kingfu.clok.ui.theme.TextBodyLarge

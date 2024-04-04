@@ -25,8 +25,6 @@ class SettingsViewModelStopwatch(
         }
     }
 
-
-
     fun updateStopwatchLabelStyle(string: String) {
         state = state.copy(stopwatchLabelStyle = string)
     }
@@ -35,7 +33,7 @@ class SettingsViewModelStopwatch(
         state = state.copy(stopwatchLabelBackgroundEffects = string)
     }
 
-    fun updateStopwatchRefreshRateValue(refreshRate: Long) {
+    fun updateStopwatchRefreshRateValue(refreshRate: Float) {
         state = state.copy(stopwatchRefreshRateValue = refreshRate)
     }
 
@@ -57,7 +55,7 @@ class SettingsViewModelStopwatch(
 
     fun saveStopwatchRefreshRateValue() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            stopwatchPreferences.setStopwatchRefreshRate(long = state.stopwatchRefreshRateValue)
+            stopwatchPreferences.setStopwatchRefreshRate(float = state.stopwatchRefreshRateValue)
         }
     }
 
