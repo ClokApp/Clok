@@ -1,131 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Clok</string>
+    <string name="app_name"> Clok </string>
+    <string name="privacy"> Quyền riêng tư </string>
+    <string name="privacy_policy"> Chính sách quyền riêng tư </string>
+    <string name="theme"> Giao diện </string>
+    <string name="app"> Ứng dụng </string>
+    <string name="about"> Giới thiệu </string>
+    <string name="full_screen"> Toàn màn hình </string>
+    <string name="dark">Tối</string>
+    <string name="light">Sáng</string>
+    <string name="system">Hệ thống</string>
+    <string name="settings_name_id"> Cài đặt </string>
+    <string name="stopwatch_name_id"> Đồng hồ bấm giờ </string>
+    <string name="timer_name_id"> Hẹn giờ </string>
+    <string name="settings_theme_name_id"> Giao diện </string>
+    <string name="stopwatch_lap"> Vòng </string>
+    <string name="stopwatch_lap_time"> Thời gian vòng </string>
+    <string name="stopwatch_lap_total_time"> Tổng thời gian </string>
+    <string name="reset"> Đặt lại </string>
+    <string name="lap"> Vòng </string>
+    <string name="start"> Bắt đầu </string>
+    <string name="pause"> Tạm dừng </string>
+    <string name="timer_edit_hour"> giờ </string>
+    <string name="timer_edit_screen_minutes"> phút </string>
+    <string name="timer_edit_screen_seconds"> giây </string>
+    <string name="cancel"> Hủy bỏ </string>
 
-    <!-- Variable -->
-    <string name="variable_rgb">Màu RGB</string>
-    <string name="variable_dynamic_color">Màu Động</string>
-    <string name="variable_dark">Tối</string>
-    <string name="variable_light">Sáng</string>
-    <string name="variable_system">Hệ thống</string>
-
-    <!-- Bug Report Screen -->
-    <string name="discord">Discord</string>
-    <string name="discord_report_bug">Báo cáo lỗi qua máy chủ Discord của Clok</string>
-    <string name="email">Email</string>
-    <string name="bug_report_email">ClokBugReport@gmail.com</string>
-    <string name="discord_invite_link">https://discord.gg/wssjhZavc2</string>
-    <string name="send_an_email_to">Gửi email đến</string>
-    <string name="potential_bug_fix">Khắc phục lỗi tiềm năng</string>
-    <string name="clear_app_data">Xóa dữ liệu ứng dụng</string>
-    <string name="clear_app_data_instructions">1. Mở ứng dụng Cài đặt trên điện thoại của bạn\n2. Chạm vào tùy chọn "Ứng dụng" hoặc "Quản lý ứng dụng"\n3. Tìm ứng dụng bạn muốn xóa dữ liệu và chạm vào nó\n4. Chạm vào nút "Xóa dữ liệu" (có thể cần vào tab Bộ nhớ trước)\n5. Xác nhận bạn muốn xóa dữ liệu ứng dụng bằng cách chạm "OK" trong hộp thoại xuất hiện\n\nLưu ý: Việc xóa dữ liệu ứng dụng sẽ xóa bất kỳ cá nhân hóa và tùy chỉnh nào bạn đã thực hiện trong ứng dụng\n\nLựa chọn cuối cùng sẽ là cài đặt lại ứng dụng</string>
-
-    <!-- Settings Privacy -->
-    <string name="privacy">Quyền riêng tư</string>
-    <string name="privacy_policy">Chính sách quyền riêng tư</string>
-    <string name="privacy_policy_link">https://github.com/ClokApp/Clok-Support/blob/main/Privacy%20Policy.md</string>
-
-    <!-- Settings Theme -->
-    <string name="theme">Giao diện</string>
-
-    <!-- Settings App -->
-    <string name="app">Ứng dụng</string>
-
-    <!-- Settings Screen -->
-    <string name="settings_screen_default_font_style">Mặc định</string>
-    <string name="settings_screen_inner_stroke_font_style">Đường viền trong</string>
-
-    <!-- Settings Stopwatch Screen -->
-    <string name="settings_stopwatch_screen_show_label">Hiển thị nhãn</string>
-    <string name="settings_stopwatch_label_background_effects_description">Kích hoạt khi hiển thị nhãn và bộ đếm đang chạy</string>
-    <string name="settings_stopwatch_refresh_rate">Tốc độ làm mới bộ đếm thời gian</string>
-    <string name="settings_stopwatch_refresh_rate_description">Độ trễ trước khi làm mới bộ đếm thời gian</string>
-    <string name="settings_stopwatch_screen_ms_delay">ms trễ</string>
-    <string name="settings_stopwatch_screen_none">Không</string>
-    <string name="settings_stopwatch_screen_snow">Tuyết</string>
-    <string name="settings_stopwatch_rgb_label_style_description">Thay đổi theo tốc độ làm mới của bộ đếm thời gian</string>
-    <string name="settings_stopwatch_dynamic_color_label_style_description">Có sẵn trên Android 12+</string>
-    <string name="settings_stopwatch_radio_option_label">Nhãn</string>
-    <string name="settings_stopwatch_radio_option_time">Thời gian</string>
-    <string name="settings_stopwatch_radio_option_lap_time">Thời gian vòng</string>
-    <string name="settings_stopwatch_label_style_dynamic_color">Màu Động</string>
-
-    <!-- Settings Timer Screen -->
-    <string name="settings_timer_progress_bar_background_effect_description">Kích hoạt khi thanh tiến trình hiển thị và đếm ngược đang chạy</string>
-    <string name="settings_timer_count_overtime_error_description">Kích hoạt khi đếm ngược đang trong chế độ chỉnh sửa</string>
-    <string name="settings_timer_count_overtime">Đếm thời gian vượt quá</string>
-    <string name="settings_timer_count_overtime_description">Tiếp tục đếm sau khi thời gian đếm ngược đã kết thúc</string>
-    <string name="settings_timer_scrolls_haptic_feedback">Phản hồi xúc giác cuộn</string>
-    <string name="settings_timer_notification">Thông báo</string>
-    <string name="settings_timer_notification_description">Thông báo sẽ được gửi khi đếm ngược kết thúc</string>
-    <string name="settings_timer_progress_bar_title">thông báo</string>
-    <string name="settings_timer_screen_strong_haptic">Mạnh</string>
-    <string name="settings_timer_weak_haptic">Yếu</string>
-    <string name="settings_timer_off_haptic">Tắt</string>
-    <string name="settings_timer_radio_option_scrolls">Cuộn</string>
-    <string name="settings_timer_radio_option_time">Thời gian</string>
-    <string name="settings_timer_label_style_dynamic_color">Màu Động</string>
-    <string name="settings_timer_dynamic_color_label_style_description">Có sẵn trên Android 12+</string>
-
-    <!-- Screen -->
-    <string name="bug_report_name_id">Báo cáo lỗi</string>
-    <string name="settings_name_id">Cài đặt</string>
-    <string name="stopwatch_name_id">Đồng hồ</string>
-    <string name="settings_stopwatch_label_styles_name_id">Kiểu nhãn</string>
-    <string name="label_background_effects_name_id">Hiệu ứng nền nhãn</string>
-    <string name="timer_name_id">Hẹn giờ</string>
-    <string name="settings_timer_progress_bar_background_effects_name_id">Hiệu ứng nền thanh tiến trình</string>
-    <string name="settings_timer_progress_bar_styles_name_id">Kiểu thanh tiến trình</string>
-    <string name="settings_timer_font_styles_name_id">Kiểu phông</string>
-    <string name="settings_timer_time_font_style_name_id">Thời gian</string>
-    <string name="settings_timer_scrolls_font_style_name_id">Cuộn</string>
-    <string name="settings_timer_scrolls_haptic_feedback_name_id">Phản hồi xúc giác cuộn</string>
-    <string name="settings_stopwatch_font_styles_name_id">Kiểu phông</string>
-    <string name="settings_stopwatch_label_font_style_name_id">Nhãn</string>
-    <string name="settings_stopwatch_Time_font_style_name_id">Thời gian</string>
-    <string name="settings_stopwatch_lap_time_font_style_name_id">Thời gian vòng</string>
-    <string name="settings_theme_name_id">Giao diện</string>
-
-    <!-- Stopwatch Lap Screen -->
-    <string name="stopwatch_lap_screen_lap">Vòng</string>
-    <string name="stopwatch_lap_screen_lap_time">Thời gian vòng</string>
-    <string name="stopwatch_lap_screen_total_time">Tổng thời gian</string>
-
-    <!-- Stopwatch Reset Button -->
-    <string name="stopwatch_reset_button_reset">Đặt lại</string>
-    <string name="stopwatch_reset_button_lap">Vòng</string>
-
-    <!-- Stopwatch Start Button -->
-    <string name="stopwatch_start_button_start">Bắt đầu</string>
-    <string name="stopwatch_start_button_pause">Tạm dừng</string>
-
-    <!-- Stopwatch Time Component -->
-    <string name="stopwatch_time_component_hr">giờ</string>
-    <string name="stopwatch_time_component_min">phút</string>
-    <string name="stopwatch_time_component_sec">giây</string>
-    <string name="stopwatch_time_component_ms">ms</string>
-
-    <!-- Stopwatch Font Style -->
-    <string name="stopwatch_font_style_inner_stroke_style">Đường viền trong</string>
-
-    <!-- Timer Font Style -->
-    <string name="timer_font_style_inner_stroke_style">Đường viền trong</string>
-
-    <!-- Timer Edit Screen -->
-    <string name="timer_edit_screen_hours">giờ</string>
-    <string name="timer_edit_screen_minutes">phút</string>
-    <string name="timer_edit_screen_seconds">giây</string>
-    <string name="timer_edit_screen_strong">Mạnh</string>
-    <string name="timer_edit_screen_weak">Yếu</string>
-
-    <!-- Timer Reset Button -->
-    <string name="timer_reset_button_reset">Đặt lại</string>
-    <string name="timer_reset_button_cancel">Hủy</string>
-
-    <!-- Timer Start Button -->
-    <string name="timer_start_button_start">Bắt đầu</string>
-    <string name="timer_start_button_pause">Tạm dừng</string>
-
-    <!-- Timer Time Screen -->
-    <string name="timer_time_screen_snow">Tuyết</string>
 </resources>

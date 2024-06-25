@@ -1,7 +1,6 @@
 package com.kingfu.clok.ui.theme
 
 import android.app.Activity
-import android.content.res.Configuration
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -13,12 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.kingfu.clok.core.ThemeType
 
 
 private val darkColorScheme = darkColorScheme(
@@ -102,38 +101,38 @@ private val lightColorScheme = lightColorScheme(
 
 @Composable
 fun ClokTheme(
-//    darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     theme: ThemeType,
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit,
+    isFullScreen: Boolean = false,
 ) {
-
-    val configuration = LocalConfiguration.current
-    val orientation = configuration.orientation
 
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             when (theme) {
-                ThemeType.Dark -> dynamicDarkColorScheme(context)
-                ThemeType.Light -> dynamicLightColorScheme(context)
-                ThemeType.System -> if (isSystemInDarkTheme()) dynamicDarkColorScheme(context) else dynamicLightColorScheme(
-                    context
-                )
+                ThemeType.DARK -> dynamicDarkColorScheme(context)
+                ThemeType.LIGHT -> dynamicLightColorScheme(context)
+                ThemeType.SYSTEM -> if (isSystemInDarkTheme()){
+                    dynamicDarkColorScheme(context)
+                } else{
+                    dynamicLightColorScheme(context)
+                }
             }
         }
 
-        (theme == ThemeType.Dark) -> darkColorScheme
-        (theme == ThemeType.Light) -> lightColorScheme
+        (theme == ThemeType.DARK) -> darkColorScheme
+        (theme == ThemeType.LIGHT) -> lightColorScheme
         else -> if (isSystemInDarkTheme()) darkColorScheme else lightColorScheme
     }
 
+
     val view = LocalView.current
     val isLightStatusBar = when (theme) {
-        ThemeType.Dark -> if (isSystemInDarkTheme()) !isSystemInDarkTheme() else isSystemInDarkTheme()
-        ThemeType.Light -> if (isSystemInDarkTheme()) isSystemInDarkTheme() else !isSystemInDarkTheme()
-        ThemeType.System -> !isSystemInDarkTheme()
+        ThemeType.DARK -> if (isSystemInDarkTheme()) !isSystemInDarkTheme() else isSystemInDarkTheme()
+        ThemeType.LIGHT -> if (isSystemInDarkTheme()) isSystemInDarkTheme() else !isSystemInDarkTheme()
+        ThemeType.SYSTEM -> !isSystemInDarkTheme()
     }
     if (!view.isInEditMode) {
         SideEffect {
@@ -152,17 +151,22 @@ fun ClokTheme(
 
             val insetsController = WindowCompat.getInsetsController(window, window.decorView)
 
-            if(orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if(isFullScreen) {
                 insetsController.apply {
                     hide(WindowInsetsCompat.Type.statusBars())
                     hide(WindowInsetsCompat.Type.navigationBars())
                     systemBarsBehavior =
                         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 }
+            }else{
+                insetsController.apply {
+                    show(WindowInsetsCompat.Type.statusBars())
+                    show(WindowInsetsCompat.Type.navigationBars())
+                    systemBarsBehavior =
+                        WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
+                }
             }
             WindowCompat.setDecorFitsSystemWindows(window, false)
-
-
         }
     }
 
@@ -171,7 +175,6 @@ fun ClokTheme(
         typography = typography,
         content = content
     )
-
 
 
 }

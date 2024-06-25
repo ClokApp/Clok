@@ -1,0 +1,64 @@
+[versions]
+activityCompose = "1.9.0"
+animationAndroid = "1.6.8"
+appcompat = "1.7.0"
+coreKtx = "1.13.1"
+coreSplashscreen = "1.0.1"
+datastorePreferences = "1.1.1"
+espressoCore = "3.5.1"
+foundationAndroid = "1.6.8"
+junit = "4.13.2"
+junitVersion = "1.1.5"
+lifecycleRuntimeKtx = "2.8.2"
+material3 = "1.2.1"
+materialIconsExtended = "1.6.8"
+navigationCompose = "2.7.7"
+roomRuntime = "2.6.1"
+rules = "1.5.0"
+runtimeAndroid = "1.6.8"
+uiToolingPreview = "1.6.8"
+agp = "8.5.0"
+kotlin = "2.0.0"
+googleServices = "4.4.2"
+ksp = "2.0.0-1.0.21"
+
+
+[libraries]
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-animation-android = { module = "androidx.compose.animation:animation-android", version.ref = "animationAndroid" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
+androidx-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundationAndroid" }
+androidx-foundation-android = { module = "androidx.compose.foundation:foundation-android", version.ref = "foundationAndroid" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
+androidx-runtime-android = { module = "androidx.compose.runtime:runtime-android", version.ref = "runtimeAndroid" }
+androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "uiToolingPreview" }
+androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "uiToolingPreview" }
+androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiToolingPreview" }
+androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "uiToolingPreview" }
+androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
+junit = { module = "junit:junit", version.ref = "junit" }
+
+
+[plugins]
+androidApplication = {id = "com.android.application", version.ref = "agp"}
+jetbrainsKotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin"}
+googleServices = {id = "com.google.gms.google-services", version.ref = "googleServices"}
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
+
+
+
+

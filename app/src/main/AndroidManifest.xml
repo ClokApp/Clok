@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name="com.kingfu.clok.notification.timer.TimerNotificationReceiver"
+            android:name="com.kingfu.clok.timer.notification.TimerNotificationReceiver"
             android:exported="false" />
     </application>
 

@@ -1,6 +1,5 @@
 package com.kingfu.clok
 
-import com.kingfu.clok.util.formatTimeMs
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -15,10 +14,6 @@ class ExampleUnitTest {
         assertEquals( 4, 2 + 2)
     }
 
-    @Test
-    fun formatMs(){
-        assertEquals( "00" , 1000L.formatTimeMs())
-    }
 
 
 

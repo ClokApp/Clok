@@ -1,136 +1,28 @@
 <resources>
     <string name="app_name"> Clok </string>
-
-    <!--    Variable-->
-    <string name="variable_rgb"> RGB </string>
-    <string name="variable_dynamic_color"> Dynamic Color </string>
-    <string name="variable_dark"> Dark </string>
-    <string name="variable_light"> Light </string>
-    <string name="variable_system"> System </string>
-
-
-    <!--    Bug Report Screen-->
-    <string name="discord"> Discord </string>
-    <string name="discord_report_bug"> Report bug via Clok\'s Discord server </string>
-    <string name="email"> Email </string>
-    <string name="bug_report_email"> ClokBugReport@gmail.com </string>
-    <string name="discord_invite_link"> https://discord.gg/wssjhZavc2 </string>
-    <string name="send_an_email_to"> Send an email to </string>
-    <string name="potential_bug_fix"> Potential bug fix </string>
-    <string name="clear_app_data"> Clear App Data </string>
-    <string name="clear_app_data_instructions">1. Go to your phone\'s Settings app\n2. Tap on the "Apps" or "Application Manager" option\n3. Find the app you want to clear data for and tap on it\n4. Tap on the "Clear Data" button (might have to go to storage tab first)\n5. Confirm that you want to clear the app data by tapping "OK" on the pop-up window\n\nNote: Clearing app data will erase any personalization and customization that you have done within the app\n\nLast resort would be reinstall the application</string>
-
-    <!--    Settings Privacy-->
     <string name="privacy"> Privacy </string>
     <string name="privacy_policy"> Privacy policy </string>
-    <string name="privacy_policy_link"> https://github.com/ClokApp/Clok-Support/blob/main/Privacy%20Policy.md </string>
-
-
-    <!--    Settings Theme-->
     <string name="theme"> Theme </string>
-
-    <!--    Settings App-->
     <string name="app"> App </string>
-
-    <!--    Settings Screen-->
-    <string name="settings_screen_default_font_style"> Default </string>
-    <string name="settings_screen_inner_stroke_font_style"> Inner stroke </string>
-
-    <!--    Settings Stopwatch Screen-->
-    <string name="settings_stopwatch_screen_show_label"> Show label </string>
-    <string name="settings_stopwatch_label_background_effects_description"> Enable when show label is turned on and stopwatch is running </string>
-    <string name="settings_stopwatch_refresh_rate"> Stopwatch refresh rate </string>
-    <string name="settings_stopwatch_refresh_rate_description"> Stopwatch is delayed before refreshing </string>
-    <string name="settings_stopwatch_screen_ms_delay"> ms delay </string>
-    <string name="settings_stopwatch_screen_none"> None </string>
-    <string name="settings_stopwatch_screen_snow"> Snow </string>
-    <string name="settings_stopwatch_rgb_label_style_description"> Scales with stopwatch refresh rate </string>
-    <string name="settings_stopwatch_dynamic_color_label_style_description"> Available on Android 12+ </string>
-    <string name="settings_stopwatch_radio_option_label"> Label </string>
-    <string name="settings_stopwatch_radio_option_time"> Time </string>
-    <string name="settings_stopwatch_radio_option_lap_time"> Lap time </string>
-    <string name="settings_stopwatch_label_style_dynamic_color"> Dynamic Color </string>
-
-
-    <!--    Settings Timer Screen-->
-    <string name="settings_timer_progress_bar_background_effect_description"> Enable when progress bar is visible and timer is running </string>
-    <string name="settings_timer_count_overtime_error_description"> Enabled when timer is in edit mode </string>
-    <string name="settings_timer_count_overtime"> Count overtime </string>
-    <string name="settings_timer_count_overtime_description"> Continue counting after the timer is finished </string>
-    <string name="settings_timer_scrolls_haptic_feedback"> Scrolls haptic feedback </string>
-    <string name="settings_timer_notification"> Notification </string>
-    <string name="settings_timer_notification_description"> Notifications will be sent when timer is finished </string>
-    <string name="settings_timer_progress_bar_title"> notification(s) </string>
-    <string name="settings_timer_screen_strong_haptic"> Strong </string>
-    <string name="settings_timer_weak_haptic"> Weak </string>
-    <string name="settings_timer_off_haptic"> off </string>
-    <string name="settings_timer_radio_option_scrolls"> Scrolls </string>
-    <string name="settings_timer_radio_option_time"> Time </string>
-    <string name="settings_timer_label_style_dynamic_color"> Dynamic Color </string>
-    <string name="settings_timer_dynamic_color_label_style_description"> Available on Android 12+ </string>
-
-
-    <!--    Screen-->
-    <string name="bug_report_name_id"> Bug report </string>
+    <string name="about"> About </string>
+    <string name="full_screen"> Full screen </string>
+    <string name="dark"> Dark </string>
+    <string name="light"> Light </string>
+    <string name="system"> System </string>
     <string name="settings_name_id"> Settings </string>
     <string name="stopwatch_name_id"> Stopwatch </string>
-    <string name="settings_stopwatch_label_styles_name_id"> Label styles </string>
-    <string name="label_background_effects_name_id"> Label background effects </string>
     <string name="timer_name_id"> Timer </string>
-    <string name="settings_timer_progress_bar_background_effects_name_id"> Progress bar background effects </string>
-    <string name="settings_timer_progress_bar_styles_name_id"> Progress bar styles </string>
-    <string name="settings_timer_font_styles_name_id"> Font styles </string>
-    <string name="settings_timer_time_font_style_name_id"> Time </string>
-    <string name="settings_timer_scrolls_font_style_name_id"> Scrolls </string>
-    <string name="settings_timer_scrolls_haptic_feedback_name_id"> Scrolls Haptic Feedback </string>
-    <string name="settings_stopwatch_font_styles_name_id"> Font styles </string>
-    <string name="settings_stopwatch_label_font_style_name_id"> Label </string>
-    <string name="settings_stopwatch_Time_font_style_name_id"> Time </string>
-    <string name="settings_stopwatch_lap_time_font_style_name_id"> Lap time </string>
     <string name="settings_theme_name_id"> Theme </string>
-
-    <!--    Stopwatch Lap Screen-->
-    <string name="stopwatch_lap_screen_lap"> Lap </string>
-    <string name="stopwatch_lap_screen_lap_time"> Lap time </string>
-    <string name="stopwatch_lap_screen_total_time"> Total time </string>
-
-    <!--    Stopwatch Reset Button-->
-    <string name="stopwatch_reset_button_reset"> Reset </string>
-    <string name="stopwatch_reset_button_lap"> Lap </string>
-
-    <!--    Stopwatch Start Button-->
-    <string name="stopwatch_start_button_start"> Start </string>
-    <string name="stopwatch_start_button_pause"> Pause </string>
-
-    <!--    Stopwatch Time Component-->
-    <string name="stopwatch_time_component_hr"> hr </string>
-    <string name="stopwatch_time_component_min"> min </string>
-    <string name="stopwatch_time_component_sec"> sec </string>
-    <string name="stopwatch_time_component_ms"> ms </string>
-
-    <!--    Stopwatch Font Style-->
-    <string name="stopwatch_font_style_inner_stroke_style"> Inner stroke </string>
-
-    <!--    Timer Font Style-->
-    <string name="timer_font_style_inner_stroke_style"> Inner stroke </string>
-
-    <!--    Timer Edit Screen-->
-    <string name="timer_edit_screen_hours"> hours </string>
+    <string name="stopwatch_lap"> Lap </string>
+    <string name="stopwatch_lap_time"> Lap time </string>
+    <string name="stopwatch_lap_total_time"> Total time </string>
+    <string name="reset"> Reset </string>
+    <string name="lap"> Lap </string>
+    <string name="start"> Start </string>
+    <string name="pause"> Pause </string>
+    <string name="timer_edit_hour"> hours </string>
     <string name="timer_edit_screen_minutes"> minutes </string>
     <string name="timer_edit_screen_seconds"> seconds </string>
-    <string name="timer_edit_screen_strong"> Strong </string>
-    <string name="timer_edit_screen_weak"> Weak </string>
-
-
-    <!--    Timer Reset Button-->
-    <string name="timer_reset_button_reset"> Reset </string>
-    <string name="timer_reset_button_cancel"> Cancel </string>
-
-    <!--    Timer Start Button-->
-    <string name="timer_start_button_start"> Start </string>
-    <string name="timer_start_button_pause"> Pause </string>
-
-    <!--    Timer Time Screen-->
-    <string name="timer_time_screen_snow"> Snow </string>
+    <string name="cancel"> Cancel </string>
 
 </resources>

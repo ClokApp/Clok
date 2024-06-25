@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
-import com.kingfu.clok.notification.timer.TimerNotificationService
+import com.kingfu.clok.timer.notification.TimerNotificationService
 
 // for android 13 and above
 @Composable

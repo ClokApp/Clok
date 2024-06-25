@@ -1,9 +1,14 @@
 plugins {
-    id("com.android.application")
-    kotlin("android")
+    alias(libs.plugins.androidApplication)
+
+    alias(libs.plugins.jetbrainsKotlin)
 
     // For Room
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.ksp)
+
+    // Compose Compiler
+    alias(libs.plugins.compose.compiler)
+
 
 }
 
@@ -15,8 +20,8 @@ android {
         applicationId = "com.kingfu.clok"
         minSdk = 26
         targetSdk = 34
-        versionCode = 16
-        versionName = "1.7.0"
+        versionCode = 17
+        versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -34,14 +39,14 @@ android {
             )
             signingConfig = signingConfigs.getByName(name = "debug")
         }
-        getByName("debug") {
-            isMinifyEnabled = false
-            isShrinkResources = false
-            proguardFiles(
-                getDefaultProguardFile(name = "proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
+//        getByName("debug") {
+//            isMinifyEnabled = false
+//            isShrinkResources = false
+//            proguardFiles(
+//                getDefaultProguardFile(name = "proguard-android-optimize.txt"),
+//                "proguard-rules.pro"
+//            )
+//        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -53,73 +58,78 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        // Compose Compiler Version
-//        kotlinCompilerExtensionVersion = "1.5.3"
-        kotlinCompilerExtensionVersion = "1.5.4-dev-k1.9.20-Beta2-ac5f960bdaf"
-    }
+//    composeOptions {
+//        // Compose Compiler Version
+////        kotlinCompilerExtensionVersion = "1.5.3"
+////        kotlinCompilerExtensionVersion = "1.5.4-dev-k1.9.20-Beta2-ac5f960bdaf"
+//        kotlinCompilerExtensionVersion = "1.5.12"
+//    }
 
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.5.4")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.activity:activity-compose:1.8.0")
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.4")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.5.4")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.4")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 
     // Setting Permission For Instrumental Test
-    implementation("androidx.test:rules:1.5.0")
+    implementation(libs.androidx.rules)
     
     // Material Design 3
-    implementation("androidx.compose.material3:material3:1.2.0-alpha10")
+    implementation(libs.androidx.material3)
 
     // Compose Animation
-    implementation("androidx.compose.animation:animation-android:1.6.0-alpha08")
+    implementation(libs.androidx.animation.android)
 
     // Foundation
-    implementation("androidx.compose.foundation:foundation-android:1.6.0-alpha08")
+    implementation(libs.androidx.foundation.android)
 
     // Runtime
-    implementation("androidx.compose.runtime:runtime-android:1.6.0-alpha08")
+    implementation(libs.androidx.runtime.android)
 
     // Compose UI
-    implementation("androidx.compose.ui:ui:1.6.0-alpha08")
+    implementation(libs.androidx.ui)
 
     // Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.4")
+    implementation(libs.androidx.navigation.compose)
 
     // preferences DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation(libs.androidx.datastore.preferences)
 
     // SnapFlingBehavior
-    implementation("androidx.compose.foundation:foundation:1.6.0-alpha08")
+    implementation(libs.androidx.foundation)
 
     // Icons
-    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+    implementation(libs.androidx.material.icons.extended)
 
     // Room
-    implementation("androidx.room:room-runtime:2.6.0")
-    ksp("androidx.room:room-compiler:2.6.0")
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
 
     // Kotlin Extensions and Coroutines support for Room
-    implementation("androidx.room:room-ktx:2.6.0")
+    implementation(libs.androidx.room.ktx)
 
     // Splash API
-    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation(libs.androidx.core.splashscreen)
+
+
+
 
 
 

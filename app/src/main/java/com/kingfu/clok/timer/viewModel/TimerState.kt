@@ -3,17 +3,16 @@ package com.kingfu.clok.timer.viewModel
 import java.io.Serializable
 
 data class TimerState(
-    val timerTotalTime: Double = 0.0,
-    val timerTime: Long = 0L,
-    val timerIsFinished: Boolean = false,
-    val timerIsActive: Boolean = false,
-    val timerHour: Int = 0,
-    val timerMinute: Int = 0,
-    val timerSecond: Int = 0,
-    val timerCurrentTimePercentage: Float = 0.0f,
-    val timerIsEditState: Boolean = true,
-    val timerInitialTime: Long = 0L,
-    val timerOffsetTime: Long = 0L,
+    val totalTime: Double = 0.0,
+    val time: Long = 0L,
+    val isFinished: Boolean = false,
+    val isActive: Boolean = false,
+    val hour: Int = 0,
+    val minute: Int = 0,
+    val second: Int = 0,
+    val isEdit: Boolean = true,
+    val initialTime: Long = 0L,
+    val offsetTime: Long = 0L,
     val delay: Long = 55L,
-    val isLoadInitialTime: Boolean = true
+    val isLoaded: Boolean = false
 ): Serializable
