@@ -1,4 +1,4 @@
-package com.kingfu.clok.settings.viewModel.settingsViewModel
+package com.kingfu.clok.settings.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

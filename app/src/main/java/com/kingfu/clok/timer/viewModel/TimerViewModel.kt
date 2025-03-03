@@ -1,15 +1,12 @@
 package com.kingfu.clok.timer.viewModel
 
-import android.content.Context
 import android.os.SystemClock
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kingfu.clok.timer.notification.TimerNotificationService
 import com.kingfu.clok.timer.repository.TimerPreferences
-import com.kingfu.clok.core.Variables.isShowTimerNotification
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -23,11 +20,7 @@ class TimerViewModel(
         private set
 
 
-    init {
-        viewModelScope.launch {
-            loadAllData()
-        }
-    }
+    init { viewModelScope.launch { loadAllData() } }
 
 
     fun setTotalTime(long: Long) {
@@ -38,22 +31,24 @@ class TimerViewModel(
     fun start(long: Long) {
         viewModelScope.launch {
             setIsActive(boolean = true)
-            if (state.isEdit) {
-                setTime(long = long)
-            }
+            if (state.isEdit) setTime(long = long)
             setIsEdit(boolean = false)
             setInitialTime(long = SystemClock.elapsedRealtime())
             while (state.isActive) {
                 if (state.time >= 0L && !state.isFinished) {
-                    setTime(long = state.offsetTime + (state.initialTime - SystemClock.elapsedRealtime()))
+                    setTime(long = state.offsetTime + state.initialTime - SystemClock.elapsedRealtime())
                 } else {
+
                     if (!state.isFinished) {
                         setIsFinished(boolean = true)
-                        setOffsetTime(long = -999L)
+                        setOffsetTime(long = 0)
                         setInitialTime(long = SystemClock.elapsedRealtime())
-                        isShowTimerNotification = true
                     }
-                    setTime(long = state.offsetTime + (SystemClock.elapsedRealtime() - state.initialTime))
+
+                    if(state.time < 360_000_000L - 2) {
+                        setTime(long = state.offsetTime + SystemClock.elapsedRealtime() - state.initialTime)
+                    }
+
                 }
                 delay(timeMillis = 1)
             }
@@ -83,20 +78,6 @@ class TimerViewModel(
         setMinute(int = 0)
         setSecond(int = 0)
         setTime(long = 0L)
-    }
-
-
-    fun showNotifications(context: Context) {
-        viewModelScope.launch {
-            while (isShowTimerNotification) {
-                if (!isShowTimerNotification) {
-                    break
-                }
-                TimerNotificationService(context = context).showNotification()
-                delay(timeMillis = 3000)
-            }
-            isShowTimerNotification = false
-        }
     }
 
     fun setInitialTime(long: Long) {
@@ -144,10 +125,6 @@ class TimerViewModel(
     fun setSecond(int: Int) {
         state = state.copy(second = int)
         saveSecond()
-    }
-
-    suspend fun clearAllDataPreferences() {
-        timerPreferences.clearAll()
     }
 
     private fun saveHour() {

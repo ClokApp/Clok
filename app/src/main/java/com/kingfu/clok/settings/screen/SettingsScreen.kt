@@ -1,112 +1,75 @@
 package com.kingfu.clok.settings.screen
 
 import android.annotation.SuppressLint
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Alignment.Companion.TopCenter
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.Transparent
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kingfu.clok.R
 import com.kingfu.clok.core.ThemeType
-import com.kingfu.clok.navigation.Screen
-import com.kingfu.clok.navigation.TopBar
-import com.kingfu.clok.settings.screen.components.FullScreen
+import com.kingfu.clok.navigation.AppDestination
+import com.kingfu.clok.navigation.topBar.TopBarBack
 import com.kingfu.clok.settings.screen.components.PrivacyPolicy
 import com.kingfu.clok.settings.screen.components.Theme
-import com.kingfu.clok.ui.theme.ClokTheme
-import com.kingfu.clok.ui.theme.TextBodyMedium
+import com.kingfu.clok.settings.viewModel.SettingsState
+import com.kingfu.clok.ui.theme.ClokThemePreview
+import com.kingfu.clok.ui.theme.typography
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    toggleDrawer: () -> Unit,
-    isDrawerOpen: () -> Boolean,
-    theme: ThemeType,
-    setTheme: (ThemeType) -> Unit,
-    route: String?,
-    setIsFullScreen: (Boolean) -> Unit,
-    isFullScreen: Boolean,
-    isShowDialogTheme: Boolean,
-    setIsShowDialogTheme: (Boolean) -> Unit
+    modifier: Modifier = Modifier,
+    state: SettingsState,
+    topBar: @Composable () -> Unit,
+    goToDialogTheme: (ThemeType) -> Unit,
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
-    BackHandler(
-        enabled = isDrawerOpen(),
-        onBack = toggleDrawer
-    )
 
     Scaffold(
-        modifier = Modifier.nestedScroll(
-            connection = scrollBehavior.nestedScrollConnection,
-        ),
-        containerColor = Transparent,
-        topBar = {
-            TopBar(
-                toggleDrawer = toggleDrawer,
-                route = route,
-                scrollBehavior = scrollBehavior
-            )
-        },
+        containerColor = colorScheme.surface,
+        modifier = modifier,
+        topBar = { topBar() },
         content = { paddingValues ->
             Box(
-                modifier = Modifier
-                    .padding(paddingValues = paddingValues)
-                    .fillMaxSize(),
-                contentAlignment = TopCenter
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
             ) {
                 Column(
                     modifier = Modifier
+                        .padding(paddingValues = paddingValues)
                         .verticalScroll(state = rememberScrollState())
-                        .widthIn(min = 300.dp, max = 500.dp),
-                    horizontalAlignment = CenterHorizontally
+                        .widthIn(max = 600.dp)
                 ) {
-                    TextBodyMedium(
-                        text = stringResource(id = R.string.app),
+                    Text(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .fillMaxWidth()
+                            .padding(all = 16.dp)
+                            .fillMaxWidth(),
+                        text = stringResource(id = R.string.app),
+                        style = typography.bodyLarge
                     )
 
                     Theme(
-                        theme = theme,
-                        setTheme = setTheme,
-                        isShowDialog = isShowDialogTheme,
-                        setIsShowDialog = setIsShowDialogTheme
+                        theme = state.theme,
+                        goToDialogTheme = goToDialogTheme
                     )
 
-                    FullScreen(
-                        isFullScreen = isFullScreen,
-                        setIsFullScreen = setIsFullScreen
-                    )
-
-                    TextBodyMedium(
-                        text = stringResource(id = R.string.about),
+                    Text(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .padding(all = 16.dp)
                             .fillMaxWidth(),
+                        text = stringResource(id = R.string.about),
+                        style = typography.bodyLarge
                     )
 
                     PrivacyPolicy()
@@ -114,48 +77,32 @@ fun SettingsScreen(
             }
         }
     )
-
-
 }
 
+
+//@PreviewLightDark
+//@PreviewScreenSizes
+@Preview
 @Composable
-fun SettingsScreenPreview(theme: ThemeType) {
-    var themeType by remember { mutableStateOf(value = theme) }
-    var isShowDialogTheme by remember { mutableStateOf(value = false) }
-    var isFullScreen by remember { mutableStateOf(value = false) }
+private fun SettingsScreenPreview() {
 
-
-    ClokTheme(
-        theme = theme,
-        content = {
-            Surface {
-                SettingsScreen(
-                    toggleDrawer = { },
-                    isDrawerOpen = { false },
-                    theme = themeType,
-                    isShowDialogTheme = isShowDialogTheme,
-                    setIsShowDialogTheme = { isShowDialogTheme = it },
-                    setTheme = { themeType = it },
-                    route = stringResource(id = Screen.Settings.nameId),
-                    setIsFullScreen = { isFullScreen = it },
-                    isFullScreen = isFullScreen
+    ClokThemePreview {
+        SettingsScreen(
+            state = SettingsState(
+                theme = ThemeType.LIGHT
+            ),
+            topBar = {
+                TopBarBack(
+                    title = stringResource(id = AppDestination.SETTINGS.label),
+                    onClick = { }
                 )
-            }
-        }
-    )
+            },
+            goToDialogTheme = { },
+
+        )
+    }
 }
 
-@Preview
-@Composable
-fun SettingsScreenPreviewDark() {
-    SettingsScreenPreview(theme = ThemeType.DARK)
-}
-
-@Preview
-@Composable
-fun SettingsScreenPreviewLight() {
-    SettingsScreenPreview(theme = ThemeType.LIGHT)
-}
 
 
 

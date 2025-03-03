@@ -12,73 +12,60 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Policy
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.LongPress
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.kingfu.clok.R
-import com.kingfu.clok.core.ThemeType
-import com.kingfu.clok.ui.theme.ClokTheme
-import com.kingfu.clok.ui.theme.TextBodyLarge
+import com.kingfu.clok.ui.theme.ClokThemePreview
+import com.kingfu.clok.ui.theme.typography
 
 @Composable
 fun PrivacyPolicy() {
-    val haptic = LocalHapticFeedback.current
     val context = LocalContext.current
     val privacyPolicyLink = "https://github.com/ClokApp/Clok-Support/blob/main/Privacy%20Policy.md"
     val privacyPolicyIntent = Intent(ACTION_VIEW)
 
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .clickable {
-            haptic.performHapticFeedback(hapticFeedbackType = LongPress)
-            privacyPolicyIntent.data = Uri.parse(privacyPolicyLink)
-            context.startActivity(privacyPolicyIntent)
+    Surface {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    privacyPolicyIntent.data = Uri.parse(privacyPolicyLink)
+                    context.startActivity(privacyPolicyIntent)
+                }
+                .padding(all = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Policy,
+                contentDescription = null,
+                tint = colorScheme.onBackground
+            )
+
+            Spacer(modifier = Modifier.width(width = 16.dp))
+
+            Text(
+                text = stringResource(id = R.string.privacy_policy),
+                style = typography.bodyLarge
+            )
         }
-        .padding(all = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.Policy,
-            contentDescription = null
-        )
-
-        Spacer(modifier = Modifier.width(width = 16.dp))
-
-        TextBodyLarge(text = stringResource(id = R.string.privacy_policy))
     }
 
 }
 
+@PreviewLightDark
 @Composable
-fun PrivacyPolicyPreview(theme: ThemeType) {
-    ClokTheme(
-        theme = theme,
-        content = {
-            Surface {
-                PrivacyPolicy()
-            }
-        }
-    )
+private fun PrivacyPolicyPreview() {
+    ClokThemePreview { PrivacyPolicy() }
 }
 
-@Preview
-@Composable
-fun PrivacyPolicyPreviewDark() {
-    PrivacyPolicyPreview(theme = ThemeType.DARK)
-}
-
-@Preview
-@Composable
-fun PrivacyPolicyPreviewLight() {
-    PrivacyPolicyPreview(theme = ThemeType.LIGHT)
-}
 
 
 

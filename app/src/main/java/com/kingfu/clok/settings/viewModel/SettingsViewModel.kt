@@ -1,4 +1,4 @@
-package com.kingfu.clok.settings.viewModel.settingsViewModel
+package com.kingfu.clok.settings.viewModel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,27 +34,9 @@ class SettingsViewModel(
         saveTheme(string = theme.name)
     }
 
-
-    fun setIsFullScreen(boolean: Boolean) {
-        state = state.copy(isFullScreen = boolean)
-        saveIsFullScreen(boolean = boolean)
-    }
-
-
-    fun setIsShowDialogTheme(boolean: Boolean) {
-        state = state.copy(isShowDialogTheme = boolean)
-    }
-
-
     private fun saveTheme(string: String) {
         viewModelScope.launch(context = Dispatchers.IO) {
             settingsPreferences.setTheme(string = string)
-        }
-    }
-
-    private fun saveIsFullScreen(boolean: Boolean) {
-        viewModelScope.launch(context = Dispatchers.IO) {
-            settingsPreferences.setIsFullScreen(boolean = boolean)
         }
     }
 
@@ -67,8 +49,7 @@ class SettingsViewModel(
     private suspend fun loadAllData() {
         state = state.copy(
             theme = enumValueOf(name = settingsPreferences.getTheme.first()),
-            isFullScreen = settingsPreferences.getIsFullScreen.first(),
-            startRoute = settingsPreferences.getStartRoute.first()
+            startRoute = enumValueOf(name = settingsPreferences.getStartRoute.first())
         )
     }
 

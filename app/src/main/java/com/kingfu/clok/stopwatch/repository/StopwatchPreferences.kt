@@ -10,12 +10,12 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class StopwatchPreferences private constructor(context: Context) {
+open class StopwatchPreferences private constructor(context: Context) {
     companion object {
         @Volatile
         private var INSTANCE: StopwatchPreferences? = null
         fun getInstance(context: Context): StopwatchPreferences =
-            INSTANCE ?: synchronized(this) {
+            INSTANCE ?: synchronized(lock = this) {
                 INSTANCE ?: StopwatchPreferences(context).also { INSTANCE = it }
             }
     }

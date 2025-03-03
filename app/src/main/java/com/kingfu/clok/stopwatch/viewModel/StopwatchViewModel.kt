@@ -57,8 +57,7 @@ class StopwatchViewModel(
 
                 saveOffsetTime()
                 saveTime()
-//                delay(timeMillis = 1)
-                delay(timeMillis = 60)
+                delay(timeMillis = 1)
                 if (state.isLap) {
                     setIsLap(boolean = false)
                     lap()
@@ -67,23 +66,25 @@ class StopwatchViewModel(
         }
     }
 
-    suspend fun lap() {
+    private fun lap() {
         val laps = laps.value
         if (laps.size == 1_000_000) return
 
-        val time = state.time - (state.time % 10)
-        val lapTotalTime = laps.lastOrNull()?.let { it.lapTotalTime - it.lapTotalTime % 10 } ?: 0
+        val lapTotalTime = state.time - (state.time % 10)
+        val latestTotalLapTime = if(laps.isEmpty()) lapTotalTime else laps.last().lapTotalTime
 
         val lap = StopwatchLapData(
             lapNumber = laps.size + 1,
-            lapTime = time - lapTotalTime,
-            lapTotalTime = time
+            lapTime = if(laps.isEmpty()) lapTotalTime else lapTotalTime - latestTotalLapTime,
+            lapTotalTime = lapTotalTime
         )
         saveLap(lap = lap)
     }
 
     fun setMaxAndMinLapIndex() {
         val laps = laps.value
+        if (laps.size == 1_000_000 || laps.isEmpty()) return
+
         val lapTime = laps.last().lapTime
 
         if (laps[state.shortestLapIndex].lapTime > lapTime) setShortestLapIndex(laps.lastIndex)
@@ -123,7 +124,7 @@ class StopwatchViewModel(
         state = state.copy(isActive = boolean)
     }
 
-    fun setOffsetTime(long: Long) {
+    private fun setOffsetTime(long: Long) {
         state = state.copy(offsetTime = long)
         saveOffsetTime()
     }
@@ -144,35 +145,37 @@ class StopwatchViewModel(
         stopwatchPreferences.clearAll()
     }
 
-    fun saveTime() {
+    private fun saveTime() {
         viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setTime(long = state.time)
         }
     }
 
-    fun saveOffsetTime() {
+    private fun saveOffsetTime() {
         viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setOffsetTime(long = state.offsetTime)
         }
     }
 
-    suspend fun saveLap(lap: StopwatchLapData) {
-        stopwatchLapDatabase.itemDao().insert(lap = lap)
+    fun saveLap(lap: StopwatchLapData) {
+        viewModelScope.launch(context = Dispatchers.IO) {
+            stopwatchLapDatabase.itemDao().insert(lap = lap)
+        }
     }
 
-    fun saveShortestLapIndex() {
+    private fun saveShortestLapIndex() {
         viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setShortestLapIndex(int = state.shortestLapIndex)
         }
     }
 
-    fun saveLongestLapIndex() {
+    private fun saveLongestLapIndex() {
         viewModelScope.launch(context = Dispatchers.IO) {
             stopwatchPreferences.setLongestLapIndex(int = state.longestLapIndex)
         }
     }
 
-    suspend fun clearAllLaps() {
+    private suspend fun clearAllLaps() {
         stopwatchLapDatabase.itemDao().deleteAllItems()
     }
 

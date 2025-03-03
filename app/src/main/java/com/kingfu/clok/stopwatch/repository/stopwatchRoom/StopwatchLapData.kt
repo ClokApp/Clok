@@ -14,6 +14,6 @@ data class StopwatchLapData(
     val lapTime: Long,
 
     @ColumnInfo(name = "lap_total_time")
-    var lapTotalTime: Long,
+    var lapTotalTime: Long
 )
 

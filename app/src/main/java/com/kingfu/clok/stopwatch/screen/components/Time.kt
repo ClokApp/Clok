@@ -2,59 +2,72 @@
 
 package com.kingfu.clok.stopwatch.screen.components
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.sp
-import com.kingfu.clok.core.ThemeType
 import com.kingfu.clok.core.formatTime
-import com.kingfu.clok.ui.theme.ClokTheme
-import com.kingfu.clok.ui.theme.TextBodyLarge
+import com.kingfu.clok.ui.theme.ClokThemePreview
+import com.kingfu.clok.ui.theme.typography
+import com.kingfu.clok.ui.util.nonScaledSp
 
 
 @Composable
 fun Time(
     modifier: Modifier = Modifier,
-    fontSize: TextUnit,
     time: Long,
-    color: Color = colorScheme.onSurface
+    lapTime: Long,
+    timerFontSize: TextUnit = typography.displayLarge.fontSize.value.nonScaledSp,
+    lapFontSize: TextUnit = typography.headlineLarge.fontSize.value.nonScaledSp,
+    lapTimeAlpha: Float = 1f
+
 ) {
-    TextBodyLarge(
-        modifier = modifier,
-        text = time.formatTime(),
-        fontSize = fontSize,
-        overflow = TextOverflow.Ellipsis,
-        maxLines = 1,
-        color = color
-    )
-}
+    Surface(modifier = modifier) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = CenterHorizontally,
+        ) {
+            Text(
+                modifier = Modifier.semantics {
+                    contentDescription = "time/time"
+                },
+                text = time.formatTime(),
+                fontSize = timerFontSize,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
 
-
-@Composable
-fun TimePreview(theme: ThemeType) {
-    ClokTheme(
-        theme = theme,
-        content = {
-            Surface {
-                Time(fontSize = 60.sp, time = 10000000)
-            }
+            Text(
+                modifier = Modifier
+                    .semantics { contentDescription = "time/lap_time" }
+                    .alpha(alpha = lapTimeAlpha),
+                text = lapTime.formatTime(),
+                fontSize = lapFontSize,
+                color = colorScheme.outline,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
         }
-    )
+    }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
-fun TimePreviewDark() {
-    TimePreview(theme = ThemeType.DARK)
-}
-
-@Preview
-@Composable
-fun TimePreviewLight() {
-    TimePreview(theme = ThemeType.LIGHT)
+private fun TimePreview() {
+    ClokThemePreview {
+        Time(
+            time = 10000,
+            lapTime = 2000
+        )
+    }
 }

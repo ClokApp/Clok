@@ -19,3 +19,8 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Need to not crash when launching release build. E.g enum ThemeType label field.
+-keep class * {
+ @kotlinx.serialization.SerialName <fields>;
+}
